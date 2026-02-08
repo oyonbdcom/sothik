@@ -1,0 +1,228 @@
+export const bloodGroup = [
+  { value: "A+", label: "A Positive (A+)" },
+  { value: "A-", label: "A Negative (A-)" },
+  { value: "B+", label: "B Positive (B+)" },
+  { value: "B-", label: "B Negative (B-)" },
+  { value: "AB+", label: "AB Positive (AB+)" },
+  { value: "AB-", label: "AB Negative (AB-)" },
+  { value: "O+", label: "O Positive (O+)" },
+  { value: "O-", label: "O Negative (O-)" },
+];
+// বাংলা ডাটা অবজেক্ট
+export const doctorDepartments = [
+  {
+    id: "med-01",
+    label: "মেডিসিন বিশেষজ্ঞ",
+    value: "medicine",
+    icon: "healthicons:medicine-syringe",
+    disabled: false,
+  },
+  {
+    id: "card-01",
+    label: "হৃদরোগ (হার্ট) বিশেষজ্ঞ",
+    value: "cardiology",
+    icon: "fa6-solid:heart-pulse",
+    disabled: false,
+  },
+  {
+    id: "neuro-01",
+    label: "মস্তিষ্ক ও স্নায়ু বিশেষজ্ঞ",
+    value: "neurology",
+    icon: "healthicons:brain-main",
+    disabled: false,
+  },
+  {
+    id: "ortho-01",
+    label: "হাড় ও জোড়া বিশেষজ্ঞ",
+    value: "orthopedics",
+    icon: "fa6-solid:bone",
+    disabled: false,
+  },
+  {
+    id: "surg-01",
+    label: "জেনারেল সার্জারি",
+    value: "general-surgery",
+    icon: "fa6-solid:scalpel-line-dashed",
+    disabled: false,
+  },
+  {
+    id: "neph-01",
+    label: "কিডনি বিশেষজ্ঞ",
+    value: "nephrology",
+    icon: "healthicons:kidneys",
+    disabled: false,
+  },
+  {
+    id: "gastro-01",
+    label: "লিভার ও পাকস্থলী",
+    value: "gastroenterology",
+    icon: "healthicons:stomach",
+    disabled: false,
+  },
+  {
+    id: "pulmo-01",
+    label: "বক্ষব্যাধি ও শ্বাসকষ্ট",
+    value: "pulmonology",
+    icon: "healthicons:lungs",
+    disabled: false,
+  },
+  {
+    id: "endo-01",
+    label: "হরমোন ও ডায়াবেটিস",
+    value: "endocrinology",
+    icon: "healthicons:blood-sugar",
+    disabled: false,
+  },
+  {
+    id: "derma-01",
+    label: "চর্ম ও যৌন রোগ বিশেষজ্ঞ",
+    value: "dermatology",
+    icon: "healthicons:skin",
+    disabled: false,
+  },
+  {
+    id: "psy-01",
+    label: "মানসিক রোগ",
+    value: "psychiatry",
+    icon: "healthicons:psychology",
+    disabled: false,
+  },
+  {
+    id: "pedia-01",
+    label: "শিশু বিশেষজ্ঞ",
+    value: "pediatrics",
+    icon: "fa6-solid:baby",
+    disabled: false,
+  },
+  {
+    id: "gyn-01",
+    label: "গাইনী এন্ড অবস বিশেষজ্ঞ",
+    value: "gynecology",
+    icon: "healthicons:female",
+    disabled: false,
+  },
+  {
+    id: "uro-01",
+    label: "ইউরোলজি বিশেষজ্ঞ",
+    value: "urology",
+    icon: "healthicons:bladder",
+    disabled: false,
+  },
+  {
+    id: "ent-01",
+    label: "নাক, কান ও গলা",
+    value: "ent",
+    icon: "healthicons:ear",
+    disabled: false,
+  },
+  {
+    id: "eye-01",
+    label: "চক্ষু বিশেষজ্ঞ",
+    value: "ophthalmology",
+    icon: "fa6-solid:eye",
+    disabled: false,
+  },
+  {
+    id: "onco-01",
+    label: "ক্যান্সার বিশেষজ্ঞ",
+    value: "oncology",
+    icon: "healthicons:ribbon",
+    disabled: false,
+  },
+  {
+    id: "dental-01",
+    label: "দন্ত চিকিৎসা",
+    value: "dentistry",
+    icon: "fa6-solid:tooth",
+    disabled: false,
+  },
+  {
+    id: "rheum-01",
+    label: "বাত-ব্যথা ও রিউমাটোলজি",
+    value: "rheumatology",
+    icon: "healthicons:joints",
+    disabled: false,
+  },
+  {
+    id: "hema-01",
+    label: "রক্তরোগ বিশেষজ্ঞ",
+    value: "hematology",
+    icon: "healthicons:blood-cells",
+    disabled: false,
+  },
+  {
+    id: "pmr-01",
+    label: "ফিজিক্যাল মেডিসিন",
+    value: "physical-medicine",
+    icon: "healthicons:exercise-yoga",
+    disabled: false,
+  },
+  {
+    id: "nutri-01",
+    label: "পুষ্টি ও ডায়েট",
+    value: "nutrition",
+    icon: "fa6-solid:apple-whole",
+    disabled: false,
+  },
+  {
+    id: "neo-01",
+    label: "নবজাতক বিশেষজ্ঞ",
+    value: "neonatology",
+    icon: "healthicons:baby-male",
+    disabled: false,
+  },
+  {
+    id: "radio-01",
+    label: "রেডিওলজি ও ইমেজিং",
+    value: "radiology",
+    icon: "healthicons:xray",
+    disabled: false,
+  },
+  {
+    id: "anes-01",
+    label: "অ্যানেস্থেসিওলজি",
+    value: "anesthesiology",
+    icon: "healthicons:unconscious",
+    disabled: false,
+  },
+  {
+    id: "path-01",
+    label: "প্যাথলজি",
+    value: "pathology",
+    icon: "healthicons:microscope",
+    disabled: false,
+  },
+  {
+    id: "emg-01",
+    label: "জরুরি চিকিৎসা",
+    value: "emergency-medicine",
+    icon: "fa6-solid:truck-medical",
+    disabled: false,
+  },
+  {
+    id: "inf-01",
+    label: "ইনফেকশাস ডিজিজ",
+    value: "infectious-disease",
+    icon: "healthicons:virus-shield",
+    disabled: false,
+  },
+];
+export const genderOptions = [
+  { value: "MALE", label: "MALE" },
+  { value: "FEMALE", label: "FEMALE" },
+];
+export const Gender = {
+  MALE: "MALE",
+  FEMALE: "FEMALE",
+};
+export const BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/v1";
+export const UserRole = {
+  PATIENT: "PATIENT",
+  DOCTOR: "DOCTOR",
+  ADMIN: "ADMIN",
+  CLINIC: "CLINIC",
+};
+export const nameRegex = /^[A-Za-z\u0980-\u09FF\s.]+$/;
+// ফোন নম্বর: ইংরেজি (017...) এবং বাংলা (০১৭১...) উভয় সংখ্যা সাপোর্ট করবে
+export const phoneRegex = /^(?:\+88|88)?(?:01[3-9]\d{8}|[০-৯]{11})$/;
