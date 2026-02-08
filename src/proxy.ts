@@ -1,14 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { UserJwtPayload, UserRole } from "@/types";
 import { jwtDecode } from "jwt-decode";
 import { NextRequest, NextResponse } from "next/server";
 
 /* --------------------------------- CONFIG -------------------------------- */
 
-const DASHBOARDS: Record<UserRole, string> = {
-  PATIENT: "/patient/dashboard",
-  ADMIN: "/admin/dashboard",
-  CLINIC: "/clinic/dashboard",
-  DOCTOR: "/doctor/dashboard",
+const DASHBOARDS: Record<any, string> = {
+  patient: "/patient/dashboard",
+  admin: "/admin/dashboard",
+  clinic: "/clinic/dashboard",
+  doctor: "/doctor/dashboard",
 };
 
 const PROTECTED_ROUTES = [
@@ -43,7 +44,7 @@ const getTokenFromRequest = (req: NextRequest): string | null => {
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const token = getTokenFromRequest(req);
-
+  console.log(token);
   /* 🔓 Public routes */
   if (!token && !isProtectedRoute(pathname)) {
     return NextResponse.next();
@@ -58,7 +59,8 @@ export async function proxy(req: NextRequest) {
     return redirectToLogin(req, pathname);
   }
 
-  const userRole = user.role as UserRole;
+  const userRole = user.role.toLowerCase() as UserRole;
+  console.log(userRole);
   const userDashboard = DASHBOARDS[userRole];
 
   /* 🚫 Auth pages (logged-in users should not access) */
