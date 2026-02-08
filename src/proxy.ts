@@ -1,11 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { UserJwtPayload, UserRole } from "@/types";
-import { jwtDecode } from "jwt-decode";
 import { NextRequest, NextResponse } from "next/server";
+
+// Vercel Edge Runtime-এ লাইব্রেরি ছাড়া ডিকোড করা নিরাপদ
+function decodeToken(token: string): any {
+  try {
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join(""),
+    );
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    return null;
+  }
+}
 
 /* --------------------------------- CONFIG -------------------------------- */
 
-const DASHBOARDS: Record<any, string> = {
+const DASHBOARDS: Record<string, string> = {
   patient: "/patient/dashboard",
   admin: "/admin/dashboard",
   clinic: "/clinic/dashboard",
@@ -13,10 +28,10 @@ const DASHBOARDS: Record<any, string> = {
 };
 
 const PROTECTED_ROUTES = [
-  "/patient/",
-  "/admin/",
-  "/clinic/",
-  "/doctor/",
+  "/patient",
+  "/admin",
+  "/clinic",
+  "/doctor",
   "/checkout",
 ];
 
@@ -25,12 +40,8 @@ const PROTECTED_ROUTES = [
 const isProtectedRoute = (pathname: string) =>
   PROTECTED_ROUTES.some((route) => pathname.startsWith(route));
 
-const isDashboardRoute = (pathname: string) =>
-  Object.values(DASHBOARDS).some((path) => pathname.startsWith(path));
-
 const getTokenFromRequest = (req: NextRequest): string | null => {
   const cookieToken = req.cookies.get("refreshToken")?.value;
-
   const authHeader = req.headers.get("Authorization");
   const headerToken = authHeader?.startsWith("Bearer ")
     ? authHeader.split(" ")[1]
@@ -44,45 +55,43 @@ const getTokenFromRequest = (req: NextRequest): string | null => {
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const token = getTokenFromRequest(req);
-  console.log(token);
-  /* 🔓 Public routes */
+  console.log({ token });
+  // ১. টোকেন নেই এবং সুরক্ষিত রুট নয় - যেতে দিন
   if (!token && !isProtectedRoute(pathname)) {
     return NextResponse.next();
   }
 
-  /* 🔐 Decode token safely */
-  let user: UserJwtPayload;
-
-  try {
-    user = jwtDecode<UserJwtPayload>(token!);
-  } catch {
+  // ২. টোকেন নেই কিন্তু সুরক্ষিত রুট - লগইন এ পাঠান
+  if (!token && isProtectedRoute(pathname)) {
     return redirectToLogin(req, pathname);
   }
 
-  const userRole = user.role.toLowerCase() as UserRole;
-  console.log(userRole);
-  const userDashboard = DASHBOARDS[userRole];
+  /* 🔐 Decode token safely (No library dependency) */
+  const user = token ? decodeToken(token) : null;
+  console.log({ user });
+  if (!user || !user.role) {
+    if (isProtectedRoute(pathname)) {
+      return redirectToLogin(req, pathname);
+    }
+    return NextResponse.next();
+  }
 
-  /* 🚫 Auth pages (logged-in users should not access) */
+  const userRole = user.role.toLowerCase(); // 'admin', 'patient' etc
+  const userDashboard = DASHBOARDS[userRole] || "/";
+
+  /* 🚫 Auth pages: লগইন করা থাকলে সাইন-ইন পেজে যেতে দিবে না */
   if (pathname.startsWith("/auth")) {
     return NextResponse.redirect(new URL(userDashboard, req.url));
   }
 
-  /* 🚫 Protected routes without token */
-  if (isProtectedRoute(pathname) && !token) {
-    return redirectToLogin(req, pathname);
-  }
+  /* 🚫 Role-based access: ভুল ড্যাশবোর্ডে প্রবেশের চেষ্টা করলে নিজস্ব ড্যাশবোর্ডে রিডাইরেক্ট */
+  const isAccessingOtherRoleFolder =
+    PROTECTED_ROUTES.some((route) => pathname.startsWith(route)) &&
+    !pathname.startsWith(`/${userRole}`) &&
+    pathname !== "/checkout";
 
-  /* 🚫 Prevent accessing other dashboards */
-  if (isDashboardRoute(pathname) && !pathname.startsWith(userDashboard)) {
+  if (isAccessingOtherRoleFolder) {
     return NextResponse.redirect(new URL(userDashboard, req.url));
-  }
-
-  /* 🚫 Role-based access protection */
-  if (!pathname.startsWith(`/${userRole.toLowerCase()}`)) {
-    if (isProtectedRoute(pathname)) {
-      return NextResponse.redirect(new URL(userDashboard, req.url));
-    }
   }
 
   return NextResponse.next();
@@ -92,6 +101,8 @@ export async function proxy(req: NextRequest) {
 
 const redirectToLogin = (req: NextRequest, pathname: string) => {
   const signInUrl = new URL("/auth/sign-in", req.url);
+  // লুপ এড়াতে চেক করুন আপনি অলরেডি সাইন-ইন পেজে আছেন কি না
+  if (pathname === "/auth/sign-in") return NextResponse.next();
   signInUrl.searchParams.set("callbackUrl", pathname);
   return NextResponse.redirect(signInUrl);
 };
@@ -100,6 +111,11 @@ const redirectToLogin = (req: NextRequest, pathname: string) => {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|css|js)$).*)",
+    "/admin/:path*",
+    "/patient/:path*",
+    "/clinic/:path*",
+    "/doctor/:path*",
+    "/auth/:path*",
+    "/checkout/:path*",
   ],
 };
