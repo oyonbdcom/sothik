@@ -33,15 +33,15 @@ export default function ChangePasswordPage() {
 
   const onSubmit = async (values: any) => {
     try {
-      const result = await changePassword(values).unwrap();
-      console.log(result);
+      await changePassword(values).unwrap();
+
       toast.success("পাসওয়ার্ড সফলভাবে পরিবর্তিত হয়েছে!");
 
       localStorage.removeItem("accessToken");
       form.reset();
 
       setTimeout(() => {
-        window.location.href = "/auth/sign-in";
+        window.location.href = "/login";
       }, 1500);
     } catch (err: any) {
       const errorMsg =

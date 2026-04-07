@@ -55,7 +55,7 @@ const getTokenFromRequest = (req: NextRequest): string | null => {
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const token = getTokenFromRequest(req);
-  console.log({ token });
+
   // ১. টোকেন নেই এবং সুরক্ষিত রুট নয় - যেতে দিন
   if (!token && !isProtectedRoute(pathname)) {
     return NextResponse.next();
@@ -68,7 +68,7 @@ export async function proxy(req: NextRequest) {
 
   /* 🔐 Decode token safely (No library dependency) */
   const user = token ? decodeToken(token) : null;
-  console.log({ user });
+
   if (!user || !user.role) {
     if (isProtectedRoute(pathname)) {
       return redirectToLogin(req, pathname);
@@ -100,9 +100,9 @@ export async function proxy(req: NextRequest) {
 /* -------------------------------- REDIRECTS ------------------------------- */
 
 const redirectToLogin = (req: NextRequest, pathname: string) => {
-  const signInUrl = new URL("/auth/sign-in", req.url);
+  const signInUrl = new URL("/login", req.url);
   // লুপ এড়াতে চেক করুন আপনি অলরেডি সাইন-ইন পেজে আছেন কি না
-  if (pathname === "/auth/sign-in") return NextResponse.next();
+  if (pathname === "/login") return NextResponse.next();
   signInUrl.searchParams.set("callbackUrl", pathname);
   return NextResponse.redirect(signInUrl);
 };

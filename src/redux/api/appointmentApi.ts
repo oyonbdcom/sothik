@@ -11,13 +11,6 @@ const APPOINTMENT_URL = "/appointments";
 
 export const appointmentApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    sendBookingOtp: build.mutation({
-      query: (data: { phoneNumber: string }) => ({
-        url: `${APPOINTMENT_URL}/send-otp`,
-        method: "POST",
-        data,
-      }),
-    }),
     // Create Appointment (Handles Guest & Auth)
     createAppointment: build.mutation({
       query: (data) => ({
@@ -110,6 +103,5 @@ export const {
   useCreateAppointmentForAdminMutation,
   useGetMyAppointmentsQuery,
   useExportDoctorDailyPdfQuery,
-  useSendBookingOtpMutation,
   useUpdateAppointmentMutation,
 } = appointmentApi;

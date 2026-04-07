@@ -25,7 +25,7 @@ export async function registerNotification() {
   if (!fcmToken) return;
 
   const user = getUserInfo();
-  console.log(user);
+
   await axiosInstance.post("/device-token/register", {
     userId: user?.userId,
     token: fcmToken,

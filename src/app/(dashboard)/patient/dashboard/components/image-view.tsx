@@ -1,205 +1,151 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
-
-import { cn } from "@/lib/utils/utils";
-import {
-  ChevronLeft,
-  ChevronRight,
-  DownloadIcon,
-  X,
-  ZoomIn,
-  ZoomOut,
-} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Download, RotateCcw, ZoomIn, ZoomOut } from "lucide-react";
 import Image from "next/image";
-import { useEffect } from "react";
+import { PhotoProvider, PhotoView } from "react-photo-view";
+import "react-photo-view/dist/react-photo-view.css";
 
-interface ImageViewerProps {
-  state: {
-    isOpen: boolean;
-    appointment: any[];
-    currentIndex: number;
-  };
-  zoomLevel: number;
-  onClose: () => void;
-  onNext: () => void;
-  onPrev: () => void;
-  onZoomIn: () => void;
-  onZoomOut: () => void;
-  // This prop allows us to jump to a specific thumbnail
-  onSelectIndex: (index: number) => void;
-}
-
-export const ImageViewerModal = ({
-  state,
-  zoomLevel,
-  onClose,
-  onNext,
-  onPrev,
-  onZoomIn,
-  onZoomOut,
-  onSelectIndex,
-}: ImageViewerProps) => {
-  const currentRecord = state.appointment[state.currentIndex];
-
-  // 1. Keyboard Shortcuts
-  useEffect(() => {
-    if (!state.isOpen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowRight") onNext();
-      if (e.key === "ArrowLeft") onPrev();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [state.isOpen, onClose, onNext, onPrev]);
-
-  // Prevent background scrolling when modal is open
-  useEffect(() => {
-    if (state.isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [state.isOpen]);
-
-  if (!state.isOpen || !currentRecord) return null;
-  const getDownloadUrl = (url: string) => {
+export default function MedicalRecordGrid({ appointment, showRecords }: any) {
+  if (!showRecords) return null;
+  const handleDownload = async (url: string, fileName: string) => {
     try {
-      const cloudUrl = new URL(url);
-      cloudUrl.pathname = cloudUrl.pathname.replace(
-        "/upload/",
-        "/upload/fl_attachment/"
-      );
-      return cloudUrl.toString();
-    } catch {
-      return url;
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = fileName || "medical-report";
+      document.body.appendChild(link);
+      link.click();
+
+      // ক্লিনআপ
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Download failed:", error);
+      // যদি কোনো কারণে ফেল করে, তবে ব্যাকআপ হিসেবে নতুন ট্যাবে ওপেন হবে
+      window.open(url, "_blank");
     }
   };
   return (
-    <div className="fixed inset-0 z-[9999] flex flex-col bg-black/95 backdrop-blur-md animate-in fade-in duration-300">
-      {/* --- Header Controls --- */}
-      <div className="flex items-center justify-between p-4 text-white bg-gradient-to-b from-black/50 to-transparent z-10">
-        <div className="flex flex-col">
-          <h3 className="font-bold text-lg leading-tight">
-            {currentRecord.name || "Medical Document"}
-          </h3>
-          <p className="text-xs text-gray-400">
-            {state.currentIndex + 1} of {state.appointment.length} • Updated{" "}
-            {new Date(currentRecord.updatedAt).toLocaleDateString()}
-          </p>
-        </div>
+    <div className="p-6 lg:p-8 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 animate-in fade-in slide-in-from-top-2">
+      {/* Header Section */}
+      <div className="flex items-center gap-2 mb-6">
+        <h4 className="font-bold text-slate-800 dark:text-white">
+          সংযুক্ত ফাইলসমূহ
+        </h4>
+        <Badge className="bg-indigo-600 px-2 py-0.5 rounded-full">
+          {appointment.medicalRecords?.length || 0}
+        </Badge>
+      </div>
 
-        <div className="flex items-center gap-3">
-          {/* Zoom Controls */}
-          <div className="flex items-center bg-white/10 border border-white/10 rounded-full px-2 py-1">
-            <button
-              onClick={onZoomOut}
-              className="p-2 hover:text-blue-400 transition-colors"
-              title="Zoom Out"
-            >
-              <ZoomOut size={18} />
-            </button>
-            <span className="text-xs font-mono w-10 text-center select-none">
-              {Math.round(zoomLevel * 100)}%
-            </span>
-            <button
-              onClick={onZoomIn}
-              className="p-2 hover:text-blue-400 transition-colors"
-              title="Zoom In"
-            >
-              <ZoomIn size={18} />
-            </button>
+      {/* Content Section */}
+      <PhotoProvider
+        speed={() => 300}
+        maskOpacity={0.9}
+        toolbarRender={({ onScale, scale, onRotate, rotate, index }) => {
+          const currentItem = appointment.medicalRecords[index];
+
+          return (
+            <div className="flex items-center gap-2 md:gap-4 px-4 py-1.5 bg-black/40 backdrop-blur-lg rounded-full mr-4 border border-white/10 shadow-2xl transition-all">
+              {/* Zoom Out Button */}
+              <button
+                className="p-2 hover:text-blue-400 text-white/90 disabled:opacity-30 disabled:hover:text-white transition-colors"
+                onClick={() => onScale(scale - 0.5)}
+                disabled={scale <= 1}
+                title="Zoom Out"
+              >
+                <ZoomOut size={20} />
+              </button>
+              {/* Zoom Level Display */}
+              <span className="text-xs font-mono text-white/70 min-w-[45px] text-center select-none">
+                {Math.round(scale * 100)}%
+              </span>
+              {/* Zoom In Button */}
+              <button
+                className="p-2 hover:text-blue-400 text-white/90 disabled:opacity-30 transition-colors"
+                onClick={() => onScale(scale + 0.5)}
+                disabled={scale >= 4}
+                title="Zoom In"
+              >
+                <ZoomIn size={20} />
+              </button>
+              <div className="w-[1px] h-4 bg-white/20 mx-1" /> {/* Separator */}
+              {/* Rotate Button */}
+              <button
+                className="p-2 hover:text-blue-400 text-white/90 transition-colors"
+                onClick={() => onRotate(rotate + 90)}
+                title="Rotate"
+              >
+                <RotateCcw size={18} />
+              </button>
+              {/* Download Button */}
+              <button
+                className="p-2 hover:text-green-400 text-white/90 transition-colors"
+                title="Download to Device"
+                onClick={() =>
+                  handleDownload(
+                    currentItem.document,
+                    `${currentItem.name}-${index + 1}`,
+                  )
+                }
+              >
+                <Download size={20} />
+              </button>
+            </div>
+          );
+        }}
+      >
+        {appointment.medicalRecords?.length ? (
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
+            {appointment.medicalRecords.map((item: any, index: number) => (
+              <RecordItem key={index} item={item} />
+            ))}
           </div>
-
-          <button
-            className="p-2.5 bg-white/10 hover:bg-blue-600 rounded-full transition-all"
-            title="Download/Open Original"
-          >
-            <a
-              href={
-                currentRecord?.document
-                  ? getDownloadUrl(currentRecord.document)
-                  : "#"
-              }
-            >
-              <DownloadIcon className="w-5 h-5" />
-            </a>
-          </button>
-
-          <button
-            onClick={onClose}
-            className="p-2.5 bg-rose-600 hover:bg-rose-700 rounded-full transition-all shadow-lg"
-            title="Close (Esc)"
-          >
-            <X size={20} />
-          </button>
-        </div>
-      </div>
-
-      {/* --- Main Viewport --- */}
-      <div className="relative flex-1 flex items-center justify-center overflow-hidden">
-        {/* Navigation Arrows */}
-        {state.appointment.length > 1 && (
-          <>
-            <button
-              onClick={onPrev}
-              className="absolute left-6 z-20 p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-white transition-all backdrop-blur-md"
-            >
-              <ChevronLeft size={32} />
-            </button>
-            <button
-              onClick={onNext}
-              className="absolute right-6 z-20 p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-white transition-all backdrop-blur-md"
-            >
-              <ChevronRight size={32} />
-            </button>
-          </>
+        ) : (
+          <EmptyState />
         )}
-
-        {/* The Image Wrapper with Zoom */}
-        <div
-          className="relative transition-transform duration-200 ease-out cursor-grab active:cursor-grabbing"
-          style={{ transform: `scale(${zoomLevel})` }}
-        >
-          <Image
-            src={currentRecord.document}
-            alt="Medical Record"
-            width={1600}
-            height={1200}
-            className="max-h-[75vh] w-auto object-contain rounded-sm shadow-2xl"
-            priority
-          />
-        </div>
-      </div>
-
-      {/* --- Bottom Thumbnail Strip --- */}
-      {state.appointment.length > 1 && (
-        <div className="p-6 flex justify-center gap-3 overflow-x-auto bg-gradient-to-t from-black/50 to-transparent z-10">
-          {state.appointment.map((record, idx) => (
-            <button
-              key={record.id}
-              onClick={() => onSelectIndex(idx)}
-              className={cn(
-                "relative h-16 w-16 rounded-xl overflow-hidden border-2 transition-all duration-300 shrink-0",
-                state.currentIndex === idx
-                  ? "border-blue-500 scale-110 shadow-lg shadow-blue-500/40"
-                  : "border-white/10 opacity-40 hover:opacity-100 hover:border-white/30"
-              )}
-            >
-              <Image
-                src={record.document}
-                alt="thumbnail"
-                fill
-                className="object-cover"
-              />
-            </button>
-          ))}
-        </div>
-      )}
+      </PhotoProvider>
     </div>
   );
+}
+
+const RecordItem = ({ item }: { item: any }) => {
+  return (
+    <PhotoView src={item.document || ""}>
+      <div className="group relative aspect-[4/4] rounded-xl overflow-hidden cursor-zoom-in border border-slate-200 dark:border-slate-800 hover:border-indigo-400 hover:shadow-lg transition-all duration-300">
+        {/* Image */}
+        <Image
+          width={400}
+          height={400}
+          src={item.document}
+          alt={item.name || "Medical Record"}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        />
+
+        {/* Overlay on Hover */}
+        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <span className="text-[10px] bg-white/90 text-black px-2 py-1 rounded shadow-sm font-medium">
+            দেখুন
+          </span>
+        </div>
+
+        {/* Name Tag (Optional) */}
+        {item.name && (
+          <div className="absolute bottom-0 inset-x-0 p-1 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+            <p className="text-[10px] text-center truncate font-medium dark:text-slate-200">
+              {item.name}
+            </p>
+          </div>
+        )}
+      </div>
+    </PhotoView>
+  );
 };
+
+const EmptyState = () => (
+  <div className="flex flex-col items-center justify-center py-10 border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-2xl">
+    <p className="text-sm text-slate-400 italic">কোনো রেকর্ড পাওয়া যায়নি</p>
+  </div>
+);

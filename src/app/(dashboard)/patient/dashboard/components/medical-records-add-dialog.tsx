@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -37,21 +38,18 @@ export default function MedicalRecordsAddDialog({
       description: "",
       date: new Date().toISOString().split("T")[0] as any,
       document: "",
-      appointmentId: appointmentId, // সরাসরি প্রপস থেকে অ্যাপয়েন্টমেন্ট আইডি সেট করুন
+      appointmentId: appointmentId,
     },
   });
 
   const onSubmit: SubmitHandler<ICreateMedicalRecords> = async (data) => {
     try {
-      // ডাটা পাঠানোর আগে নিশ্চিত করুন appointmentId ঠিক আছে
-      const payload = { ...data, appointmentId };
-      await createMedicalRecord(payload).unwrap();
-
-      toast.success("মেডিকেল রেকর্ড সফলভাবে যোগ করা হয়েছে");
+      await createMedicalRecord({ ...data, appointmentId }).unwrap();
+      toast.success("রেকর্ডটি সফলভাবে সংরক্ষিত হয়েছে");
       form.reset();
       setOpen(false);
     } catch (error: any) {
-      toast.error(error?.data?.message || "রেকর্ড সেভ করতে ব্যর্থ হয়েছে");
+      toast.error(error?.data?.message || "সংরক্ষণ করতে সমস্যা হয়েছে");
     }
   };
 
@@ -60,44 +58,48 @@ export default function MedicalRecordsAddDialog({
       <DialogTrigger asChild>
         <Button
           variant="outline"
-          className="w-full h-12 gap-2 border-2 border-dashed border-indigo-200 hover:border-indigo-500 hover:bg-indigo-50 text-indigo-600 transition-all rounded-xl font-bold"
+          className="w-full flex items-center justify-center gap-2 py-6 border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-indigo-600 transition-all rounded-lg"
         >
-          <Plus className="h-5 w-5" />
-          রিপোর্ট যোগ করুন
+          <Plus className="h-4 w-4" />
+          <span className="font-semibold text-sm">নতুন রিপোর্ট যোগ করুন</span>
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[550px] p-0 overflow-hidden rounded-3xl border-none shadow-2xl">
-        <div className="bg-indigo-600 p-6 text-white">
+      {/* মেইন ফিক্স: flex flex-col এবং max-h-[90vh] ব্যবহার করা হয়েছে 
+          যাতে স্ক্রিন ছোট হলে ডায়ালগ স্ক্রিনের বাইরে চলে না যায়।
+      */}
+      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden rounded-xl border border-slate-200 flex flex-col max-h-[90vh]">
+        {/* Header - Fixed */}
+        <div className="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex-shrink-0">
           <DialogHeader>
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
-                <FileUp className="h-6 w-6 text-white" />
+              <div className="p-2 bg-indigo-50 rounded-lg">
+                <FileUp className="h-5 w-5 text-indigo-600" />
               </div>
-              <DialogTitle className="text-2xl font-black tracking-tight">
-                নতুন মেডিকেল রেকর্ড
-              </DialogTitle>
+              <div>
+                <DialogTitle className="text-xl font-bold text-slate-900">
+                  মেডিকেল রেকর্ড
+                </DialogTitle>
+                <DialogDescription className="text-slate-500 text-sm">
+                  রিপোর্ট বা প্রেসক্রিপশন আপলোড করুন
+                </DialogDescription>
+              </div>
             </div>
-            <p className="text-indigo-100 text-sm mt-1">
-              অ্যাপয়েন্টমেন্ট সম্পর্কিত সকল প্রেসক্রিপশন বা রিপোর্ট এখানে আপলোড
-              করুন।
-            </p>
           </DialogHeader>
         </div>
 
-        <div className="p-6">
+        {/* Scrollable Form Body - overflow-y-auto ব্যবহার করা হয়েছে */}
+        <div className="p-6 overflow-y-auto custom-scrollbar">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="md:col-span-2">
-                  <CustomFormField
-                    fieldType={FormFieldType.INPUT}
-                    name="name"
-                    control={form.control}
-                    placeholder="উদাঃ রক্তের রিপোর্ট / এক্স-রে"
-                    label="রিপোর্টের শিরোনাম"
-                  />
-                </div>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <div className="space-y-4">
+                <CustomFormField
+                  fieldType={FormFieldType.INPUT}
+                  name="name"
+                  control={form.control}
+                  placeholder="উদাঃ রক্ত পরীক্ষা, এক্স-রে"
+                  label="রিপোর্টের নাম"
+                />
 
                 <CustomFormField
                   fieldType={FormFieldType.INPUT}
@@ -107,46 +109,34 @@ export default function MedicalRecordsAddDialog({
                   label="পরীক্ষার তারিখ"
                 />
 
-                <div className="md:col-span-2">
-                  <CustomFormField
-                    fieldType={FormFieldType.TEXTAREA}
-                    name="description"
-                    control={form.control}
-                    placeholder="রিপোর্ট সম্পর্কে কিছু লিখুন..."
-                    label="বিবরণ (অপশনাল)"
-                  />
-                </div>
+                <CustomFormField
+                  fieldType={FormFieldType.FILE_UPLOAD}
+                  name="document"
+                  control={form.control}
+                  label="ডকুমেন্ট আপলোড (PDF বা ছবি)"
+                />
 
-                <div className="md:col-span-2">
-                  <CustomFormField
-                    fieldType={FormFieldType.FILE_UPLOAD}
-                    name="document"
-                    control={form.control}
-                    label="ডকুমেন্ট আপলোড করুন (PDF/Image)"
-                  />
-                </div>
+                {/* প্রয়োজনে আরও ফিল্ড এখানে যোগ করলেও স্ক্রল হবে */}
               </div>
 
-              <div className="flex items-center gap-3 pt-4">
+              {/* Action Buttons - Fixed at bottom of the scroll area or outside */}
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-50 mt-4">
                 <Button
                   type="button"
-                  variant="ghost"
-                  className="flex-1 h-12 rounded-xl font-bold text-gray-500 hover:bg-gray-100"
+                  variant="outline"
+                  className="px-6 rounded-md font-medium text-slate-600"
                   onClick={() => setOpen(false)}
                   disabled={isLoading}
                 >
-                  বাতিল করুন
+                  বাতিল
                 </Button>
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="flex-[2] h-12 rounded-xl font-bold bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all"
+                  className="px-6 bg-primary-600 hover:bg-primary-700 text-white rounded-md font-medium min-w-[120px]"
                 >
                   {isLoading ? (
-                    <div className="flex items-center gap-2">
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                      সেভ হচ্ছে...
-                    </div>
+                    <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
                     "রেকর্ড সেভ করুন"
                   )}

@@ -9,6 +9,8 @@ import { useState } from "react";
 import AddBlock from "../common/add-block";
 
 import SiteLogo from "@/components/sitelogo";
+import { Stethoscope } from "lucide-react";
+import Link from "next/link";
 import NestedSubMenu from "../common/nested-menus";
 import SingleMenuItem from "./single-menu-item";
 import SubMenuHandler from "./sub-menu-handler";
@@ -66,21 +68,45 @@ const PopoverSidebar = ({
         "w-[72px]": collapsed,
       })}
     >
-      {sidebarBg !== "none" && (
-        <div
-          className="absolute left-0 top-0 z-[-1] w-full h-full bg-cover bg-center opacity-[0.07]"
-          style={{ backgroundImage: `url(${sidebarBg})` }}
-        />
-      )}
-      <SiteLogo />
+      <div className="px-1 flex justify-star items-center h-14">
+        {collapsed ? (
+          <div>
+            <Link
+              href={"/"}
+              className="flex items-center justify-center group outline-none select-none transition-all active:scale-95"
+            >
+              <div className="flex items-center gap-0.5">
+                {/* Main Brand Text - Deep Professional Slate */}
+                <span className="text-[14px] font-black text-[#1A237E] tracking-tighter transition-colors group-hover:text-[#1E293B]">
+                  Susthi
+                </span>
+
+                {/* The Icon 'O' - Refined Medical Cyan */}
+                <div className="relative flex items-center justify-center ml-[1px]">
+                  <div className="relative w-[16px] h-[16px] border-[3px] border-[#1A237E] rounded-full flex items-center justify-center transition-all duration-300  ">
+                    {/* Lucide Stethoscope Icon centered perfectly */}
+                    <Stethoscope
+                      size={8}
+                      strokeWidth={3}
+                      className="text-[#06B6D4] transition-colors duration-300  "
+                    />
+                  </div>
+                </div>
+              </div>
+            </Link>
+          </div>
+        ) : (
+          <SiteLogo />
+        )}
+      </div>
       <Separator />
       <ScrollArea
         className={cn("sidebar-menu h-[calc(100%-80px)]", {
-          "px-4": !collapsed,
+          "px-4 pt-2": !collapsed,
         })}
       >
         <ul
-          className={cn("space-y-1", {
+          className={cn("space-y-1 pt-2", {
             "space-y-2 text-center": collapsed,
           })}
         >

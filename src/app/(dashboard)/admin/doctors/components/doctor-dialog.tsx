@@ -68,7 +68,7 @@ export default function DoctorDialog({
     resolver: zodResolver(schema),
     defaultValues: {
       user: {
-        name: "",
+        name: "ডা:",
         phoneNumber: "",
         password: "Password3@#",
         role: "DOCTOR",

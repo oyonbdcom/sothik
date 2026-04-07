@@ -1,5 +1,5 @@
-import Footer from "@/components/landing-page/footer";
-import Header from "@/components/landing-page/header";
+import Footer from "@/app/components/footer";
+import Header from "@/app/components/header";
 import { siteConfig } from "@/config/site";
 import { Metadata } from "next";
 

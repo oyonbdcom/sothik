@@ -7,8 +7,8 @@ import youtube from "@/public/images/social/youtube.png";
 export { avatar, femaleAvatar };
 export const siteConfig = {
   sidebarBg: "none",
-  siteName: "Oyonbd",
-  name: "Sebadar - Find & Book Doctors Online",
+  siteName: "susthio",
+  name: "susthio - Find & Book Doctors Online",
   address: "dinajpur sodor dinajpur",
   url: `${process.env.NEXT_PUBLIC_API_URL || "https://doccare.srikanto.site"}`,
   description:

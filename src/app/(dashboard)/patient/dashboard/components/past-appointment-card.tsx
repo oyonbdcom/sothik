@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +10,6 @@ import {
   Building,
   CalendarDays,
   Clock,
-  Download,
   FileText,
   Hash,
   Phone,
@@ -21,7 +19,7 @@ import {
 import Image from "next/image";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { ImageViewerModal } from "./image-view";
+import MedicalRecordGrid from "./image-view";
 import MedicalRecordsAddDialog from "./medical-records-add-dialog";
 
 export const PastAppointmentCard = ({
@@ -30,13 +28,6 @@ export const PastAppointmentCard = ({
   appointment: IAppointmentResponse;
 }) => {
   const [showRecords, setShowRecords] = useState(false);
-  const [zoomLevel, setZoomLevel] = useState(1);
-  const [viewerState, setViewerState] = useState({
-    isOpen: false,
-    appointment: appointment?.medicalRecords || [],
-    currentIndex: 0,
-    appointmentId: appointment?.id,
-  });
 
   const statusConfig = {
     PENDING: {
@@ -275,78 +266,13 @@ export const PastAppointmentCard = ({
 
           {/* মেডিকেল রেকর্ডস সেকশন (Expandable) */}
           {showRecords && (
-            <div className="p-6 lg:p-8 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 animate-in fade-in slide-in-from-top-2">
-              <div className="flex items-center gap-2 mb-6">
-                <h4 className="font-bold text-slate-800 dark:text-white">
-                  সংযুক্ত ফাইলসমূহ
-                </h4>
-                <Badge className="bg-indigo-600">
-                  {appointment.medicalRecords?.length || 0}
-                </Badge>
-              </div>
-
-              {appointment.medicalRecords?.length ? (
-                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
-                  {appointment.medicalRecords.map(
-                    (record: any, index: number) => (
-                      <div
-                        key={record.id}
-                        className="group/item relative aspect-[3/4] rounded-xl overflow-hidden cursor-zoom-in border dark:border-slate-700"
-                      >
-                        <Image
-                          src={record.document}
-                          alt={record.name}
-                          fill
-                          className="object-cover transition-transform group-hover/item:scale-105"
-                          onClick={() =>
-                            setViewerState((p) => ({
-                              ...p,
-                              isOpen: true,
-                              currentIndex: index,
-                            }))
-                          }
-                        />
-                        <button className="absolute top-1.5 right-1.5 p-1.5 bg-white/90 rounded-lg opacity-0 group-hover/item:opacity-100 transition-all shadow-sm">
-                          <Download size={12} className="text-slate-700" />
-                        </button>
-                      </div>
-                    ),
-                  )}
-                </div>
-              ) : (
-                <p className="text-center py-6 text-sm text-slate-400 italic">
-                  কোনো রেকর্ড পাওয়া যায়নি
-                </p>
-              )}
-            </div>
+            <MedicalRecordGrid
+              appointment={appointment}
+              showRecords={showRecords}
+            />
           )}
         </CardContent>
       </Card>
-
-      <ImageViewerModal
-        state={viewerState}
-        zoomLevel={zoomLevel}
-        onClose={() => setViewerState((prev) => ({ ...prev, isOpen: false }))}
-        onNext={() =>
-          setViewerState((p) => ({
-            ...p,
-            currentIndex: (p.currentIndex + 1) % p.appointment.length,
-          }))
-        }
-        onPrev={() =>
-          setViewerState((p) => ({
-            ...p,
-            currentIndex:
-              (p.currentIndex - 1 + p.appointment.length) %
-              p.appointment.length,
-          }))
-        }
-        onZoomIn={() => setZoomLevel((prev) => Math.min(prev + 0.5, 4))}
-        onZoomOut={() => setZoomLevel((prev) => Math.max(prev - 0.5, 1))}
-        onSelectIndex={(index: any) =>
-          setViewerState((prev) => ({ ...prev, currentIndex: index }))
-        }
-      />
     </>
   );
 };

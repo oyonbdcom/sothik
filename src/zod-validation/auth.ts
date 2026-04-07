@@ -1,4 +1,4 @@
-import { nameRegex, phoneRegex } from "@/constant/common";
+import { phoneRegex } from "@/constant/common";
 import { z } from "zod";
 
 // ---------------------- LOGIN ----------------------
@@ -13,7 +13,7 @@ export const registerSchema = z
       .string()
       .min(2, "নাম অন্তত ২ অক্ষরের হতে হবে")
       .max(100, "নাম ১০০ অক্ষরের বেশি হওয়া সম্ভব নয়")
-      .regex(nameRegex, "নামে শুধুমাত্র বাংলা বা ইংরেজি অক্ষর ব্যবহার করুন"),
+      .regex(/^[ঀ-৿\s]+$/, "নাম অবশ্যই বাংলায় হতে হবে"),
     phoneNumber: z
       .string()
       .min(11, "ফোন নম্বর অন্তত ১১ ডিজিটের হতে হবে")

@@ -35,7 +35,7 @@ export const ProfileInfo = ({ dashboard = false }: { dashboard?: boolean }) => {
       // লোকাল স্টোরেজ থেকে তথ্য মুছে ফেলা
       removeUserInfo();
 
-      router.push("/auth/sign-in");
+      router.push("/login");
       toast.success("সফলভাবে লগআউট করা হয়েছে");
     } catch (err) {
       toast.error("লগআউট করতে ব্যর্থ হয়েছে");

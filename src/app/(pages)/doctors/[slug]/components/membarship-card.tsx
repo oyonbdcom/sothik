@@ -3,7 +3,7 @@
 import CreateAppointment from "@/components/booking/booking-dialog";
 import { IMembershipResponse } from "@/interface/clinic-membership";
 import { enToBnNumber } from "@/lib/utils/utils";
-import { Clock, MapPin, Phone, Star } from "lucide-react";
+import { BadgeCheck, Building2, Clock, MapPin, Star } from "lucide-react";
 import Image from "next/image";
 
 const MembershipCard = ({
@@ -34,26 +34,57 @@ const MembershipCard = ({
 
         <div className="flex flex-col md:flex-row p-4 sm:p-5 gap-5">
           {/* Section: Visual - 'figure' ট্যাগ ইমেজের জন্য এসইও ফ্রেন্ডলি */}
-          <figure className="md:w-[240px] relative shrink-0">
-            <div className="relative aspect-square md:aspect-[4/5] h-56 sm:h-48 w-full overflow-hidden rounded-2xl bg-gray-50 dark:bg-gray-800 border border-gray-100">
-              <Image
-                src={membership.clinic?.user?.image || "/de.jpg"}
-                alt={`${membership.clinic?.user?.name} ক্লিনিকের ছবি`}
-                fill
-                itemProp="image"
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
-              />
+          <figure className="md:w-[200px] lg:w-[240px] relative shrink-0 group">
+            {/* Main Container */}
+            <div className="relative aspect-[5/5] overflow-hidden rounded-[2rem] bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm transition-all duration-500 group-hover:shadow-xl group-hover:shadow-blue-500/10">
+              {membership.clinic?.user?.image ? (
+                <>
+                  {/* Full Image with Overlay */}
+                  <Image
+                    src={membership.clinic.user.image}
+                    alt={`${membership.clinic?.user?.name} ক্লিনিকের ছবি`}
+                    fill
+                    itemProp="image"
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 transition-opacity group-hover:opacity-80" />
+                </>
+              ) : (
+                /* Sophisticated Fallback when no image exists */
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-indigo-700 flex flex-col items-center justify-center p-4">
+                  <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center mb-3 transition-transform duration-500 group-hover:scale-110">
+                    <Building2 className="w-8 h-8 text-white" />
+                  </div>
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-100 text-center">
+                    {membership.clinic?.user?.name?.split(" ")[0] || "No Photo"}
+                  </span>
+                </div>
+              )}
 
-              <figcaption className="absolute bottom-2 left-2 flex items-center gap-1 rounded-lg bg-white/90 px-2 py-1 shadow-md dark:bg-black/60">
-                <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-                <span
-                  className="text-[11px] font-bold"
-                  itemProp="aggregateRating"
-                >
-                  {membership.clinic?.averageRating || "New"}
-                </span>
-              </figcaption>
+              {/* Floating Elements */}
+              <div className="absolute inset-x-3 bottom-3 flex items-center justify-between">
+                {/* Rating Badge */}
+                <figcaption className="flex items-center gap-1.5 rounded-xl bg-white/95 dark:bg-slate-900/90 backdrop-blur-sm px-2.5 py-1.5 shadow-lg border border-white/20">
+                  <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                  <span
+                    className="text-[11px] font-black text-slate-800 dark:text-white"
+                    itemProp="aggregateRating"
+                  >
+                    {membership.clinic?.averageRating
+                      ? Number(membership.clinic.averageRating).toFixed(1)
+                      : "NEW"}
+                  </span>
+                </figcaption>
+
+                {/* Verify Badge on Image */}
+                <div className="p-1.5 bg-blue-600 rounded-lg shadow-lg border border-white/20 translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                  <BadgeCheck className="w-3.5 h-3.5 text-white" />
+                </div>
+              </div>
             </div>
+
+            {/* Hover Glow Effect */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-[2.1rem] opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500" />
           </figure>
 
           {/* Section: Main Info */}
@@ -80,12 +111,12 @@ const MembershipCard = ({
                     </span>
                   </address>
 
-                  <div className="flex items-center gap-2 text-xs text-slate-500">
+                  {/* <div className="flex items-center gap-2 text-xs text-slate-500">
                     <Phone className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
                     <span className="font-semibold" itemProp="telephone">
                       01737-813575
                     </span>
-                  </div>
+                  </div> */}
                 </div>
               </div>
 
@@ -117,15 +148,15 @@ const MembershipCard = ({
                   key={schedule.id}
                   className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100"
                 >
-                  <div className="flex items-center gap-1.5 mb-1 text-[10px] font-bold text-slate-400">
+                  <div className="flex items-center gap-1.5 mb-1 text-[12px] font-bold text-slate-400">
                     <Clock className="h-3 w-3" />
-                    <span>সময়: {schedule.times}</span>
+                    <span> {schedule.times}</span>
                   </div>
                   <div className="flex flex-wrap gap-1">
                     {schedule.days?.map((day: string) => (
                       <span
                         key={day}
-                        className="text-[9px] font-bold text-blue-600 bg-white dark:bg-slate-700 px-1.5 py-0.5 rounded"
+                        className="text-[12px] font-bold text-blue-600 bg-white dark:bg-slate-700 px-1.5 py-0.5 rounded"
                       >
                         {day}
                       </span>

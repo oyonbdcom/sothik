@@ -1,19 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import {
-  BarChart3,
-  Clock,
-  MessageSquare,
-  Star,
-  Trash2,
-  User,
-} from "lucide-react";
+import { BarChart3, Clock, MessageSquare, Star, User } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
 import {
-  useDeleteReviewMutation,
   useGetReviewStatsQuery,
   useGetRoleBaseReviewsQuery,
   useReplyReviewMutation,
@@ -57,7 +49,6 @@ export default function ClinicReviewsDashboard() {
   );
 
   const [replyToReview, { isLoading: isReplying }] = useReplyReviewMutation();
-  const [deleteReview] = useDeleteReviewMutation();
 
   const reviews = data?.reviews || [];
   const meta = data?.meta;
@@ -75,16 +66,6 @@ export default function ClinicReviewsDashboard() {
       setShowResponseForm(null);
     } catch (error: any) {
       toast.error(error?.data?.message || "উত্তর দিতে ব্যর্থ হয়েছে");
-    }
-  };
-
-  const handleDeleteReview = async (reviewId: string) => {
-    alert("আপনি কি নিশ্চিতভাবে এই রিভিউটি ডিলিট করতে চান?");
-    try {
-      await deleteReview(reviewId).unwrap();
-      toast.success("রিভিউ ডিলিট করা হয়েছে");
-    } catch (err) {
-      toast.error("ডিলিট করতে ব্যর্থ হয়েছে");
     }
   };
 
@@ -273,14 +254,6 @@ export default function ClinicReviewsDashboard() {
                           }}
                         >
                           {review.reviewReply ? "উত্তর এডিট করুন" : "উত্তর দিন"}
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="rounded-full text-rose-400 hover:text-rose-600 hover:bg-rose-50 transition-all"
-                          onClick={() => handleDeleteReview(review.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     )}

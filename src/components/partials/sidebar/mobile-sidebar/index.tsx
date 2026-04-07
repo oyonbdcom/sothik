@@ -98,7 +98,10 @@ const MobileSidebar = ({
             style={{ backgroundImage: `url(${sidebarBg})` }}
           ></div>
         )}
-        <SiteLogo />
+        <div className="container flex justify-between items-center  h-12 ">
+          <SiteLogo />
+        </div>
+        <hr />
         <ScrollArea
           className={cn(
             "sidebar-menu h-[calc(100%-80px)] transition-all duration-200",
@@ -159,7 +162,7 @@ const MobileSidebar = ({
               <div className="space-y-4 transition-all duration-200">
                 <Button className="w-full transition-all duration-200">
                   <Link
-                    href="/auth/sign-in"
+                    href="/login"
                     className="font-semibold mx-3 text-default-100 flex items-center gap-1 transition-all duration-200"
                   >
                     Sign in
@@ -168,7 +171,7 @@ const MobileSidebar = ({
 
                 <Button className="w-full transition-all duration-200">
                   <Link
-                    href="/auth/sign-up"
+                    href="/register"
                     className="font-semibold mx-3 text-white flex items-center gap-1 transition-all duration-200"
                   >
                     Sign up

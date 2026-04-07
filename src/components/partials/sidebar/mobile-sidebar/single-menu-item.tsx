@@ -13,10 +13,10 @@ const SingleMenuItem = ({ item }: { item: any; collapsed: boolean }) => {
     <Link href={href}>
       <div
         className={cn(
-          "flex gap-3  text-default-700 text-base capitalize px-[10px] py-3 rounded cursor-pointer hover:bg-primary hover:text-primary-foreground",
+          "flex gap-3  text-default-700 text-sm capitalize px-[10px] py-3 rounded cursor-pointer hover:bg-primary hover:text-primary-foreground",
           {
             "bg-primary text-white": isActive,
-          }
+          },
         )}
       >
         {item?.icon && (
@@ -24,9 +24,7 @@ const SingleMenuItem = ({ item }: { item: any; collapsed: boolean }) => {
             <item.icon className="w-5 h-5" />
           </span>
         )}
-        <div className="text-box flex-grow text-base font-semibold">
-          {title}
-        </div>
+        <div className="text-box flex-grow text-sm font-semibold">{title}</div>
         {badge && <Badge className=" rounded">{item.badge}</Badge>}
       </div>
     </Link>

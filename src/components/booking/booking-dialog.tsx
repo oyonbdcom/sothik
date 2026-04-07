@@ -30,10 +30,8 @@ import {
 import CustomFormField, { FormFieldType } from "../custom-form-field";
 import { Form } from "../ui/form";
 
-import {
-  useCreateAppointmentMutation,
-  useSendBookingOtpMutation,
-} from "@/redux/api/appointmentApi";
+import { useCreateAppointmentMutation } from "@/redux/api/appointmentApi";
+import { useSendOtpMutation } from "@/redux/api/authApi";
 import { storeUserInfo } from "@/service/auth.service";
 import { AppointmentBaseSchema } from "@/zod-validation/appointment";
 
@@ -54,8 +52,7 @@ export default function CreateAppointment({
 
   const [createAppointment, { isLoading: guestLoading }] =
     useCreateAppointmentMutation();
-  const [sendBookingOtp, { isLoading: otpLoading }] =
-    useSendBookingOtpMutation();
+  const [sendOtp, { isLoading: isSendingOtp }] = useSendOtpMutation();
 
   const form = useForm<any>({
     resolver: zodResolver(AppointmentBaseSchema),
@@ -89,10 +86,10 @@ export default function CreateAppointment({
         appointmentDate: data.appointmentDate,
       };
 
-      const res = await sendBookingOtp(payload).unwrap();
+      const res = await sendOtp(payload).unwrap();
 
       setShowOTPScreen(true);
-      toast.success(res?.message || "ওটিপি পাঠানো হয়েছে");
+      toast.success(res?.data?.message || "ওটিপি পাঠানো হয়েছে");
     } catch (err: any) {
       // ব্যাকএন্ড থেকে আসা ডুপ্লিকেট বুকিং এরর এখানে শো করবে
       toast.error(err?.message || "ওটিপি পাঠাতে ব্যর্থ হয়েছে");
@@ -121,7 +118,7 @@ export default function CreateAppointment({
       router.replace("/patient/dashboard");
       router.refresh();
     } catch (err: any) {
-      toast.error(err?.data?.message || "প্রসেসটি সম্পন্ন করা যায়নি");
+      toast.error(err?.message || "প্রসেসটি সম্পন্ন করা যায়নি");
     }
   };
   const resetFlow = () => {
@@ -129,7 +126,7 @@ export default function CreateAppointment({
     form.reset();
   };
 
-  const isSubmitting = guestLoading || otpLoading;
+  const isSubmitting = guestLoading || isSendingOtp;
 
   return (
     <Dialog
@@ -223,10 +220,10 @@ export default function CreateAppointment({
 
                   <Button
                     type="submit"
-                    disabled={otpLoading}
+                    disabled={isSendingOtp}
                     className="w-full h-12 bg-indigo-600 hover:bg-indigo-700 rounded-2xl font-bold text-white mt-4 gap-2"
                   >
-                    {otpLoading ? (
+                    {isSendingOtp ? (
                       <Loader2 className="animate-spin" />
                     ) : (
                       <>

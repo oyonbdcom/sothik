@@ -33,7 +33,7 @@ export const axiosBaseQuery =
         },
         withCredentials: true,
       });
-      console.log(result);
+
       return { data: result };
     } catch (axiosError) {
       const err = axiosError as any;

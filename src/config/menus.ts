@@ -13,12 +13,12 @@ import {
 // --- সাধারণ মেনু (Public Menus) ---
 export const menus: MenuItemProps[] = [
   {
-    title: "ডাক্তারগণ",
+    title: "ডাক্তার খুজুন ",
     href: "/doctors",
   },
   {
-    title: "ক্লিনিক ও হাসপাতাল",
-    href: "/clinics",
+    title: "ডায়াগনস্টিক খুজুন",
+    href: "/diagnostic",
   },
 ];
 

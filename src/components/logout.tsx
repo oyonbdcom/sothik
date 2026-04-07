@@ -16,7 +16,7 @@ export default function LogoutButton({ className }: LogoutButtonProps) {
 
       toast.success("Logged out successfully");
 
-      router.replace("/auth/sign-in");
+      router.replace("/login");
     } catch (error) {
       toast.error("Logout failed. Try again.");
       console.error("Logout error:", error);

@@ -1,53 +1,58 @@
+"use client"; // Required for hooks
+
 import Link from "next/link";
-export const metadata = {
-  title: "Page Not Found | 404 Error",
-  description: "The page you're looking for doesn't exist or has been moved.",
-  openGraph: {
-    title: "Page Not Found | 404 Error",
-    description: "The page you're looking for doesn't exist or has been moved.",
-    type: "website",
-    url: `${process.env.NEXT_PUBLIC_API_URL}/404`, // Replace with your actual domain
-    images: [
-      {
-        url: `${process.env.NEXT_PUBLIC_API_URL}/og-image.png`, // Replace with your actual OG image URL
-        width: 1200,
-        height: 630,
-        alt: "Page Not Found",
-      },
-    ],
-  },
-};
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Custom404() {
+  const router = useRouter();
+  const [countdown, setCountdown] = useState(5);
+
+  useEffect(() => {
+    // 1. Create the countdown interval
+    const timer = setInterval(() => {
+      setCountdown((prev) => prev - 1);
+    }, 1000);
+
+    // 2. Redirect when the countdown hits zero
+    const timeout = setTimeout(() => {
+      router.push("/");
+    }, 3000);
+
+    // 3. Cleanup on unmount
+    return () => {
+      clearInterval(timer);
+      clearTimeout(timeout);
+    };
+  }, [router]);
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 p-4">
-      <div className="text-center max-w-md mx-auto">
-        <div className="text-9xl font-bold text-blue-600 mb-4">404</div>
-
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">
+    <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-primary-50 to-purple-50 p-6 text-center">
+      <div className="max-w-md">
+        <h1 className="text-9xl font-extrabold text-primary-600 mb-4">404</h1>
+        <h2 className="text-3xl font-bold text-gray-800 mb-3">
           Page Not Found
-        </h1>
+        </h2>
 
-        <p className="text-gray-600 mb-8">
-          The page you&apos;re looking for doesn&apos;t exist or has been moved.
+        <p className="text-gray-600 mb-6">
+          The page you&apos;re looking for doesn&apos;t exist.
         </p>
 
-        <Link
-          href="/"
-          className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition duration-300"
-        >
-          Return to Homepage
-        </Link>
+        {/* Visual Countdown Indicator */}
+        <div className="bg-primary-100 text-primary-800 px-4 py-2 rounded-full inline-block mb-8 font-medium">
+          Redirecting to home in <span className="font-bold">{countdown}</span>{" "}
+          seconds...
+        </div>
 
-        <div className="mt-8 text-base text-gray-500">
-          <p>
-            Need help?{" "}
-            <a href="/contact" className="text-blue-600 hover:underline">
-              Contact support
-            </a>
-          </p>
+        <div className="flex flex-col gap-4">
+          <Link
+            href="/"
+            className="px-8 py-3 bg-primary text-default font-semibold rounded-lg shadow-md hover:bg-primary-700 transition-all"
+          >
+            Go Home Now
+          </Link>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

@@ -1,5 +1,5 @@
-import DoctorFilterForm from "@/components/doctors/doctor-filter-form";
-import SearchDoctorCard from "@/components/doctors/search-doctor-card";
+import DoctorFilterForm from "@/app/(pages)/doctors/components/doctor-filter-form";
+import SearchDoctorCard from "@/app/(pages)/doctors/components/search-doctor-card";
 import { Hero } from "@/components/hero";
 import { NotFound } from "@/components/not-found";
 import Pagination from "@/components/PaginationComponents";
@@ -82,16 +82,8 @@ export default async function DoctorsPage({
       >
         <div className="container  ">
           {/* Aside: ফিল্টার সেকশন যা সাইডবারে থাকবে */}
-          <aside className="w-full  ">
-            <div>
-              <h2
-                id="filter-heading"
-                className="text-lg font-semibold  text-slate-700"
-              >
-                ফিল্টার করুন
-              </h2>
-              <DoctorFilterForm />
-            </div>
+          <aside className="w-full mb-4 ">
+            <DoctorFilterForm />
           </aside>
 
           {/* Article: মূল ডক্টর লিস্ট */}
@@ -121,13 +113,13 @@ export default async function DoctorsPage({
             {/* ডক্টর কার্ডের তালিকা */}
             <div className="space-y-6">
               {doctors.length > 0 ? (
-                <ul className="grid grid-cols-1 gap-6 list-none p-0">
+                <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                   {doctors.map((doctor: IDoctorResponse) => (
                     <li
                       key={doctor?.id}
                       className="transition-transform hover:scale-[1.01]"
                     >
-                      <SearchDoctorCard doctor={doctor} profileButton />
+                      <SearchDoctorCard doctor={doctor} />
                     </li>
                   ))}
                 </ul>

@@ -171,7 +171,16 @@ body {
   max-width: 2040px !important;
   margin: 0 auto;
 }
+/* ── Hero Gradient ─────────────────────────────────── */
+.hero-gradient {
+  background: linear-gradient(135deg, #eff6ff 0%, #eef2ff 50%, #f0fdf4 100%);
+}
 
+/* ── Dot Pattern ───────────────────────────────────── */
+.dot-pattern {
+  background-image: radial-gradient(circle, #bfdbfe 1px, transparent 1px);
+  background-size: 28px 28px;
+}
 .CollapsibleContent {
   overflow: hidden;
 }
@@ -210,15 +219,6 @@ body {
   }
 }
 
-.loginwrapper {
-  min-height: calc(var(--vh, 1vh) * 100);
-  flex-basis: 100%;
-}
-
-.loginwrapper .lg-inner-column {
-  height: calc(var(--vh, 1vh) * 100);
-}
-
 [id] {
   scroll-margin-top: 100px;
   scroll-behavior: smooth;
@@ -235,7 +235,50 @@ body {
     height: var(--radix-collapsible-content-height);
   }
 }
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+.float {
+  animation: float 4s ease-in-out infinite;
+}
 
+/* ── Fade Up ────────────────────────────────────────── */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.fade-up {
+  animation: fadeUp 0.7s ease forwards;
+}
+
+/* ── Tab Styles ─────────────────────────────────────── */
+.tab-active {
+  background: var(--brand-primary);
+  color: white;
+  box-shadow: 0 4px 14px rgba(29, 78, 216, 0.3);
+}
+.tab-inactive {
+  background: white;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+.tab-inactive:hover {
+  border-color: #93c5fd;
+  color: var(--brand-primary);
+  background: #f0f7ff;
+}
 @keyframes slideUp {
   from {
     height: var(--radix-collapsible-content-height);
