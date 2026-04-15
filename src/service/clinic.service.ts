@@ -27,6 +27,7 @@ export const getAllClinics = async (query: Record<string, any>) => {
 
     return res.json();
   } catch (error) {
+    console.log(error);
     return { message: "Failed to fetch" };
   }
 };
@@ -37,10 +38,6 @@ export const getSingleClinic = async (id: string) => {
     const res = await fetch(`${BASE_URL}/clinics/${id}`, {
       cache: "no-store",
     });
-
-    if (!res.ok) {
-      throw new Error("Failed to fetch clinic");
-    }
 
     const result = await res.json();
     return result.data;

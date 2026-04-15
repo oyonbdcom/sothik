@@ -1,44 +1,15 @@
-import { avatar, femaleAvatar } from "@/config/site";
 import { IDoctorResponse } from "@/interface/doctor";
-import { getDepartmentLabel } from "@/lib/utils/utils";
-import Image from "next/image";
 import Link from "next/link";
+import DoctorGridCard from "../(pages)/doctors/components/search-doctor-card";
 
 export default function FeaturedDoctors({
   doctors,
 }: {
   doctors: IDoctorResponse[];
 }) {
-  const doctorStyles = [
-    {
-      gradient: "from-blue-100 to-blue-50",
-      text: "text-blue-700",
-      initBg: "bg-white",
-      btn: "bg-blue-700 hover:bg-blue-800",
-    },
-    {
-      gradient: "from-emerald-100 to-emerald-50",
-      text: "text-emerald-700",
-      initBg: "bg-white",
-      btn: "bg-emerald-700 hover:bg-emerald-800",
-    },
-    {
-      gradient: "from-rose-100 to-rose-50",
-      text: "text-rose-700",
-      initBg: "bg-white",
-      btn: "bg-rose-700 hover:bg-rose-800",
-    },
-    {
-      gradient: "from-amber-100 to-amber-50",
-      text: "text-amber-700",
-      initBg: "bg-white",
-      btn: "bg-amber-700 hover:bg-amber-800",
-    },
-  ];
-
   return (
-    <section className="bg-slate-50 py-16">
-      <div className="container">
+    <section className="bg-slate-50 py-16 ">
+      <div className="container px-6">
         <div className="flex items-end justify-between mb-8">
           <div>
             <h2 className="text-2xl font-bold text-slate-900">
@@ -58,83 +29,7 @@ export default function FeaturedDoctors({
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {doctors.map((doc, i) => {
-            const style = doctorStyles[i % doctorStyles.length];
-            return (
-              <div
-                key={doc.id}
-                className="group flex flex-col h-full bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-md"
-              >
-                {/* Top colored section - Fixed height */}
-                <div
-                  className={`bg-gradient-to-br ${style.gradient} h-40 flex items-end justify-between p-4 relative shrink-0`}
-                >
-                  {/* Avatar */}
-                  <div className="w-20 h-20 rounded-2xl shadow-lg border-2 border-white relative overflow-hidden bg-white">
-                    <Image
-                      src={
-                        doc?.user?.image ||
-                        (doc.gender === "MALE" ? avatar : femaleAvatar)
-                      }
-                      alt="doctor"
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                  </div>
-
-                  {/* Available badge */}
-                  <div
-                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold shadow-sm ${doc.active ? "bg-white/90 text-green-700" : "bg-white/90 text-gray-500"}`}
-                  >
-                    <span
-                      className={`w-1.5 h-1.5 rounded-full ${doc.active ? "bg-green-500 animate-pulse" : "bg-gray-400"}`}
-                    ></span>
-                    {doc.active ? "উপলব্ধ" : "ব্যস্ত"}
-                  </div>
-                </div>
-
-                {/* Body - Flex-1 makes this section grow to fill space */}
-                <div className="p-4 flex flex-col flex-1">
-                  {/* Info Wrapper - This holds the text and takes up available space */}
-                  <div className="flex-1">
-                    <h3 className="font-bold text-slate-900 text-sm line-clamp-1">
-                      {doc.user?.name}
-                    </h3>
-                    <p className="text-blue-700 text-xs font-semibold mt-0.5">
-                      {getDepartmentLabel(doc.department)}
-                    </p>
-                    <p className="text-gray-700 font-medium text-[11px] leading-tight mt-2 line-clamp-2">
-                      {doc.specialization}
-                    </p>
-
-                    <div className="flex items-center gap-3 mt-2.5 text-xs font-semibold text-slate-700">
-                      <span className="flex items-center gap-1 line-clamp-1">
-                        {doc.hospital}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-1.5 mt-2">
-                      <Stars rating={doc.averageRating} />
-                      <span className="text-[11px] text-slate-700">
-                        {doc.averageRating} (
-                        {doc.reviewsCount.toLocaleString("bn")})
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* CTA Section - mt-auto pushes it to the bottom */}
-                  <div className="mt-auto pt-4">
-                    <div className="w-full border-t border-slate-100 pt-3">
-                      <Link
-                        href={`/doctors/${doc.slug}`}
-                        className="block w-full text-center bg-blue-600 py-3 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all active:scale-95 shadow-sm"
-                      >
-                        বুক করুন
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
+            return <DoctorGridCard key={doc.id} doctor={doc} />;
           })}
         </div>
       </div>

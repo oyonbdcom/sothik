@@ -68,7 +68,7 @@ const memberShipApi = baseApi.injectEndpoints({
       query: ({ id, data }) => ({
         url: `${MEMBERSHIP_URL}/${id}`,
         method: "PATCH",
-        data: data,
+        data,
       }),
       invalidatesTags: (result, error, { id }) => [
         { type: tagTypes.membership, id },

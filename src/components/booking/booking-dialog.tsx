@@ -41,10 +41,14 @@ export default function CreateAppointment({
   discount,
   doctorId,
   clinicId,
+  membershipId,
+  disabled,
 }: {
   discount: number;
   doctorId: string;
   clinicId: string;
+  membershipId: string;
+  disabled: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [showOTPScreen, setShowOTPScreen] = useState(false);
@@ -72,6 +76,7 @@ export default function CreateAppointment({
       discount,
       doctorId,
       clinicId,
+      membershipId,
     },
   });
 
@@ -101,6 +106,7 @@ export default function CreateAppointment({
         ...data,
         doctorId,
         clinicId,
+        membershipId,
         ptAge: Number(data.ptAge),
         discount: Number(discount) || 0,
         otp: data.otp,
@@ -137,19 +143,46 @@ export default function CreateAppointment({
       }}
     >
       <DialogTrigger asChild>
-        <Button className="bg-indigo-600 w-full hover:bg-indigo-700 h-12 px-6 rounded-2xl gap-3 font-bold text-white shadow-lg hover:scale-[1.02] active:scale-95 transition-all duration-200 border-b-4 border-indigo-800">
-          <div className="bg-white/20 p-1 rounded-lg">
-            <Plus size={18} className="text-white" />
+        <Button
+          disabled={disabled}
+          className={`w-full h-9 px-2 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-sm
+    ${
+      disabled
+        ? "bg-slate-50 border border-slate-200 cursor-not-allowed"
+        : "bg-primary hover:bg-primary-700 text-white active:scale-95 border-b-2 border-primary-800"
+    }`}
+        >
+          {/* ১. আইকন এবং মেইন টেক্সট এক লাইনে */}
+          <div className="flex items-center gap-1.5 overflow-hidden">
+            {!disabled && (
+              <div className="bg-white/20 p-0.5 rounded flex-shrink-0">
+                <Plus size={12} className="text-white" />
+              </div>
+            )}
+
+            <span
+              className={`text-[11px] font-black whitespace-nowrap ${disabled ? "text-slate-400" : "text-white"}`}
+            >
+              {disabled ? "বুকিং বন্ধ" : "অ্যাপয়েন্টমেন্ট নিন"}
+            </span>
           </div>
 
-          <div className="flex flex-col items-start leading-tight">
-            <span className="text-[15px]">অ্যাপয়েন্টমেন্ট নিন</span>
-            {discount && (
-              <span className="text-[10px] font-medium text-indigo-100 flex items-center gap-1">
-                <span className="w-1 h-1 bg-yellow-400 rounded-full animate-ping" />
-                রিপোর্টে {discount}% নিশ্চিত ছাড়
+          {/* ২. সেপারেটর (ঐচ্ছিক, ডিজাইন সুন্দর করার জন্য) */}
+          {!disabled && discount > 0 && (
+            <div className="w-[1px] h-3 bg-white/20 flex-shrink-0" />
+          )}
+
+          {/* ৩. ডিসকাউন্ট বা স্ট্যাটাস টেক্সট */}
+          <div className="flex-shrink-0">
+            {!disabled && discount > 0 ? (
+              <span className="text-[10px] font-bold text-yellow-300 flex items-center gap-1">
+                {discount}% ছাড়
               </span>
-            )}
+            ) : disabled ? (
+              <span className="text-[9px] font-medium text-slate-400">
+                শিডিউল নেই
+              </span>
+            ) : null}
           </div>
         </Button>
       </DialogTrigger>

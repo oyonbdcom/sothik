@@ -1,34 +1,29 @@
 import { z } from "zod";
 
-export const clinicMembershipSchema = z.object({
-  doctorId: z
-    .string({ required_error: "অনুগ্রহ করে একজন চিকিৎসক নির্বাচন করুন" })
-    .min(1, "চিকিৎসক নির্বাচন করা আবশ্যক"),
+export const membershipSchema = z.object({
+  doctorId: z.string().min(1, { message: "ডাক্তার নির্বাচন করা আবশ্যক" }),
+  clinicId: z.string().min(1, { message: "ক্লিনিক নির্বাচন করা আবশ্যক" }),
 
-  // input থেকে স্ট্রিং এলেও এটি নাম্বারে কনভার্ট করবে
-  fee: z.preprocess(
-    (val) => Number(val),
-    z
-      .number({ required_error: "কনসালটেশন ফি প্রদান করা আবশ্যক" })
-      .min(1, "ফি অন্তত ১ টাকা হতে হবে"),
-  ),
+  fee: z.coerce
+    .number({
+      required_error: "ফি প্রদান করুন",
+      invalid_type_error: "ফি অবশ্যই সংখ্যা হতে হবে",
+    })
+    .min(0, { message: "ফি ০ এর কম হতে পারবে না" }),
 
-  maxAppointments: z.preprocess(
-    (val) => Number(val),
-    z
-      .number({ required_error: "সর্বোচ্চ অ্যাপয়েন্টমেন্ট সংখ্যা আবশ্যক" })
-      .min(1, "অন্তত ১টি অ্যাপয়েন্টমেন্ট থাকতে হবে"),
-  ),
+  discount: z.coerce
+    .number({
+      invalid_type_error: "ডিসকাউন্ট সংখ্যায় লিখুন",
+    })
+    .min(0, { message: "ডিসকাউন্ট ০ এর কম হতে পারবে না" })
+    .max(100, { message: "ডিসকাউন্ট ১০০% এর বেশি হতে পারবে না" }),
 
-  discount: z.preprocess(
-    (val) => Number(val),
-    z
-      .number({ required_error: "ডিসকাউন্ট প্রদান করা আবশ্যক" })
-      .min(0, "ডিসকাউন্ট ০ বা তার বেশি হতে হবে"), // ডিসকাউন্ট ০ হতে পারে
-  ),
+  active: z.boolean().default(true),
 });
-// Schema for creating a new ClinicMembership
-export const createClinicMembershipSchema = clinicMembershipSchema;
+
+// টাইপ এক্সপোর্ট (TypeScript-এর জন্য)
+export type TMembership = z.infer<typeof membershipSchema>;
+export const createMembershipSchema = membershipSchema;
 
 // Schema for updating an existing ClinicMembership
-export const updateClinicMembershipSchema = clinicMembershipSchema.partial();
+export const updateMembershipSchema = membershipSchema.partial();

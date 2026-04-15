@@ -1,9 +1,7 @@
 export interface IScheduleResponse {
   id: string;
   membershipId: string;
-  days: string[];
-  times: string;
-  note: string;
+  time: string;
   createdAt: string | Date;
   updatedAt: string | Date;
 }

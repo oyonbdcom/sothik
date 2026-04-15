@@ -2,8 +2,8 @@
 
 export function HomeBanner() {
   return (
-    <section className="hero-gradient dot-pattern relative overflow-hidden">
-      <div className="container pt-16 pb-0  ">
+    <section className="hero-gradient   h-fit dot-pattern relative overflow-hidden">
+      <div className="container pt-16    ">
         <div className="grid lg:grid-cols-2 gap-12 items-end">
           {/* Left Content */}
           <div className="pb-16 fade-up">

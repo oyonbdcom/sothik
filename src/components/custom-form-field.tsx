@@ -298,7 +298,7 @@ const RenderInput = ({
               {...field}
               disabled={props.disabled || props.loading}
               className={cn(
-                "w-full h-10 appearance-none rounded-md border border-input bg-background px-3 pr-8 text-sm shadow-sm transition-colors",
+                "w-full h-10 appearance-none rounded-md border border-input bg-white px-3 pr-8 text-sm shadow-sm transition-colors",
                 "focus-visible:outline-none focus-visible:ring-1 focus:ring-primary focus-visible:ring-muted-background",
                 "disabled:cursor-not-allowed disabled:opacity-50",
                 Icon && "pl-10",
@@ -317,6 +317,7 @@ const RenderInput = ({
                       key={option.value}
                       value={option.value}
                       disabled={option.disabled}
+                      className="bg-slate-50"
                     >
                       {option.label}
                     </option>
@@ -332,74 +333,6 @@ const RenderInput = ({
           </span>
         </div>
       );
-
-    case FormFieldType.MULTI_SELECT: {
-      const selectedValues: string[] = Array.isArray(field.value)
-        ? field.value
-        : [];
-
-      const toggleValue = (value: string) => {
-        if (selectedValues.includes(value)) {
-          field.onChange(selectedValues.filter((v) => v !== value));
-        } else {
-          field.onChange([...selectedValues, value]);
-        }
-      };
-
-      return (
-        <FormControl>
-          <div className="space-y-3">
-            {/* Dropdown */}
-            <select
-              className="w-full h-10 rounded-md border  text-sm"
-              onChange={(e) => {
-                if (e.target.value) {
-                  toggleValue(e.target.value);
-                  e.target.value = "";
-                }
-              }}
-              disabled={props.disabled}
-              value=""
-            >
-              <option value="">Add specialization...</option>
-              {props.options?.map((option) => (
-                <option
-                  key={option.value}
-                  value={option.value}
-                  disabled={selectedValues.includes(option.value)}
-                >
-                  {option.label}
-                </option>
-              ))}
-            </select>
-
-            {/* Selected badges */}
-            <div className="flex flex-wrap gap-2">
-              {selectedValues.map((value) => {
-                const label =
-                  props.options?.find((o) => o.value === value)?.label ?? value;
-
-                return (
-                  <span
-                    key={value}
-                    className="flex items-center gap-2 rounded-full bg-muted   py-1 text-sm"
-                  >
-                    {label}
-                    <button
-                      type="button"
-                      onClick={() => toggleValue(value)}
-                      className="hover:text-destructive"
-                    >
-                      ✕
-                    </button>
-                  </span>
-                );
-              })}
-            </div>
-          </div>
-        </FormControl>
-      );
-    }
 
     case FormFieldType.FILE_UPLOAD: {
       const handleFileSelection = async (file: File) => {
@@ -485,7 +418,7 @@ const RenderInput = ({
           <div className="flex flex-col gap-3">
             {/* Preview Container */}
             <div
-              className={`relative w-full h-48 border-2 border-dashed rounded-lg overflow-hidden flex items-center justify-center bg-gray-50 dark:bg-gray-800 transition-colors`}
+              className={`relative w-full h-48 border-2 border-dashed rounded-lg overflow-hidden flex items-center justify-center bg-gray-50   transition-colors`}
             >
               {loading ? (
                 <div className="flex flex-col items-center gap-2">
@@ -645,8 +578,8 @@ const RenderInput = ({
 
       return (
         <FormControl>
-          <div className="relative  ">
-            <div className="w-24 h-24 rounded-full border-4 border-white dark:border-gray-800 shadow-lg overflow-hidden relative">
+          <div className="relative w-fit  ">
+            <div className="w-24 h-24 rounded-full border-4 border-white   shadow-lg overflow-hidden relative">
               {/* Check if profilePreview exists AND is not just whitespace */}
               {profilePreview && profilePreview.trim() !== "" ? (
                 <Image

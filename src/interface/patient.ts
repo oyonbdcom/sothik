@@ -2,34 +2,36 @@ import z from "zod";
 
 import { IFavoriteDoctor } from "./favorite";
 
-import { Gender } from "@/types";
 import { updatePatientSchema } from "@/zod-validation/patient";
 import { IAppointmentResponse } from "./appointment";
 import { IMedicalRecordResponse } from "./medical-history";
 import { IReviewResponse } from "./review";
 import { IUserResponse } from "./user";
 
-export interface IPatientResponse {
+export type IPatientResponse = {
   id: string;
-  userId: string;
-  name: string;
-  email: string;
+  name: string | null;
+  phoneNumber: string;
   image: string | null;
+  role: "PATIENT" | "DOCTOR" | "ADMIN" | "MANAGER" | "CLINIC";
   deactivate: boolean;
-  age: number | null;
-  gender: Gender | null;
-  phoneNumber: string | null;
-  bloodGroup: string | null;
-  address: string | null;
-  district: string | null;
-  city: string | null;
-  country?: string | null;
-  totalAppointments: number;
-  latestAppointment: ILatestAppointment | null;
+  patient: {
+    age: number | null;
+    gender: "MALE" | "FEMALE" | "OTHER" | null;
+    address: string | null;
+    area: {
+      name: string | null;
+      slug: string | null;
+      district: {
+        name: string | null;
+        slug: string | null;
+      };
+    } | null;
+  } | null;
+
   createdAt: Date;
   updatedAt: Date;
-}
-
+};
 export interface ILatestAppointment {
   id: string;
   date: Date;

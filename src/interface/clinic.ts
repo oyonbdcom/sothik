@@ -4,32 +4,27 @@ import {
 } from "@/zod-validation/clinic";
 import z from "zod";
 
+import { IAreaResponse } from "./area";
 import { IMembershipResponse } from "./clinic-membership";
 import { IUserResponse } from "./user";
 
 export interface IClinicResponse {
   id: string;
   userId: string;
-  phoneNumber: string | null;
-  description: string | null;
-  openingHour: string | null;
-  slug: string | "";
-  // CHANGE THIS:
-  establishedYear: number | null;
-  address: string | null;
-  district: string | null;
-  city: string | null;
-  country: string | null;
-  active: boolean;
-  website: string | null;
-  averageRating: number;
-  reviewsCount: number;
-  createdAt: Date;
-  updatedAt: Date;
   user: IUserResponse;
-
-  memberships?: IMembershipResponse[];
+  name: string;
+  slug: string;
+  address: string;
+  areaId: string;
+  area: IAreaResponse;
+  memberships: IMembershipResponse[];
+  averageRating: number;
+  stats: IClinicStats;
+  reviewsCount: number;
+  createdAt: string;
+  updatedAt: string;
 }
+
 export interface IClinicStats {
   total: number;
   active: number;

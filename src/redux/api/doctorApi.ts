@@ -22,6 +22,27 @@ const doctorApi = baseApi.injectEndpoints({
       invalidatesTags: [tagTypes.doctor],
     }),
 
+    // add to area
+    addDoctorToArea: build.mutation<IGenericResponse<any>, string>({
+      query: (id) => ({
+        url: `${DOCTOR_URL}/add-to-area`,
+        method: "POST",
+        data: { doctorId: id },
+      }),
+      invalidatesTags: [tagTypes.doctor],
+    }),
+
+    // remove to ara
+    removeDoctorFromArea: build.mutation<IGenericResponse<any>, string>({
+      query: (id) => ({
+        url: `${DOCTOR_URL}/remove-from-area`,
+        method: "POST",
+        data: { doctorId: id },
+      }),
+      invalidatesTags: [tagTypes.doctor],
+    }),
+
+    // update doctor
     updateDoctor: build.mutation<
       IGenericResponse<IDoctorResponse>,
       { id: string; data: Partial<UpdateDoctorInput> }
@@ -51,6 +72,24 @@ const doctorApi = baseApi.injectEndpoints({
         };
       },
       providesTags: [tagTypes.doctor],
+    }),
+    getAllDoctorForManager: build.query<
+      { doctors: IDoctorResponse[] },
+      Record<string, any> | void
+    >({
+      query: (arg) => ({
+        url: `${DOCTOR_URL}/manager-all`,
+        method: "GET",
+        params: arg,
+      }),
+
+      transformResponse: (response: any) => {
+        return {
+          doctors: response.data,
+        };
+      },
+
+      providesTags: [tagTypes.clinic],
     }),
     getDoctorStats: build.query<{ stats: IDoctorStats }, void>({
       query: () => ({
@@ -94,5 +133,8 @@ export const {
   useUpdateDoctorMutation,
   useGetDoctorsQuery,
   useGetSingleDoctorQuery,
+  useGetAllDoctorForManagerQuery,
+  useAddDoctorToAreaMutation,
   useDeleteDoctorMutation,
+  useRemoveDoctorFromAreaMutation,
 } = doctorApi;

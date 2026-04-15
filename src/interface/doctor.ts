@@ -1,39 +1,46 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Gender } from "@/types/common";
 
+import { IDoctorAreaResponse } from "./area";
 import { IMembershipResponse } from "./clinic-membership";
 import { IUserResponse } from "./user";
 
-export interface IEducation {
-  degree: string;
-  institution: string;
-  year: number;
+export interface IDepartmentResponse {
+  id: string;
+  name: string;
+  slug: string;
 }
+
+// --- Main Doctor Response Interface ---
 export interface IDoctorResponse {
   id: string;
   userId: string;
-  department: string | null;
-  specialization: string | null;
-  degree: string | null;
   slug: string;
-  bio: string | null;
-  gender: Gender | null;
-  district: string | null;
-  city: string | null;
-  country: string | null;
+  specialization: string;
+  departmentId: string;
+
+  // Optional Fields from Schema
   website: string | null;
-  hospital: string | null;
   position: string | null;
-  active: boolean;
+  education: any;
+  hospital: string | null;
+  gender: Gender | null;
+  experience: number;
+
+  // Counters & Ratings
   averageRating: number;
   reviewsCount: number;
-  education: IEducation | any;
-  createdAt: Date;
-  updatedAt: Date;
-  user: IUserResponse;
-  memberships?: IMembershipResponse[];
-}
 
+  // Timestamps
+  createdAt: Date | string;
+  updatedAt: Date | string;
+
+  // Relationships (Include logic অনুযায়ী আসবে)
+  user: IUserResponse;
+  department?: IDepartmentResponse;
+  areas?: IDoctorAreaResponse[]; // DoctorArea[] রিলেশন
+  memberships?: IMembershipResponse[]; // আপনার প্রয়োজন অনুযায়ী Membership টাইপ যোগ করতে পারেন
+}
 export interface IDepartmentStat {
   name: string;
   count: number;

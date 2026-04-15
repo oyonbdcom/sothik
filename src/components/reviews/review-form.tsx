@@ -19,16 +19,16 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 interface ReviewFormProps {
-  targetId: string;
+  doctorId: string;
   review?: IReviewResponse;
-  targetType: "DOCTOR" | "CLINIC";
+
   setEditingReview?: (review: IReviewResponse | null) => void;
 }
 
 export default function ReviewForm({
-  targetId,
+  doctorId,
   review,
-  targetType,
+
   setEditingReview,
 }: ReviewFormProps) {
   const user: any = getUserInfo();
@@ -42,8 +42,8 @@ export default function ReviewForm({
     resolver: zodResolver(createReviewSchema),
     defaultValues: {
       comment: review?.comment || "",
-      targetId: targetId,
-      targetType: targetType,
+      doctorId,
+
       rating: review?.rating || 0,
       status: "PENDING",
     },
@@ -53,13 +53,13 @@ export default function ReviewForm({
     if (user?.userId) {
       form.reset({
         comment: review?.comment || "",
-        targetId,
-        targetType: targetType,
+        doctorId,
+
         rating: review?.rating || 0,
         status: review?.status,
       });
     }
-  }, [user?.userId, review, targetId, targetType, form]);
+  }, [user?.userId, review, doctorId, form]);
 
   const onSubmit: SubmitHandler<any> = async (data) => {
     try {
@@ -86,7 +86,7 @@ export default function ReviewForm({
   };
 
   return (
-    <section className="bg-card p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800">
+    <section className="bg-card  p-6  rounded-3xl   border-gray-100  ">
       <header className="sr-only">
         <h3>{review ? "রিভিউ এডিট করুন" : "নতুন রিভিউ লিখুন"}</h3>
       </header>
@@ -104,14 +104,14 @@ export default function ReviewForm({
                   className="rounded-2xl object-cover border-2 border-primary/10"
                 />
               ) : (
-                <div className="p-2 bg-blue-50 dark:bg-blue-900/20 w-12 h-12 rounded-2xl flex items-center justify-center">
+                <div className="p-2 bg-blue-50   w-12 h-12 rounded-2xl flex items-center justify-center">
                   <User className="text-blue-600 w-6 h-6" />
                 </div>
               )}
             </figure>
 
             <div className="flex-1">
-              <label className="text-sm font-bold text-gray-900 dark:text-white mb-1 block">
+              <label className="text-sm font-bold text-gray-900   mb-1 block">
                 {review
                   ? "আপনার অভিজ্ঞতা আপডেট করুন"
                   : "আপনার অভিজ্ঞতা রেট করুন"}

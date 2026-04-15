@@ -34,14 +34,26 @@ export interface IReviewReply {
 export interface IReviewResponse {
   id: string;
   rating: number;
-  comment: string | null;
-  createdAt: Date | string;
-  status: ReviewStatus;
-  targetId?: string;
-  targetType?: ReviewTargetType;
-
-  reviewer: IReviewer;
-  reviewReply: IReviewReply | null;
+  comment: string;
+  reviewerId: string;
+  doctorId: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  createdAt: string;
+  updatedAt: string;
+  reviewer: {
+    name: string;
+    image: string | null;
+  };
+  doctor: {
+    user: {
+      name: string;
+    };
+    specialization: string;
+  };
+  reply: {
+    content: string;
+    createdAt: string;
+  } | null;
 }
 export type IReviewStatsResponse = {
   totalReviews: number;

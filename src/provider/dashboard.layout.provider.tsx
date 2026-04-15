@@ -9,6 +9,7 @@ import {
   adminConfig,
   clinicConfig,
   doctorConfig,
+  managerConfig,
   MenuItemProps,
   patientConfig,
 } from "@/config/menus";
@@ -80,6 +81,8 @@ const LayoutWrapper = ({
         return clinicConfig;
       case UserRole.PATIENT:
         return patientConfig;
+      case UserRole.MANAGER:
+        return managerConfig;
       default:
         return [];
     }

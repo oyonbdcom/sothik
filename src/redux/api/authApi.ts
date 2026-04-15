@@ -80,7 +80,7 @@ const authApi = baseApi.injectEndpoints({
     }),
 
     // ৭. UPDATE PROFILE
-    updateProfile: build.mutation<
+    updateUserProfile: build.mutation<
       IGenericResponse<IUserResponse>,
       Partial<UpdateUserInput>
     >({
@@ -128,7 +128,7 @@ export const {
   useResetPasswordMutation,
 
   useGetCurrentUserQuery,
-  useUpdateProfileMutation,
+  useUpdateUserProfileMutation,
   useLogoutUserMutation,
   useChangePasswordMutation,
 } = authApi;

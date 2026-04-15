@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  createClinicMembershipSchema,
-  updateClinicMembershipSchema,
-} from "@/zod-validation/membership";
+import { createMembershipSchema } from "@/zod-validation/membership";
 import z from "zod";
 import { IClinicResponse } from "./clinic";
 import { IDoctorResponse } from "./doctor";
@@ -18,9 +15,5 @@ export interface IMembershipResponse {
   clinic?: IClinicResponse;
   schedules?: any[];
 }
-export type CreateMembershipInput = z.infer<
-  typeof createClinicMembershipSchema
->;
-export type UpdateMembershipInput = z.infer<
-  typeof updateClinicMembershipSchema
->;
+export type CreateMembershipInput = z.infer<typeof createMembershipSchema>;
+export type UpdateMembershipInput = z.infer<typeof createMembershipSchema>;

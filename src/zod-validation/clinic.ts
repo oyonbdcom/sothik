@@ -1,85 +1,39 @@
-import { phoneRegex } from "@/constant/common";
 import { z } from "zod";
+import { banglaRegex, phoneRegex } from "./common";
 
 export const clinicSchema = z.object({
-  id: z.string().cuid(),
-  userId: z.string().cuid(),
   user: z.object({
-    // নাম শুধুমাত্র বাংলায় হতে হবে
     name: z
       .string()
-      .min(2, "নাম অন্তত ২ অক্ষরের হতে হবে")
-      .regex(/^[ঀ-৿\s]+$/, "নাম অবশ্যই বাংলায় হতে হবে"),
+      .min(1, "ক্লিনিকের নাম আবশ্যক")
+      .regex(banglaRegex, "ক্লিনিকের নাম  অবশ্যই বাংলায় হতে হবে"),
     phoneNumber: z
       .string()
-      .min(1, "মোবাইল নম্বর দেওয়া আবশ্যক")
-      .regex(phoneRegex, "সঠিক মোবাইল নম্বর প্রদান করুন"),
-    image: z.string().default("null"),
+      .min(11, "সঠিক মোবাইল নম্বর দিন")
+      .regex(phoneRegex, "সঠিক মোবাইল নম্বর দিন"),
+    password: z
+      .string()
+      .min(6, "পাসওয়ার্ড অন্তত ৬ অক্ষরের হতে হবে")
+      .optional()
+      .or(z.literal("")),
+    image: z.string().optional(),
+    deactivate: z.boolean().default(false),
   }),
-
-  // ফোন নম্বর শুধুমাত্র সংখ্যা এবং + চিহ্ন
-  phoneNumber: z
-    .string()
-    .min(11, "ফোন নম্বর অন্তত ১১ ডিজিটের হতে হবে")
-    .regex(/^[0-9+]+$/, "সঠিক ফোন নম্বর দিন"),
-
-  // বর্ণনা বাংলায় এবং বিশেষ চিহ্ন (.,।/()-) অনুমোদিত
-  description: z
-    .string()
-    .regex(/^[ঀ-৿\s.,।/()/-]*$/, "বর্ণনা বাংলায় লিখুন")
-    .nullable(),
-
-  openingHour: z
-    .string()
-    .regex(/^[ঀ-৿\s.,।/()/-]*$/, "সময় অবশ্যই বাংলায় হতে হবে")
-    .nullable(),
-  active: z.boolean().default(false),
-  averageRating: z.coerce.number().nullable(),
-  reviewsCount: z.coerce.number().nullable(),
-
-  // ওয়েবসাইট URL ফরম্যাট চেক
-  website: z.string().url("সঠিক ইউআরএল দিন").nullable().or(z.literal("")),
-
-  establishedYear: z.coerce.number().nullable(),
-
-  // ঠিকানা ও শহর বাংলায়
+  slug: z.string().min(1, "ইউনিক স্লাগ আবশ্যক"),
   address: z
     .string()
-    .regex(/^[ঀ-৿\s.,।/()/-]*$/, "ঠিকানা বাংলায় লিখুন")
-    .nullable(),
-
-  district: z.string().nullable(),
-
-  city: z
-    .string()
-    .regex(/^[ঀ-৿\s]*$/, "শহরের নাম বাংলায় লিখুন")
-    .nullable(),
-
-  country: z
-    .string()
-    .min(1, "দেশ নির্বাচন করা বাধ্যতামূলক")
-    .default("Bangladesh"),
-
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
+    .min(1, "ঠিকানা আবশ্যক")
+    .regex(banglaRegex, "ঠিকানা   অবশ্যই বাংলায় হতে হবে"),
 });
+export type ClinicFormValues = z.infer<typeof clinicSchema>;
+export const createClinicSchema = clinicSchema;
 
-// --- CREATE CLINIC SCHEMA ---
-// We omit system-generated fields and relations
-export const createClinicSchema = clinicSchema
-  .omit({
-    id: true,
-    createdAt: true,
-    updatedAt: true,
-  })
-  .extend({
-    userId: z.string().cuid().optional(),
-  });
-
-export const updateClinicSchema = createClinicSchema.partial();
+export const updateClinicSchema = clinicSchema.partial();
 
 export const ClinicZodValidation = {
-  clinicSchema,
   createClinicSchema,
   updateClinicSchema,
 };
+
+export type CreateClinicInput = z.infer<typeof createClinicSchema>;
+export type UpdateClinicInput = z.infer<typeof updateClinicSchema>;

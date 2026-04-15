@@ -1,13 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { IGenericResponse, IMeta } from "@/types";
+import { IGenericResponse } from "@/types";
 import { tagTypes } from "@/types/tagTypes";
 
-import {
-  IPatientResponse,
-  IPatientStats,
-  IUpdatePatientRequest,
-} from "@/interface/patient";
+import { IPatientResponse, IUpdatePatientRequest } from "@/interface/patient";
 import { baseApi } from "../api/baseApi";
 
 const PATIENT_URL = "/patient";
@@ -26,64 +20,18 @@ const patient = baseApi.injectEndpoints({
       invalidatesTags: [tagTypes.patient],
     }),
 
-    getPatients: build.query<
-      { patients: IPatientResponse[]; meta: IMeta | undefined },
-      Record<string, any> | void
-    >({
-      query: (arg) => ({
-        url: PATIENT_URL,
-        method: "GET",
-        params: arg,
-      }),
-
-      transformResponse: (response: IGenericResponse<IPatientResponse[]>) => {
-        return {
-          patients: response.data,
-          meta: response.meta,
-        };
-      },
-      providesTags: [tagTypes.patient],
-    }),
-    getPatientStats: build.query<{ stats: IPatientStats }, void>({
-      query: () => ({
-        url: `${PATIENT_URL}/statistics`,
-        method: "GET",
-      }),
-      transformResponse: (response: IGenericResponse<IPatientStats>) => {
-        return {
-          stats: response.data as IPatientStats,
-        };
-      },
-      providesTags: [tagTypes.patient],
-    }),
     getSinglePatient: build.query({
-      query: (id) => ({
-        url: `${PATIENT_URL}/${id}`,
+      query: () => ({
+        url: `${PATIENT_URL}/single`,
         method: "GET",
       }),
+      // এখানে response.data সরাসরি রিটার্ন করলে টাইপ হ্যান্ডেল করা সহজ হয়
       transformResponse: (response: IGenericResponse<IPatientResponse>) => {
-        return {
-          patient: response.data,
-          meta: response.meta,
-        };
+        return response.data; // সরাসরি পেশেন্ট অবজেক্ট রিটার্ন করা হলো
       },
       providesTags: [tagTypes.patient],
-    }),
-    deletePatient: build.mutation({
-      query: (id) => ({
-        url: `${PATIENT_URL}/${id}`,
-        method: "DELETE",
-      }),
-
-      invalidatesTags: [tagTypes.patient],
     }),
   }),
 });
 
-export const {
-  useUpdatePatientMutation,
-  useGetPatientsQuery,
-  useGetPatientStatsQuery,
-  useGetSinglePatientQuery,
-  useDeletePatientMutation,
-} = patient;
+export const { useUpdatePatientMutation, useGetSinglePatientQuery } = patient;

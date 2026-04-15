@@ -6,7 +6,6 @@ const banglaRegex = /^[০-৯\u0980-\u09FF\s\-:.,()]+$/;
 
 const createScheduleShape = z.object({
   membershipId: z.string().cuid("মেম্বারশিপ আইডি সঠিক নয়"),
-  days: z.array(z.string()).min(1, "অন্তত একটি দিন সিলেক্ট করুন"),
 
   times: z
     .string()
@@ -15,14 +14,6 @@ const createScheduleShape = z.object({
       banglaRegex,
       "দয়া করে শুধুমাত্র বাংলা অক্ষর, সংখ্যা এবং বিরামচিহ্ন ব্যবহার করুন (যেমন: সকাল ১০:৩০ - রাত ০৮:০০)",
     ),
-
-  note: z
-    .string()
-    .nullable()
-    .optional()
-    .refine((val) => !val || banglaRegex.test(val), {
-      message: "নোট অবশ্যই বাংলায় হতে হবে",
-    }),
 });
 export const createScheduleSchema = createScheduleShape;
 

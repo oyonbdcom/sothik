@@ -7,25 +7,19 @@ import {
   useDeleteReviewMutation,
   useGetTargetReviewsQuery,
 } from "@/redux/api/reviewApi";
-import {
-  CheckCircle2,
-  Edit2,
-  Loader2,
-  MessageSquare,
-  Trash2,
-} from "lucide-react";
+import { CheckCircle2, Edit2, Loader2, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { RatingField } from "../ui/rating";
+import { Separator } from "../ui/separator";
 import ReviewForm from "./review-form";
 
 interface ReviewPageProps {
-  targetId: string;
-  targetType: "DOCTOR" | "CLINIC";
+  doctorId: string;
 }
 
-export default function ReviewPage({ targetId, targetType }: ReviewPageProps) {
+export default function ReviewPage({ doctorId }: ReviewPageProps) {
   const { user } = useAuth();
   const [editingReview, setEditingReview] = useState<any>(null);
   const [page, setPage] = useState(1);
@@ -34,8 +28,7 @@ export default function ReviewPage({ targetId, targetType }: ReviewPageProps) {
   const formRef = useRef<HTMLDivElement>(null);
 
   const { data, isLoading, isFetching } = useGetTargetReviewsQuery({
-    targetId,
-    targetType,
+    doctorId,
     page,
     limit,
     status: "APPROVED",
@@ -84,28 +77,11 @@ export default function ReviewPage({ targetId, targetType }: ReviewPageProps) {
 
   return (
     <section aria-labelledby="reviews-heading" className="space-y-8">
-      {/* Header - SEO Friendly */}
-      <header className="flex items-center justify-between border-b pb-4">
-        <h2
-          id="reviews-heading"
-          className="text-2xl font-black text-gray-900 dark:text-white flex items-center gap-2"
-        >
-          <MessageSquare className="text-blue-600 w-6 h-6" />
-          রোগীদের মতামত
-          <span className="ml-2 text-sm font-medium text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">
-            {meta?.total || 0}
-          </span>
-        </h2>
-      </header>
-
       {/* --- FORM SECTION --- */}
       <div className="transition-all duration-300">
         {editingReview ? (
-          <div
-            ref={formRef}
-            className="bg-blue-50/50 dark:bg-blue-900/10 p-6 rounded-[2rem] border border-blue-100 dark:border-blue-800"
-          >
-            <div className="flex justify-between items-center mb-4">
+          <div ref={formRef} className="bg-blue-50/50   rounded-[2rem]  ">
+            <div className="flex justify-between items-center mb-4 p-6">
               <h3 className="text-lg font-bold text-blue-900 dark:text-blue-100">
                 আপনার রিভিউ আপডেট করুন
               </h3>
@@ -117,20 +93,15 @@ export default function ReviewPage({ targetId, targetType }: ReviewPageProps) {
               </button>
             </div>
             <ReviewForm
-              targetId={targetId}
-              targetType={targetType}
+              doctorId={doctorId}
               review={editingReview}
               setEditingReview={() => setEditingReview(null)}
             />
           </div>
         ) : (
-          <div className="bg-gray-50 dark:bg-gray-800/50 p-6 rounded-[2rem] border border-dashed border-gray-200 dark:border-gray-700">
-            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">
-              একটি রিভিউ লিখুন
-            </h3>
-            <ReviewForm targetId={targetId} targetType={targetType} />
-          </div>
+          <ReviewForm doctorId={doctorId} />
         )}
+        <Separator />
       </div>
 
       {/* --- REVIEWS LIST - Semantic Article Tags for SEO --- */}
@@ -151,96 +122,171 @@ export default function ReviewPage({ targetId, targetType }: ReviewPageProps) {
           return (
             <article
               key={review.id}
-              className="relative group border-b border-gray-50 dark:border-gray-900 pb-4 last:border-0"
+              className="group relative bg-white   rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100   overflow-hidden"
             >
-              <div className="flex gap-4 p-4 rounded-2xl transition-colors relative z-10">
-                {/* Avatar */}
-                <div className="relative h-12 w-12 shrink-0">
-                  {review.reviewer?.image ? (
-                    <Image
-                      src={review.reviewer.image}
-                      alt={review.reviewer.name}
-                      fill
-                      className="rounded-full object-cover border border-gray-100 shadow-sm"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 font-bold">
-                      {review.reviewer?.name?.charAt(0) || "P"}
-                    </div>
-                  )}
-                </div>
+              {/* Subtle gradient accent bar */}
+              <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                <div className="flex-1 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-bold text-[16px] text-gray-900 dark:text-white">
-                        {review.reviewer?.name}
-                      </h4>
-                      <time className="text-[11px] text-gray-400 font-medium uppercase tracking-wider">
-                        {new Date(review.createdAt).toLocaleDateString("bn-BD")}
-                      </time>
+              <div className="p-5">
+                {/* Header Section */}
+                <div className="flex gap-4">
+                  {/* Avatar with status indicator */}
+                  <div className="relative flex-shrink-0">
+                    <div className="relative h-12 w-12">
+                      {review.reviewer?.image ? (
+                        <Image
+                          src={review.reviewer.image}
+                          alt={review.reviewer.name}
+                          fill
+                          className="rounded-full object-cover ring-2 ring-gray-100 dark:ring-gray-700"
+                        />
+                      ) : (
+                        <div className="w-full h-full rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-semibold text-lg shadow-sm">
+                          {review.reviewer?.name?.charAt(0) || "P"}
+                        </div>
+                      )}
                     </div>
-
-                    {isOwner && (
-                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={() => onEdit(review)}
-                          className="p-2 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full text-blue-600"
-                          title="এডিট করুন"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button
-                          disabled={deletingId === review.id}
-                          onClick={() => onDelete(review.id)}
-                          className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full text-red-500 disabled:opacity-50"
-                          title="মুছে ফেলুন"
-                        >
-                          {deletingId === review.id ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            <Trash2 className="w-4 h-4" />
-                          )}
-                        </button>
+                    {/* Verified badge (optional) */}
+                    {review.verified && (
+                      <div className="absolute -bottom-0.5 -right-0.5 bg-green-500 rounded-full p-0.5 ring-2 ring-white dark:ring-gray-800">
+                        <CheckCircle2 className="w-3 h-3 text-white" />
                       </div>
                     )}
                   </div>
 
-                  <RatingField
-                    value={review.rating}
-                    readOnly
-                    className="py-0.5"
-                  />
+                  {/* Reviewer Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="min-w-0 flex-1">
+                        <h4 className="font-semibold text-gray-900 dark:text-white text-base leading-tight truncate">
+                          {review.reviewer?.name}
+                        </h4>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <time className="text-xs text-gray-400 dark:text-gray-500">
+                            {new Date(review.createdAt).toLocaleDateString(
+                              "bn-BD",
+                              {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              },
+                            )}
+                          </time>
+                          {review.edited && (
+                            <span className="text-xs text-gray-400">
+                              (edited)
+                            </span>
+                          )}
+                        </div>
+                      </div>
 
-                  <div className="bg-white dark:bg-gray-900 p-4 rounded-2xl rounded-tl-none border border-gray-100 dark:border-gray-800 shadow-sm">
-                    <p className="text-[15px] text-gray-700 dark:text-gray-300 leading-relaxed italic">
-                      &quot;{review.comment}&quot;
-                    </p>
+                      {/* Action Buttons */}
+                      {isOwner && (
+                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all duration-200">
+                          <button
+                            onClick={() => onEdit(review)}
+                            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                            title="Edit review"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button
+                            disabled={deletingId === review.id}
+                            onClick={() => onDelete(review.id)}
+                            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            title="Delete review"
+                          >
+                            {deletingId === review.id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Trash2 className="w-4 h-4" />
+                            )}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Rating */}
+                    <div className="mt-2">
+                      <RatingField
+                        value={review.rating}
+                        readOnly
+                        className="scale-90 origin-left"
+                      />
+                    </div>
                   </div>
                 </div>
+
+                {/* Review Content */}
+                <div className="mt-4 pl-4 border-l-2 border-gray-100 dark:border-gray-700">
+                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                    {review.comment}
+                  </p>
+                </div>
+
+                {/* Metadata Footer */}
+                {review.reply && (
+                  <div className="bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-900/10 dark:to-indigo-900/10 border-t border-blue-100 dark:border-blue-800/30 px-5 py-4">
+                    <div className="flex gap-3">
+                      <div className="flex-shrink-0">
+                        <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center shadow-sm">
+                          <CheckCircle2 className="w-4 h-4 text-white" />
+                        </div>
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                          <span className="text-xs font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wide">
+                            Official Response
+                          </span>
+                          <span className="text-xs text-gray-400">•</span>
+
+                          <time className="text-xs text-gray-400">
+                            {new Date(
+                              review.reply.createdAt,
+                            ).toLocaleDateString("bn-BD", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </time>
+                        </div>
+
+                        <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                          {review.reply.content}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Official Response */}
+              {/* Official Response Section */}
               {review.reviewReply && (
-                <div className="ml-16 mr-4 mt-2 mb-4">
-                  <div className="flex gap-3 p-4 rounded-2xl bg-blue-50/40 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/50">
-                    <div className="h-8 w-8 bg-blue-600 rounded-lg shrink-0 flex items-center justify-center shadow-md">
-                      <CheckCircle2 className="w-4 h-4 text-white" />
+                <div className="bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-900/10 dark:to-indigo-900/10 border-t border-blue-100 dark:border-blue-800/30 px-5 py-4">
+                  <div className="flex gap-3">
+                    <div className="flex-shrink-0">
+                      <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center shadow-sm">
+                        <CheckCircle2 className="w-4 h-4 text-white" />
+                      </div>
                     </div>
-                    <div>
-                      <header className="flex items-center gap-2 mb-1">
-                        <span className="font-bold text-[12px] text-blue-800 dark:text-blue-400 uppercase tracking-widest">
-                          {targetType === "DOCTOR"
-                            ? "ডাক্তারের উত্তর"
-                            : "ক্লিনিকের উত্তর"}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                        <span className="text-xs font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wide">
+                          Official Response
                         </span>
-                        <time className="text-[10px] text-gray-400">
+                        <span className="text-xs text-gray-400">•</span>
+                        <time className="text-xs text-gray-400">
                           {new Date(
                             review.reviewReply.createdAt,
-                          ).toLocaleDateString("bn-BD")}
+                          ).toLocaleDateString("bn-BD", {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          })}
                         </time>
-                      </header>
-                      <p className="text-[14px] text-gray-700 dark:text-gray-300 leading-normal">
+                      </div>
+                      <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                         {review.reviewReply.content}
                       </p>
                     </div>
@@ -256,7 +302,7 @@ export default function ReviewPage({ targetId, targetType }: ReviewPageProps) {
       {meta && meta.total > limit && (
         <nav
           aria-label="রিভিউ নেভিগেশন"
-          className="flex justify-center items-center gap-4 pt-8"
+          className="flex justify-center items-center gap-4 p-6"
         >
           <button
             disabled={page === 1 || isFetching}

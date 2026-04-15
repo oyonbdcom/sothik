@@ -27,7 +27,6 @@ import {
   forgotPasswordSchema,
   resetPasswordSchema,
 } from "@/zod-validation/auth";
-import { OTPCountdown } from "../../(pages)/register/[role]/components/resend-button";
 
 export default function ForgetPasswordPage() {
   const router = useRouter();
@@ -160,9 +159,6 @@ export default function ForgetPasswordPage() {
                   "ভেরিফাই করুন"
                 )}
               </Button>
-              <OTPCountdown
-                onResend={() => phoneForm.handleSubmit(handleSendOtp)()}
-              />
             </div>
           </div>
         )}

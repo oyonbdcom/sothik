@@ -1,36 +1,38 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react"; // useState যোগ করা হয়েছে
-import { useForm, useWatch } from "react-hook-form";
-import { z } from "zod";
-
-import { bangladeshDistricts } from "@/constant/dristrict";
+import CustomFormField, { FormFieldType } from "@/components/custom-form-field";
+import { Form } from "@/components/ui/form";
 import { useDebounce } from "@/hooks/useDebaunce";
-import { Gender } from "@/types/common";
-import CustomFormField, {
-  FormFieldType,
-} from "../../../../components/custom-form-field";
-
-import { doctorDepartments } from "@/constant/common";
+import {
+  useGetAreasQuery,
+  useGetDepartmentsQuery,
+  useGetDistrictsQuery,
+} from "@/redux/api/setup";
+import { skipToken } from "@reduxjs/toolkit/query";
 import {
   ChevronDown,
-  ChevronUp,
   FilterX,
   MapPin,
   Search,
   SlidersHorizontal,
+  Star,
   Stethoscope,
   User,
-} from "lucide-react"; // বাড়তি আইকন
-import { Button } from "../../../../components/ui/button";
-import { Form } from "../../../../components/ui/form";
+  X, // Close আইকনের জন্য
+} from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { z } from "zod";
 
 const formSchema = z.object({
   searchTerm: z.string().optional(),
   department: z.string().optional(),
   district: z.string().optional(),
+  area: z.string().optional(),
   gender: z.string().optional(),
+  rating: z.string().optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -39,22 +41,42 @@ const DoctorFilterForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isFirstRender = useRef(true);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-  // মোবাইলের জন্য টগল স্টেট
-  const [isOpen, setIsOpen] = useState(false);
+  // Redux API Queries
+  const { data: departments, isLoading: isDeptLoading } =
+    useGetDepartmentsQuery(undefined);
+  const { data: districts, isLoading: isDistLoading } =
+    useGetDistrictsQuery(undefined);
 
   const form = useForm<FormData>({
     defaultValues: {
       searchTerm: searchParams.get("searchTerm") || "",
       department: searchParams.get("department") || "",
       district: searchParams.get("district") || "",
+      area: searchParams.get("area") || "",
       gender: searchParams.get("gender") || "",
+      rating: searchParams.get("rating") || "",
     },
   });
 
-  const watchedValues = useWatch({ control: form.control });
+  const { control, reset, setValue } = form;
+  const watchedValues = useWatch({ control });
   const debouncedSearchTerm = useDebounce(watchedValues.searchTerm, 500);
 
+  // এরিয়া ফেচিং (ডিস্ট্রিক্ট স্লাগ অনুযায়ী)
+  const { data: areas, isLoading: isAreaLoading } = useGetAreasQuery(
+    watchedValues.district ? watchedValues.district : skipToken,
+  );
+
+  // জেলা পরিবর্তন হলে এরিয়া রিসেট
+  useEffect(() => {
+    if (!isFirstRender.current) {
+      setValue("area", "");
+    }
+  }, [watchedValues.district, setValue]);
+
+  // URL Sync
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -67,150 +89,156 @@ const DoctorFilterForm = () => {
       if (finalValue) params.set(key, finalValue as string);
       else params.delete(key);
     });
+
     params.set("page", "1");
     router.push(`?${params.toString()}`, { scroll: false });
-  }, [
-    debouncedSearchTerm,
-    watchedValues.department,
-    watchedValues.district,
-    watchedValues.gender,
-    router,
-  ]);
+  }, [debouncedSearchTerm, watchedValues, router]);
 
   const resetFilters = () => {
-    form.reset({
+    reset({
       searchTerm: "",
       department: "",
       district: "",
+      area: "",
       gender: "",
+      rating: "",
     });
   };
 
   return (
-    <div className="relative z-20 space-y-3">
-      {/* ১. মোবাইল টগল বাটন (শুধুমাত্র মোবাইলে দেখা যাবে) */}
-      <div className="lg:hidden">
-        <Button
-          type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          className="w-full flex items-center justify-between h-12 px-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white shadow-sm hover:bg-slate-50 transition-all"
-        >
-          <div className="flex items-center gap-2 font-bold text-sm">
-            <SlidersHorizontal className="w-4 h-4 text-blue-600" />
-            <span>ডাক্তার ফিল্টার করুন</span>
-          </div>
-          {isOpen ? (
-            <ChevronUp className="w-4 h-4" />
-          ) : (
-            <ChevronDown className="w-4 h-4" />
-          )}
-        </Button>
-      </div>
-
-      {/* ২. ফিল্টার ফর্ম এরিয়া */}
-      <div
-        className={`${isOpen ? "block" : "hidden"} lg:block transition-all duration-300`}
+    <div className="w-full   bg-white border border-slate-200 rounded-2xl shadow-sm">
+      {/* Mobile Toggle Button */}
+      <button
+        onClick={() => setIsMobileOpen(!isMobileOpen)}
+        className="lg:hidden w-full flex items-center justify-between p-4  active:scale-[0.98] transition-all"
       >
-        <Form {...form}>
-          <form
-            role="search"
-            aria-label="Doctor Filter"
-            className="bg-white dark:bg-slate-950 p-5 rounded-3xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] border border-slate-100 dark:border-slate-800 transition-all"
-          >
-            {/* Header Area (ডেস্কটপে সুন্দর দেখানোর জন্য) */}
-            <div className="hidden lg:flex items-center justify-between mb-6 px-1">
-              <div>
-                <h2 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
-                  <SlidersHorizontal className="w-5 h-5 text-blue-600" />
-                  ফিল্টার করুন
-                </h2>
-                <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">
-                  আপনার প্রয়োজনীয় বিশেষজ্ঞ খুঁজে নিন
-                </p>
-              </div>
+        <span className="flex items-center gap-2 font-bold text-slate-700">
+          <SlidersHorizontal size={18} className="text-indigo-600" />
+          {isMobileOpen ? "ফিল্টার বন্ধ করুন" : "ফিল্টার করুন"}
+        </span>
+        {isMobileOpen ? (
+          <X size={20} className="text-slate-500" />
+        ) : (
+          <ChevronDown size={20} className="text-slate-500" />
+        )}
+      </button>
 
-              <Button
-                type="button"
-                variant="ghost"
+      {/* Filter Container */}
+      <div
+        className={` p-4 pt-0 ${isMobileOpen ? "block" : "hidden"} lg:block`}
+      >
+        <div className="  relative">
+          {/* Header */}
+
+          <Form {...form}>
+            <form className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
+              {/* সার্চ ইনপুট */}
+              <CustomFormField
+                fieldType={FormFieldType.INPUT}
+                control={control}
+                name="searchTerm"
+                placeholder="ডাক্তারের  নাম দিয়ে সার্চ করুন..."
+                icon={Search}
+              />
+
+              {/* স্পেশালিটি সিলেক্ট */}
+              <CustomFormField
+                fieldType={FormFieldType.SELECT}
+                control={control}
+                name="department"
+                placeholder={isDeptLoading ? "লোডিং..." : "স্পেশালিটি বেছে নিন"}
+                icon={Stethoscope}
+                options={departments?.departments?.map((dept: any) => ({
+                  label: dept.name,
+                  value: dept.slug,
+                }))}
+              />
+
+              {/* জেলা সিলেক্ট */}
+              <CustomFormField
+                fieldType={FormFieldType.SELECT}
+                control={control}
+                name="district"
+                placeholder={isDistLoading ? "লোডিং..." : "জেলা বেছে নিন"}
+                icon={MapPin}
+                options={districts?.districts?.map((dist: any) => ({
+                  label: dist.name,
+                  value: dist.slug,
+                }))}
+              />
+
+              {/* এরিয়া সিলেক্ট (জেলা নির্ভর) */}
+              <CustomFormField
+                fieldType={FormFieldType.SELECT}
+                control={control}
+                name="area"
+                placeholder={
+                  isAreaLoading
+                    ? "লোডিং..."
+                    : watchedValues.district
+                      ? "এরিয়া বেছে নিন"
+                      : "আগে জেলা বেছে নিন"
+                }
+                disabled={!watchedValues.district}
+                icon={MapPin}
+                options={areas?.areas?.map((area: any) => ({
+                  label: area.name,
+                  value: area.slug,
+                }))}
+              />
+
+              {/* জেন্ডার সিলেক্ট */}
+              <CustomFormField
+                fieldType={FormFieldType.SELECT}
+                control={control}
+                name="gender"
+                placeholder="লিঙ্গ বেছে নিন"
+                icon={User}
+                options={[
+                  { label: "পুরুষ", value: "MALE" },
+                  { label: "মহিলা", value: "FEMALE" },
+                ]}
+              />
+
+              {/* রেটিং সিলেক্ট */}
+              <CustomFormField
+                fieldType={FormFieldType.SELECT}
+                control={control}
+                name="rating"
+                placeholder="রেটিং বেছে নিন"
+                icon={Star}
+                options={[
+                  { label: "৫ স্টার", value: "5" },
+                  { label: "৪+ স্টার", value: "4" },
+                  { label: "৩+ স্টার", value: "3" },
+                ]}
+              />
+            </form>
+          </Form>
+          <div className="flex items-center justify-between mt-6">
+            <h2 className="hidden lg:flex items-center gap-2 font-black text-slate-800 uppercase tracking-tight text-sm">
+              <Search size={16} className="text-indigo-600" />
+              Advanced Doctor Search
+            </h2>
+
+            <div className="flex items-center gap-2 w-full lg:w-auto justify-between lg:justify-end">
+              <button
                 onClick={resetFilters}
-                className="h-8 px-4 text-[11px] font-black text-rose-500 hover:text-rose-600 hover:bg-rose-50 rounded-full transition-all flex items-center gap-1.5"
+                className="flex items-center gap-1 text-[11px] font-bold text-rose-500 hover:bg-rose-50 px-3 py-1.5 rounded-full transition-all"
               >
-                <FilterX className="w-3.5 h-3.5" />
-                সব মুছুন
-              </Button>
-            </div>
+                <FilterX size={14} /> রিসেট করুন
+              </button>
 
-            {/* Form Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              <div className="group transition-all">
-                <CustomFormField
-                  fieldType={FormFieldType.INPUT}
-                  name="searchTerm"
-                  control={form.control}
-                  placeholder="ডাক্তারের নাম..."
-                  label="সার্চ"
-                  icon={Search}
-                  className="bg-slate-50 border-none focus-within:ring-2 focus-within:ring-blue-500/20 transition-all rounded-2xl"
-                />
-              </div>
-
-              <div className="group transition-all">
-                <CustomFormField
-                  fieldType={FormFieldType.SELECT}
-                  name="department"
-                  control={form.control}
-                  placeholder="সিলেক্ট করুন"
-                  label="ডিপার্টমেন্ট"
-                  options={doctorDepartments}
-                  icon={Stethoscope}
-                  className="bg-slate-50 border-none transition-all rounded-2xl"
-                />
-              </div>
-
-              <div className="group transition-all">
-                <CustomFormField
-                  fieldType={FormFieldType.SELECT}
-                  name="district"
-                  control={form.control}
-                  placeholder="সিলেক্ট করুন"
-                  label="জেলা/অবস্থান"
-                  options={bangladeshDistricts}
-                  icon={MapPin}
-                  className="bg-slate-50 border-none transition-all rounded-2xl"
-                />
-              </div>
-
-              <div className="group transition-all">
-                <CustomFormField
-                  fieldType={FormFieldType.SELECT}
-                  name="gender"
-                  control={form.control}
-                  label="লিঙ্গ"
-                  placeholder="সব"
-                  options={[
-                    { value: Gender.MALE, label: "পুরুষ" },
-                    { value: Gender.FEMALE, label: "মহিলা" },
-                  ]}
-                  icon={User}
-                  className="bg-slate-50 border-none transition-all rounded-2xl"
-                />
-              </div>
-            </div>
-
-            {/* মোবাইল ইউজারদের জন্য রিসেট বাটনটি নিচে দেখানো ভালো */}
-            <div className="lg:hidden mt-5 pt-4 border-t border-slate-100 dark:border-slate-800">
-              <Button
-                type="button"
-                onClick={() => setIsOpen(!isOpen)}
-                variant="ghost"
-                className="w-full text-rose-500 font-bold text-xs flex items-center justify-center gap-2"
+              {/* মোবাইল ভিউতে আলাদা ক্লোজ বাটন */}
+              <button
+                onClick={() => setIsMobileOpen(false)}
+                className="lg:hidden p-2 bg-slate-100 rounded-full text-slate-600"
               >
-                <FilterX className="w-4 h-4" />
-                ফিল্টার বন্দ করুন
-              </Button>
+                <X size={16} />
+              </button>
             </div>
-          </form>
-        </Form>
+          </div>
+        </div>
       </div>
     </div>
   );

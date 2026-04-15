@@ -1,12 +1,15 @@
 import {
+  Building,
   Building2,
   Calendar,
+  CreditCard,
   LayoutDashboard,
   Lock,
+  Settings,
   Share2,
   Star,
-  Stethoscope,
   User,
+  UserPlus,
   Users,
 } from "lucide-react";
 
@@ -17,8 +20,12 @@ export const menus: MenuItemProps[] = [
     href: "/doctors",
   },
   {
-    title: "ডায়াগনস্টিক খুজুন",
-    href: "/diagnostic",
+    title: "আমাদের সম্পর্কে",
+    href: "/about-us",
+  },
+  {
+    title: "যোগাযোগ",
+    href: "/contact",
   },
 ];
 
@@ -125,9 +132,19 @@ export const adminConfig: MenuItemProps[] = [
     href: "dashboard",
   },
   {
-    title: "ডাক্তার ব্যবস্থাপনা",
-    href: "doctors",
-    icon: Stethoscope,
+    title: "সিস্টেম সেটআপ ",
+    href: "setup",
+    icon: Settings,
+  },
+  {
+    title: "ইউজার ম্যানেজমেন্ট",
+    href: "users",
+    icon: Users,
+  },
+  {
+    title: "ম্যানেজার সমূহ",
+    href: "managers",
+    icon: Users,
   },
   {
     title: "অ্যাপয়েন্টমেন্ট তালিকা",
@@ -139,19 +156,18 @@ export const adminConfig: MenuItemProps[] = [
     href: "clinics",
     icon: Building2,
   },
-  {
-    title: "রোগীদের তালিকা",
-    href: "patients",
-    icon: Users,
-  },
-  {
-    title: "সকল রিভিউ",
-    href: "reviews",
-    icon: Star,
-  },
+
   {
     title: "পাসওয়ার্ড পরিবর্তন",
     href: "change-password",
     icon: Lock,
   },
+];
+export const managerConfig: MenuItemProps[] = [
+  { title: "ড্যাশবোর্ড", icon: LayoutDashboard, href: "dashboard" },
+  { title: "ডাক্তার প্রোফাইল", icon: UserPlus, href: "doctors" },
+  { title: "ক্লিনিক প্রোফাইল", icon: Building, href: "clinics" },
+  { title: "মেম্বারশিপ", icon: CreditCard, href: "memberships" },
+  { title: "রিভিউ ম্যানেজমেন্ট", icon: Star, href: "reviews" },
+  { title: "পাসওয়ার্ড পরিবর্তন", icon: Lock, href: "change-password" },
 ];

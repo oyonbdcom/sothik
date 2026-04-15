@@ -7,7 +7,7 @@ const SCHEDULE_URL = "/schedule";
 
 const scheduleApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    createSchedule: build.mutation<IGenericResponse<any>, any>({
+    addSchedule: build.mutation<IGenericResponse<any>, any>({
       query: (data) => ({
         url: SCHEDULE_URL,
         method: "POST",
@@ -37,7 +37,7 @@ const scheduleApi = baseApi.injectEndpoints({
 });
 
 export const {
-  useCreateScheduleMutation,
+  useAddScheduleMutation,
   useUpdateScheduleMutation,
   useDeleteScheduleMutation,
 } = scheduleApi;

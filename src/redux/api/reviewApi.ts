@@ -14,12 +14,11 @@ const reviewApi = baseApi.injectEndpoints({
         method: "POST",
         data,
       }),
-      invalidatesTags: (result, error, arg) => [
+      invalidatesTags: (result, error, { id, data }) => [
         tagTypes.review,
-        tagTypes.clinic,
         tagTypes.doctor,
 
-        { type: tagTypes.doctor, id: arg.targetId },
+        { type: tagTypes.doctor, id: data?.doctorId },
       ],
     }),
     replyReview: build.mutation({
@@ -54,13 +53,13 @@ const reviewApi = baseApi.injectEndpoints({
 
     getTargetReviews: build.query<
       { reviews: any[]; meta: IMeta | undefined },
-      { targetId: string; targetType: "DOCTOR" | "CLINIC"; [key: string]: any }
+      { doctorId: string; [key: string]: any }
     >({
-      query: ({ targetId, targetType, ...params }) => ({
-        url: `${REVIEW_URL}/${targetId}`,
+      query: ({ doctorId, ...params }) => ({
+        url: `${REVIEW_URL}/${doctorId}`,
         method: "GET",
 
-        params: { targetType, ...params },
+        params: { ...params },
       }),
       transformResponse: (response: IGenericResponse<IReviewResponse[]>) => {
         return {
@@ -69,6 +68,20 @@ const reviewApi = baseApi.injectEndpoints({
         };
       },
       providesTags: [tagTypes.review, tagTypes.doctor],
+    }),
+    getManagerAreaReviews: build.query({
+      query: (arg: Record<string, any>) => ({
+        url: "/reviews/manager-area-reviews",
+        method: "GET",
+        params: arg, // এখানে searchTerm, page, limit, rating, status ইত্যাদি পাস হবে
+      }),
+      transformResponse: (response: IGenericResponse<IReviewResponse[]>) => {
+        return {
+          reviews: response?.data || [],
+          meta: response?.meta,
+        };
+      },
+      providesTags: [tagTypes.review],
     }),
     getReviewStats: build.query<
       { stats: any },
@@ -93,12 +106,11 @@ const reviewApi = baseApi.injectEndpoints({
         method: "PATCH",
         data,
       }),
-      invalidatesTags: (result, error, arg) => [
+      invalidatesTags: (result, error, { id, data }) => [
         tagTypes.review,
         tagTypes.doctor,
-        tagTypes.clinic,
 
-        { type: tagTypes.doctor, id: arg.data.targetId },
+        { type: tagTypes.doctor, id: data?.doctorId },
       ],
     }),
 
@@ -107,7 +119,12 @@ const reviewApi = baseApi.injectEndpoints({
         url: `${REVIEW_URL}/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: [tagTypes.review],
+      invalidatesTags: (result, error, { id, data }) => [
+        tagTypes.review,
+        tagTypes.doctor,
+
+        { type: tagTypes.doctor, id: data?.doctorId },
+      ],
     }),
   }),
 });
@@ -120,4 +137,5 @@ export const {
   useGetReviewStatsQuery,
   useUpdateReviewMutation,
   useDeleteReviewMutation,
+  useGetManagerAreaReviewsQuery,
 } = reviewApi;

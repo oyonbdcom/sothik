@@ -4,6 +4,7 @@ import {
   adminConfig,
   clinicConfig,
   doctorConfig,
+  managerConfig,
   MenuItemProps,
   patientConfig,
 } from "@/config/menus";
@@ -23,6 +24,7 @@ const Sidebar = () => {
     [UserRole.DOCTOR]: doctorConfig,
     [UserRole.CLINIC]: clinicConfig,
     [UserRole.PATIENT]: patientConfig,
+    [UserRole.MANAGER]: managerConfig,
   };
 
   const menus = roleMap[user?.role ?? ""] ?? [];

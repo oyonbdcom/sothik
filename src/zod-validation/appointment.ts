@@ -31,6 +31,7 @@ export const AppointmentBaseSchema = z.object({
   discount: z.coerce.number().optional(),
   doctorId: z.string().min(1, "ডাক্তার নির্বাচন করুন"),
   clinicId: z.string().min(1, "ক্লিনিক নির্বাচন করুন"),
+  membershipId: z.string().min(1, "ক্লিনিক নির্বাচন করুন"),
   otp: z.string().optional(),
 });
 /** Final Submit → OTP Required */

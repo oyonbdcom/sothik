@@ -25,6 +25,7 @@ const DASHBOARDS: Record<string, string> = {
   admin: "/admin/dashboard",
   clinic: "/clinic/dashboard",
   doctor: "/doctor/dashboard",
+  manager: "/manager/dashboard",
 };
 
 const PROTECTED_ROUTES = [
@@ -32,6 +33,7 @@ const PROTECTED_ROUTES = [
   "/admin",
   "/clinic",
   "/doctor",
+  "/manager",
   "/checkout",
 ];
 

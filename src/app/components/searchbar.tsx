@@ -3,17 +3,29 @@
 
 import CustomFormField, { FormFieldType } from "@/components/custom-form-field";
 import { Form } from "@/components/ui/form";
-import { doctorDepartments } from "@/constant/common";
-import { bangladeshDistricts } from "@/constant/dristrict";
+import {
+  useGetDepartmentsQuery,
+  useGetDistrictsQuery,
+} from "@/redux/api/setup";
 import { MapPin, Search, Stethoscope } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+// আপনার API স্লাইস থেকে হুকগুলো ইম্পোর্ট করুন
 
 export function Searchbar() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchTab, setSearchTab] = useState<"doctor" | "center">("doctor");
+
+  // --- API ফেচিং ---
+  const { data: deptData, isLoading: isDeptLoading } =
+    useGetDepartmentsQuery(undefined);
+  const { data: distData, isLoading: isDistLoading } =
+    useGetDistrictsQuery(undefined);
+
+  const departments = deptData?.departments || []; // আপনার API রেসপন্স স্ট্রাকচার অনুযায়ী
+  const districts = distData?.districts || [];
 
   const form = useForm({
     defaultValues: {
@@ -25,41 +37,33 @@ export function Searchbar() {
 
   const onSubmit = (values: any) => {
     const params = new URLSearchParams();
-
-    if (values.searchTerm) params.set("searchTerm", values.searchTerm);
+    if (values.searchTerm?.trim())
+      params.set("searchTerm", values.searchTerm.trim());
     if (values.district) params.set("district", values.district);
-
-    if (searchTab === "doctor" && values.department) {
+    if (searchTab === "doctor" && values.department)
       params.set("department", values.department);
-    }
 
     const path = searchTab === "doctor" ? "/doctors" : "/diagnostic";
     router.push(`${path}?${params.toString()}`);
   };
 
-  // Helper to handle Quick Tags
-  const handleTagClick = (tagLabel: string) => {
-    const dept = doctorDepartments.find((d) => d.label.includes(tagLabel));
-    if (dept) {
-      form.setValue("department", dept.value);
-      setSearchTab("doctor");
-    } else {
-      form.setValue("searchTerm", tagLabel);
-    }
+  const handleTagClick = (tagValue: string) => {
+    form.setValue("department", tagValue);
+    setSearchTab("doctor");
   };
 
   return (
-    <section className="container -mt-8 relative z-20">
-      <div className="bg-white rounded-3xl shadow-2xl shadow-blue-900/5 border border-slate-100 p-2 lg:p-6">
+    <section className="container   relative z-20">
+      <div className="bg-white  mb-6   p-2 lg:p-6">
         {/* Tabs */}
-        <div className="flex gap-2 mb-6 px-4 pt-2">
+        <div className="flex gap-2 mb-6 pt-2">
           <button
             type="button"
             onClick={() => setSearchTab("doctor")}
             className={`flex items-center gap-2 text-sm font-bold px-6 py-3 rounded-2xl transition-all ${
               searchTab === "doctor"
-                ? "bg-blue-700 text-white shadow-lg shadow-blue-200"
-                : "bg-slate-50 text-slate-500 hover:bg-slate-100"
+                ? "bg-blue-700 text-white shadow-lg"
+                : "bg-slate-50 text-slate-500"
             }`}
           >
             🩺 ডাক্তার খুঁজুন
@@ -68,12 +72,12 @@ export function Searchbar() {
             type="button"
             onClick={() => {
               setSearchTab("center");
-              form.setValue("department", ""); // Clear dept when switching to centers
+              form.setValue("department", "");
             }}
             className={`flex items-center gap-2 text-sm font-bold px-6 py-3 rounded-2xl transition-all ${
               searchTab === "center"
-                ? "bg-blue-700 text-white shadow-lg shadow-blue-200"
-                : "bg-slate-50 text-slate-500 hover:bg-slate-100"
+                ? "bg-blue-700 text-white shadow-lg"
+                : "bg-slate-50 text-slate-500"
             }`}
           >
             🏥 সেন্টার খুঁজুন
@@ -83,29 +87,36 @@ export function Searchbar() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="flex flex-col lg:flex-row items-stretch lg:items-end gap-4 p-4 lg:p-0 w-full"
+            className="flex flex-col lg:flex-row items-stretch lg:items-end gap-4  w-full"
           >
+            {/* ডায়নামিক জেলা (Districts) */}
             <div className="flex-1 min-w-0">
               <CustomFormField
                 fieldType={FormFieldType.SELECT}
                 control={form.control}
                 name="district"
-                placeholder="অবস্থান বেছে নিন..."
-                options={bangladeshDistricts}
+                placeholder={isDistLoading ? "লোডিং..." : "অবস্থান বেছে নিন..."}
+                options={districts.map((d: any) => ({
+                  label: d.name,
+                  value: d.slug || d.id,
+                }))}
                 icon={MapPin}
                 className="h-12 ring-1"
-                // Ensure CustomFormField doesn't have internal mb-6
               />
             </div>
 
+            {/* ডায়নামিক ডিপার্টমেন্ট (Departments) */}
             {searchTab === "doctor" && (
               <div className="flex-1 min-w-0">
                 <CustomFormField
                   fieldType={FormFieldType.SELECT}
                   control={form.control}
                   name="department"
-                  placeholder="বিশেষজ্ঞতা..."
-                  options={doctorDepartments}
+                  placeholder={isDeptLoading ? "লোডিং..." : "বিশেষজ্ঞতা..."}
+                  options={departments.map((d: any) => ({
+                    label: d.name,
+                    value: d.slug || d.id,
+                  }))}
                   icon={Stethoscope}
                   className="h-12 ring-1"
                 />
@@ -129,64 +140,28 @@ export function Searchbar() {
 
             <button
               type="submit"
-              className="bg-blue-700 hover:bg-blue-800 text-white text-sm font-bold px-10 rounded-xl transition-all shadow-xl shadow-blue-100 flex items-center justify-center gap-2 active:scale-95 h-[48px] lg:h-[52px] w-full lg:w-auto flex-shrink-0 mb-[2px]"
+              className="bg-blue-700 hover:bg-blue-800 text-white text-sm font-bold px-10 rounded-xl transition-all active:scale-95 h-[48px] lg:h-[52px] w-full lg:w-auto"
             >
-              <Search className="w-4 h-4" />
-              অনুসন্ধান করুন
+              <Search className="w-4 h-4 mr-2 inline" />
+              অনুসন্ধান
             </button>
           </form>
         </Form>
 
-        {/* Quick Suggestion Tags */}
-        {searchTab === "doctor" && (
+        {/* Quick Suggestion Tags - ডায়নামিক ৫টি জনপ্রিয় ডিপার্টমেন্ট */}
+        {searchTab === "doctor" && departments.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 mt-6 px-4">
             <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
               জনপ্রিয়:
             </span>
-            {[
-              {
-                id: "med-01",
-                label: "মেডিসিন বিশেষজ্ঞ",
-                value: "medicine",
-                icon: "💊",
-                count: 0,
-              },
-              {
-                id: "card-01",
-                label: "হৃদরোগ (হার্ট) বিশেষজ্ঞ",
-                value: "cardiology",
-                icon: "💓",
-                count: 0,
-              },
-              {
-                id: "neuro-01",
-                label: "মস্তিষ্ক ও স্নায়ু বিশেষজ্ঞ",
-                value: "neurology",
-                icon: "🧠",
-                count: 0,
-              },
-              {
-                id: "ortho-01",
-                label: "হাড় ও জোড়া বিশেষজ্ঞ",
-                value: "orthopedics",
-                icon: "🦴",
-                count: 0,
-              },
-              {
-                id: "gyn-01",
-                label: "গাইনী এন্ড অবস বিশেষজ্ঞ",
-                value: "gynecology",
-                icon: "👩‍⚕️",
-                count: 0,
-              },
-            ].map((tag) => (
+            {departments.slice(0, 5).map((dept: any) => (
               <button
-                key={tag.label}
+                key={dept.id}
                 type="button"
                 className="text-xs font-semibold text-slate-600 bg-white border border-slate-200 px-4 py-1.5 rounded-full hover:border-blue-400 hover:text-blue-600 transition-all shadow-sm"
-                onClick={() => handleTagClick(tag.label)}
+                onClick={() => handleTagClick(dept.slug || dept.id)}
               >
-                {tag.label}
+                {dept.name}
               </button>
             ))}
           </div>

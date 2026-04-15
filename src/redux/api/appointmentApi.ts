@@ -24,6 +24,7 @@ export const appointmentApi = baseApi.injectEndpoints({
       // Optional: Transform response to handle auto-login logic in the component
       transformResponse: (response: any) => response,
     }),
+
     createAppointmentForAdmin: build.mutation({
       query: (data) => ({
         url: `${APPOINTMENT_URL}/admin`,
@@ -36,20 +37,7 @@ export const appointmentApi = baseApi.injectEndpoints({
       // Optional: Transform response to handle auto-login logic in the component
       transformResponse: (response: any) => response,
     }),
-    createLoggedInAppointment: build.mutation({
-      query: (data) => ({
-        url: `${APPOINTMENT_URL}/logged`,
-        method: "POST",
-        data,
-      }),
-      // We invalidate appointment tags and potentially user/patient tags
-      invalidatesTags: [tagTypes.appointment, tagTypes.user, tagTypes.patient],
 
-      // Optional: Transform response to handle auto-login logic in the component
-      transformResponse: (response: any) => response,
-    }),
-
-    // Get My Appointments (For Patient Dashboard)
     getMyAppointments: build.query({
       query: (arg: Record<string, any>) => ({
         url: `${APPOINTMENT_URL}`,
@@ -68,6 +56,15 @@ export const appointmentApi = baseApi.injectEndpoints({
       providesTags: [tagTypes.appointment],
     }),
 
+    getManagerAreaAppointments: build.query({
+      query: (arg: Record<string, any>) => ({
+        url: "/appointments/manager-appointments",
+        method: "GET",
+        params: arg,
+      }),
+      providesTags: ["appointment"],
+    }),
+
     exportDoctorDailyPdf: build.query({
       query: (params: { doctorId: string; date: string; status: string }) => ({
         url: `${APPOINTMENT_URL}/export`,
@@ -80,6 +77,7 @@ export const appointmentApi = baseApi.injectEndpoints({
       }),
       providesTags: [tagTypes.appointment],
     }),
+
     updateAppointment: build.mutation({
       query: (data: {
         id: string;
@@ -99,7 +97,7 @@ export const appointmentApi = baseApi.injectEndpoints({
 
 export const {
   useCreateAppointmentMutation,
-  useCreateLoggedInAppointmentMutation,
+  useGetManagerAreaAppointmentsQuery,
   useCreateAppointmentForAdminMutation,
   useGetMyAppointmentsQuery,
   useExportDoctorDailyPdfQuery,

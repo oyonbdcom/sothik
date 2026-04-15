@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import UpdateDialog from "@/app/(dashboard)/clinic/dashboard/appointments/update-dialog";
+
 import Error from "@/app/error";
 import {
   IAppointmentResponse,
@@ -9,22 +9,23 @@ import {
   StatusBadgeProps,
 } from "@/interface/appointment";
 import { cn } from "@/lib/utils/utils";
-import {
-  useGetMyAppointmentsQuery,
-  useUpdateAppointmentMutation,
-} from "@/redux/api/appointmentApi";
+import { useGetMyAppointmentsQuery } from "@/redux/api/appointmentApi";
+import { useGetAreasQuery, useGetDistrictsQuery } from "@/redux/api/setup";
 import {
   AlertCircle,
+  Building2,
+  Calendar,
   CheckCircle2,
-  ChevronLeft,
-  ChevronRight,
   Clock,
   Edit,
+  Phone,
   Search,
   TrendingUp,
   Users,
 } from "lucide-react";
 import { useState } from "react";
+import AppPagination from "../app-pagination";
+import UpdateDialog from "./update-dialog";
 
 // স্ট্যাটাস ফিল্টার অনুবাদ
 const statusFilters = [
@@ -39,20 +40,29 @@ export default function AppointmentList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState<number>(1);
   const [date, setDate] = useState<string>("");
-
+  const [district, setDistrict] = useState(""); // জেলা স্লাগ
+  const [area, setArea] = useState(""); // এরিয়া স্লাগ
   const [selectedAppointment, setSelectedAppointment] = useState<any>();
-  const [serialNumber, setSerialNumber] = useState<number>(0);
+  const { data: distData } = useGetDistrictsQuery(undefined);
+  const { data: areaData, isLoading: isAreaLoading } = useGetAreasQuery(
+    district,
+    {
+      skip: !district, // জেলা সিলেক্ট না করলে এরিয়া কুয়েরি হবে না
+    },
+  );
+  const districts = distData?.districts || [];
+  const areas = areaData?.areas || [];
   const query: Record<string, any> = {
     page,
-    limit: 8,
+    limit: 12,
     ...(searchTerm && { searchTerm }),
     ...(status !== "ALL" && { status }),
     ...(date && { date }),
+    ...(district && { district }),
+    ...(area && { area }),
   };
 
   const { data, isLoading, isError } = useGetMyAppointmentsQuery(query);
-  const [updateAppointment, { isLoading: isUpdating }] =
-    useUpdateAppointmentMutation();
 
   const appointments: any[] = data?.appointments || [];
   const meta = data?.meta;
@@ -64,7 +74,6 @@ export default function AppointmentList() {
   };
 
   const handleSelectedApt = (apt: IAppointmentResponse) => {
-    setSerialNumber(apt.serialNumber || 0);
     setSelectedAppointment(apt);
   };
 
@@ -141,20 +150,50 @@ export default function AppointmentList() {
             </div>
             <div className="flex flex-wrap items-center gap-2 p-2 w-full lg:w-auto">
               <div className="flex bg-slate-50 p-1 rounded-xl">
-                {statusFilters.map((s) => (
-                  <button
-                    key={s.value}
-                    onClick={() => setStatus(s.value)}
-                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
-                      status === s.value
-                        ? "bg-white text-blue-600 shadow-sm"
-                        : "text-slate-500 hover:text-slate-700"
-                    }`}
-                  >
-                    {s.label}
-                  </button>
-                ))}
+                <select
+                  value={status}
+                  onChange={(e) => {
+                    setStatus(e.target.value);
+                    setPage(1); // filter change হলে page reset
+                  }}
+                  className="px-4 py-3 bg-white border border-slate-100 rounded-2xl text-[11px] font-bold text-slate-600 outline-none shadow-sm"
+                >
+                  <option value="ALL">সব</option>
+                  <option value="SCHEDULED">নির্ধারিত</option>
+                  <option value="COMPLETED">সম্পন্ন</option>
+                  <option value="CANCELLED">বাতিল</option>
+                  <option value="PENDING">অপেক্ষমান</option>
+                </select>
               </div>
+              <select
+                value={district}
+                onChange={(e) => setDistrict(e.target.value)}
+                className="px-4 py-3 bg-white border border-slate-100 rounded-2xl text-[11px] font-bold text-slate-600 outline-none shadow-sm"
+              >
+                <option value="">সব জেলা</option>
+                {districts.map((dist: any) => (
+                  <option key={dist.id} value={dist.slug}>
+                    {dist.name}
+                  </option>
+                ))}
+              </select>
+
+              {/* Area (Slug) */}
+              <select
+                value={area}
+                onChange={(e) => setArea(e.target.value)}
+                disabled={!district}
+                className="px-4 py-3 bg-white border border-slate-100 rounded-2xl text-[11px] font-bold text-slate-600 outline-none shadow-sm disabled:opacity-50"
+              >
+                <option value="">
+                  {isAreaLoading ? "লোড হচ্ছে..." : "সব এরিয়া"}
+                </option>
+                {areas.map((a: any) => (
+                  <option key={a.id} value={a.slug}>
+                    {a.name}
+                  </option>
+                ))}
+              </select>
               <input
                 type="date"
                 className="px-4 py-2 bg-slate-50 border-none rounded-xl text-xs font-bold text-slate-600 outline-none"
@@ -164,83 +203,107 @@ export default function AppointmentList() {
           </div>
         </div>
 
-        {/* টেবিল */}
-        <div className="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
-          <div className="overflow-x-auto">
-            <div className="min-w-[1000px] lg:min-w-full">
-              <table className="w-full text-left border-collapse">
+        {/* টেবিল কার্ড */}
+        <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl shadow-blue-500/5 border border-slate-100 dark:border-slate-800 overflow-hidden">
+          {/* টেবিল কার্ড */}
+          <div className="bg-white dark:bg-slate-900 rounded-[2rem] shadow-xl shadow-blue-500/5 border border-slate-100 dark:border-slate-800 overflow-hidden max-w-full">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[1000px]">
                 <thead>
-                  <tr className="bg-slate-50/50">
-                    <th className="px-6 py-5 text-[11px] font-bold text-slate-400 uppercase">
+                  <tr className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-50 dark:border-slate-800">
+                    <th className="w-[30%] px-5 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider">
                       রোগীর তথ্য
                     </th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-slate-400 uppercase">
-                      ফোন নম্বর
+                    <th className="w-[20%] px-4 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider text-center">
+                      সিরিয়াল ও সময়
                     </th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-slate-400 uppercase">
-                      সিরিয়াল নং
-                    </th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-slate-400 uppercase">
+                    <th className="w-[25%] px-4 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider">
                       নিযুক্ত চিকিৎসক
                     </th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-slate-400 uppercase">
-                      ক্লিনিক/চেম্বার
-                    </th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-slate-400 uppercase">
+                    <th className="w-[15%] px-4 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider">
                       অবস্থা
                     </th>
-                    <th className="px-6 py-5 text-[11px] font-bold text-slate-400 uppercase text-right">
-                      অপশন
+                    <th className="w-[10%] px-5 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider text-right">
+                      অ্যাকশন
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-50">
+
+                <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
                   {appointments.map((apt: IAppointmentResponse) => (
                     <tr
                       key={apt.id}
-                      className="group hover:bg-blue-50/30 transition-colors"
+                      className="group hover:bg-blue-50/20 dark:hover:bg-blue-900/10 transition-all"
                     >
-                      <td className="px-6 py-5">
+                      {/* রোগীর তথ্য */}
+                      <td className="px-5 py-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">
+                          <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-black text-sm shrink-0">
                             {apt.patient?.name?.charAt(0)}
                           </div>
-                          <div>
-                            <p className="text-sm font-bold text-slate-800">
+                          <div className="min-w-0">
+                            <p className="text-sm font-bold text-slate-800 dark:text-white truncate">
                               {apt.patient?.name}
                             </p>
-                            <span className="text-[10px] bg-slate-100 px-2 py-0.5 rounded text-blue-600 font-bold uppercase">
-                              ID: {apt.code || "N/A"}
-                            </span>
+                            <p className="text-[11px] font-medium text-slate-500 flex items-center gap-1 mt-0.5">
+                              <Phone size={10} className="text-blue-500" />
+                              {apt?.phoneNumber || "N/A"}
+                            </p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-5 text-sm text-slate-600 font-medium">
-                        {apt?.phoneNumber || "N/A"}
+
+                      {/* সিরিয়াল, তারিখ ও সময় - সব এক কলামে */}
+                      <td className="px-4 py-3 text-center">
+                        <div className="flex flex-col items-center gap-1.5">
+                          {/* সিরিয়াল নম্বর */}
+                          <span className="text-xs font-black text-blue-600 bg-blue-50 dark:bg-blue-900/40 px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-800">
+                            #{apt.serialNumber || "00"}
+                          </span>
+
+                          {/* তারিখ এবং ১২ ঘণ্টার সময়সূচী */}
+                          <div className="flex  w-full  items-center gap-4 text-[10px] font-bold text-slate-400  ">
+                            <span className="flex items-center gap-1">
+                              <Calendar size={10} className="text-slate-400" />
+                              {new Date(
+                                apt?.appointmentDate,
+                              ).toLocaleDateString("en-GB")}
+                            </span>
+                            {apt?.times && (
+                              <span className="flex items-center gap-1">
+                                <Clock size={10} className="text-slate-400" />
+                                {formatTime12hr(apt?.times || "N/A")}
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       </td>
-                      <td className="px-6 py-5 text-sm font-black text-blue-600">
-                        {apt.serialNumber || "N/A"}
+
+                      {/* চিকিৎসক ও প্রতিষ্ঠান */}
+                      <td className="px-4 py-3">
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold text-slate-700 dark:text-slate-300 truncate">
+                            {apt.doctor?.name}
+                          </p>
+                          <p className="text-[10px] text-slate-400 flex items-center gap-1 truncate mt-0.5">
+                            <Building2 size={11} />
+                            {apt.clinic?.name}
+                          </p>
+                        </div>
                       </td>
-                      <td className="px-6 py-5">
-                        <p className="text-sm font-semibold text-slate-700">
-                          {apt.doctor?.name}
-                        </p>
-                        <p className="text-[10px] text-slate-400 italic">
-                          বিশেষজ্ঞ চিকিৎসক
-                        </p>
-                      </td>
-                      <td className="px-6 py-5 text-sm font-medium text-slate-600">
-                        {apt.clinic?.name}
-                      </td>
-                      <td className="px-6 py-5">
+
+                      {/* স্ট্যাটাস */}
+                      <td className="px-4 py-3">
                         <StatusBadge status={apt?.status || "SCHEDULED"} />
                       </td>
-                      <td className="px-6 py-5 text-right">
+
+                      {/* অ্যাকশন */}
+                      <td className="px-5 py-3 text-right">
                         <button
                           onClick={() => handleSelectedApt(apt)}
-                          className="p-2 hover:bg-white rounded-lg text-slate-400 hover:text-blue-600 border border-transparent hover:border-slate-100 shadow-none hover:shadow-sm transition-all"
+                          className="p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors"
                         >
-                          <Edit size={18} />
+                          <Edit size={16} />
                         </button>
                       </td>
                     </tr>
@@ -250,39 +313,9 @@ export default function AppointmentList() {
             </div>
           </div>
 
-          {/* পেজিনেশন */}
-          <footer className="px-8 py-6 bg-slate-50/30 border-t border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <span className="text-sm text-slate-500 font-medium">
-              মোট{" "}
-              <span className="text-slate-900 font-bold">
-                {meta?.total || 0}
-              </span>{" "}
-              টি ফলাফলের মধ্যে{" "}
-              <span className="text-slate-900 font-bold">
-                {appointments.length}
-              </span>{" "}
-              টি দেখানো হচ্ছে
-            </span>
-            <div className="flex items-center gap-1">
-              <button
-                disabled={page === 1}
-                onClick={() => setPage((p) => p - 1)}
-                className="p-2 rounded-lg border border-slate-200 bg-white disabled:opacity-30"
-              >
-                <ChevronLeft size={18} />
-              </button>
-              <span className="text-sm font-extrabold text-blue-600 px-4">
-                {page}
-              </span>
-              <button
-                disabled={page >= (meta?.totalPage || 1)}
-                onClick={() => setPage((p) => p + 1)}
-                className="p-2 rounded-lg border border-slate-200 bg-white disabled:opacity-30"
-              >
-                <ChevronRight size={18} />
-              </button>
-            </div>
-          </footer>
+          {meta?.totalPage && meta.totalPage > 1 && (
+            <AppPagination meta={meta} onPageChange={(p) => setPage(p)} />
+          )}
         </div>
       </main>
 
@@ -385,3 +418,15 @@ function LoadingSkeleton() {
     </div>
   );
 }
+const formatTime12hr = (time: string) => {
+  if (!time || time === "N/A") return "N/A";
+  try {
+    const [hours, minutes] = time.split(":");
+    const h = parseInt(hours);
+    const ampm = h >= 12 ? "PM" : "AM";
+    const formattedHours = h % 12 || 12;
+    return `${formattedHours}:${minutes} ${ampm}`;
+  } catch (e) {
+    return time; // যদি ফরম্যাটে ভুল থাকে তবে যা আছে তাই দেখাবে
+  }
+};

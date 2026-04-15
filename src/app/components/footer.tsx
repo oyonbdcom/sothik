@@ -1,5 +1,7 @@
 "use client";
 
+import SiteLogo from "@/components/sitelogo";
+
 const Footer = () => {
   return (
     <footer className="bg-slate-900 text-slate-400">
@@ -7,18 +9,7 @@ const Footer = () => {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <svg
-                  className="w-4 h-4 text-white"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M19 3H5c-1.1 0-1.99.9-1.99 2L3 19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 11h-4v4h-4v-4H6v-4h4V6h4v4h4v4z" />
-                </svg>
-              </div>
-              <span className="text-white font-bold text-lg">ডাক্তারবাড়ি</span>
-            </div>
+            <SiteLogo />
             <p className="text-sm leading-relaxed">
               বাংলাদেশের রোগী ও ডাক্তারদের মধ্যে সেতু তৈরি করে সেরা
               স্বাস্থ্যসেবা নিশ্চিত করছি।

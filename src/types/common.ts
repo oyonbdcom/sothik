@@ -1,31 +1,13 @@
 import { JwtPayload } from "jwt-decode";
 
 // types/common.ts
-export type UserRole = "PATIENT" | "DOCTOR" | "ADMIN" | "CLINIC";
-
-export enum NotificationType {
-  APPOINTMENT,
-  REMINDER,
-  SYSTEM,
-  BILLING,
-  MESSAGE,
-}
+export type UserRole = "PATIENT" | "DOCTOR" | "ADMIN" | "CLINIC" | "MANAGER";
 
 export enum Gender {
   MALE = "MALE",
   FEMALE = "FEMALE",
   OTHER = "OTHER",
 }
-
-export type BloodGroup =
-  | "A+"
-  | "A-"
-  | "B+"
-  | "B-"
-  | "AB+"
-  | "AB-"
-  | "O+"
-  | "O-";
 
 export interface SearchParams {
   search?: string;
@@ -69,5 +51,5 @@ export type IGenericResponse<T, N = Record<string, unknown>> = {
     totalPage: number;
   };
   data: T;
-  stats?: N; // N is optional in the object and has a default type
+  stats?: N;
 };
