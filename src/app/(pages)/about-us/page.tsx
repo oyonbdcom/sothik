@@ -1,153 +1,212 @@
-import Link from "next/link";
+"use client";
+
+import { motion } from "framer-motion";
+import { CheckCircle2, HeartHandshake, Lock, Zap } from "lucide-react";
 
 const AboutPage = () => {
+  const fadeIn = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6 },
+  };
+
+  const missionItems = [
+    {
+      title: "সঠিক বিশেষজ্ঞ নির্বাচন",
+      text: "পরিচিতদের ওপর নির্ভরতা কমিয়ে, ভেরিফাইড তথ্যের মাধ্যমে সঠিক বিশেষজ্ঞ খুঁজে পাওয়া নিশ্চিত করা।",
+    },
+    {
+      title: "বিস্তারিত প্রোফাইল",
+      text: "ডাক্তার কোথায়, কখন বসেন এবং তার অভিজ্ঞতা—সব তথ্য এখন আপনার হাতের মুঠোয়।",
+    },
+    {
+      title: "ইনস্ট্যান্ট বুকিং",
+      text: "দীর্ঘ লাইনে দাঁড়ানোর ঝামেলা ছাড়াই কয়েক সেকেন্ডে সরাসরি অ্যাপয়েন্টমেন্ট নিশ্চিত করার সমাধান।",
+    },
+    {
+      title: "স্বচ্ছ ডিরেক্টরি",
+      text: "সরকারি ও বেসরকারি ক্লিনিক এবং ডাক্তারদের অবস্থান ও সেবা সংক্রান্ত তথ্যের স্বচ্ছতা তৈরি করা।",
+    },
+    {
+      title: "জরুরি সেবা সংযোগ",
+      text: "জরুরি মুহূর্তে আপনার নিকটস্থ অ্যাম্বুলেন্স বা ক্লিনিক দ্রুত খুঁজে দিয়ে মূল্যবান জীবন বাঁচানো।",
+    },
+    {
+      title: "১০০% চার্জ-মুক্ত",
+      text: "কোনো প্রকার হিডেন ফি বা কমিশন ছাড়াই সাধারণ মানুষের জন্য স্বাস্থ্যসেবা সহজতর করা।",
+    },
+  ];
+
   return (
-    <div className="bg-[#F8FAFC] min-h-screen font-sans antialiased text-slate-900">
-      {/* Hero Section with Glassmorphism */}
-      <section className="relative h-[70vh] flex items-center justify-center overflow-hidden  ">
-        <div className="absolute inset-0 bg-cover bg-center animate-hero-bg" />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 background/80 to-secondary/40" />
-
-        <div className="relative z-10 text-center px-6 max-w-5xl">
-          <h1 className="opacity-0 animate-hero-text text-3xl md:text-4xl lg:text-6xl font-extrabold mb-6 bg-gradient-to-r from-[#0F4C81] via-[#14B8A6] to-[#0EA5E9] bg-clip-text text-transparent leading-tight">
-            <span className="block">সুস্থতার পথে আপনার</span>
-
-            <span className="block mt-6 text-[#14B8A6]">
-              সঠিক ডিজিটাল সঙ্গী
+    <div className="bg-white min-h-screen font-sans selection:bg-blue-100 selection:text-blue-700">
+      {/* --- Hero Section --- */}
+      <section className="relative pt-24 pb-16 lg:pt-36 lg:pb-32 overflow-hidden">
+        <div className="container mx-auto px-6 relative z-10">
+          <motion.div {...fadeIn} className="max-w-4xl">
+            <span className="inline-block px-4 py-1.5 mb-6 text-sm font-bold tracking-wider text-blue-600 uppercase bg-blue-50 rounded-full">
+              Empowering Healthcare
             </span>
-          </h1>
-
-          <p className="opacity-0 animate-hero-text animate-delay-200 text-base md:text-xl text-default-700 dark:text-default-300 mb-10 max-w-2xl mx-auto">
-            আধুনিক প্রযুক্তির মাধ্যমে সঠিক ডাক্তার এবং উন্নত সেবা নিশ্চিত করাই
-            আমাদের লক্ষ্য।
-          </p>
+            <h1 className="text-5xl lg:text-7xl font-extrabold text-slate-900 leading-[1.1] mb-8 tracking-tight">
+              স্বাস্থ্যসেবা এখন সবার জন্য <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-emerald-500">
+                সহজ এবং উন্মুক্ত।
+              </span>
+            </h1>
+            <p className="text-xl text-slate-600 leading-relaxed max-w-2xl">
+              সুস্থিও (SusthiO) কোনো সাধারণ ডিরেক্টরি নয়; এটি একটি ডিজিটাল
+              বিপ্লব। আমরা প্রযুক্তির মাধ্যমে রোগী এবং চিকিৎসকের মাঝে একটি
+              নিরাপদ ও দ্রুত সেতুবন্ধন তৈরি করেছি।
+            </p>
+          </motion.div>
         </div>
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-slate-50/50 -z-10 skew-x-12 translate-x-24 hidden lg:block"></div>
       </section>
 
-      {/* Stats Section - Floating Card Design */}
-      <div className="container -mt-16 px-6 relative z-20">
-        <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] grid grid-cols-2 md:grid-cols-4 gap-4 py-10 px-6 text-center border border-white">
-          {[
-            {
-              label: "পার্টনার ক্লিনিক",
-              value: "২০+",
-              color: "text-indigo-600",
-            },
-            { label: "সন্তুষ্ট রোগী", value: "১০০০+", color: "text-teal-600" },
-            {
-              label: "বিশেষজ্ঞ ডাক্তার",
-              value: "৫০+",
-              color: "text-indigo-600",
-            },
-            { label: "অনলাইন সাপোর্ট", value: "২৪/৭", color: "text-teal-600" },
-          ].map((stat, i) => (
-            <div key={i} className={i !== 0 ? "border-l border-slate-100" : ""}>
-              <p
-                className={`text-3xl md:text-5xl font-black ${stat.color} mb-1`}
-              >
-                {stat.value}
-              </p>
-              <p className="text-slate-500 text-xs md:text-sm font-bold uppercase tracking-widest">
-                {stat.label}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Mission & Vision - Two Column Layout */}
-      <section className="py-24 container">
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="relative group p-1 bg-gradient-to-br from-slate-200 to-white rounded-[2rem]">
-            <div className="bg-white p-12 rounded-[1.8rem] h-full transition-all group-hover:bg-slate-50">
-              <div className="w-14 h-14 bg-indigo-600 text-white rounded-2xl flex items-center justify-center text-3xl shadow-lg shadow-indigo-200 mb-8">
-                🎯
-              </div>
-              <h2 className="text-3xl font-extrabold text-slate-800 mb-6">
-                আমাদের মিশন
-              </h2>
-              <p className="text-slate-600 text-lg leading-relaxed">
-                আমাদের লক্ষ্য হলো রোগীদের সময় বাঁচিয়ে দ্রুততম সময়ে বিশেষজ্ঞ
-                ডাক্তারের সিরিয়াল নিশ্চিত করা। আমরা চাই প্রতিটি রোগী যেন সঠিক
-                তথ্যের মাধ্যমে ক্লিনিকে গিয়ে কোনো ভোগান্তি ছাড়াই সেবা পায়।
-              </p>
-            </div>
-          </div>
-
-          <div className="relative group p-1 bg-gradient-to-br from-slate-200 to-white rounded-[2rem]">
-            <div className="bg-white p-12 rounded-[1.8rem] h-full transition-all group-hover:bg-slate-50">
-              <div className="w-14 h-14 bg-teal-500 text-white rounded-2xl flex items-center justify-center text-3xl shadow-lg shadow-teal-100 mb-8">
-                👁️
-              </div>
-              <h2 className="text-3xl font-extrabold text-slate-800 mb-6">
-                আমাদের ভিশন
-              </h2>
-              <p className="text-slate-600 text-lg leading-relaxed">
-                আমরা এমন একটি ডিজিটাল স্বাস্থ্য ইকোসিস্টেম তৈরি করছি যেখানে
-                বাংলাদেশের যেকোনো প্রান্ত থেকে মানুষ ঘরে বসেই ২০টিরও বেশি
-                ক্লিনিকের সেবা এবং বিশ্বস্ত ডাক্তারদের পরামর্শ নিতে পারবে।
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Why Choose Us - Modern Grid */}
-      <section className="bg-slate-100/50  container">
-        <div className="">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl font-black text-slate-900 mb-4 tracking-tight">
-              কেন আমরা আলাদা?
-            </h2>
-            <div className="h-1.5 w-24 bg-indigo-600 mx-auto rounded-full"></div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-10">
+      {/* --- Value Proposition --- */}
+      <section className="py-24 bg-slate-900 text-white">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {[
               {
-                title: "সঠিক তথ্য",
-                icon: "💎",
-                desc: "আমরা সরাসরি ক্লিনিক থেকে প্রাপ্ত ১০০% ভেরিফাইড তথ্য প্রদান করি।",
+                icon: <Lock size={28} />,
+                title: "Privacy First",
+                desc: "আপনার হেলথ ডেটা এনক্রিপ্টেড। অনুমতি ছাড়া কেউ আপনার তথ্য দেখতে পারবে না।",
               },
               {
-                title: "দ্রুত সিরিয়াল",
-                icon: "⚡",
-                desc: "ওটিপি ভেরিফিকেশনের মাধ্যমে সেকেন্ডের মধ্যে আপনার সিরিয়াল নিশ্চিত করুন।",
+                icon: <Zap size={28} />,
+                title: "Zero Latency",
+                desc: "কোনো সিরিয়াল বা লাইনে দাঁড়ানোর ঝামেলা নেই। রিয়েল-টাইম বুকিং সিস্টেম।",
               },
               {
-                title: "ইউজার ফ্রেন্ডলি",
-                icon: "📱",
-                desc: "যেকোনো স্মার্টফোন থেকে সহজেই ব্যবহারযোগ্য আমাদের এই ইন্টারফেস।",
+                icon: <HeartHandshake size={28} />,
+                title: "No Commission",
+                desc: "আমরা কোনো আর্থিক লেনদেনে জড়িত নই। আমাদের সেবা ১০০% ফ্রি।",
               },
-            ].map((feature, i) => (
-              <div
+            ].map((item, i) => (
+              <motion.div
                 key={i}
-                className="bg-white p-10 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-500 border border-slate-100"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="group p-2"
               >
-                <div className="text-5xl mb-6">{feature.icon}</div>
-                <h3 className="text-2xl font-bold text-slate-800 mb-4">
-                  {feature.title}
+                <div className="w-14 h-14 bg-blue-600/20 text-blue-400 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500">
+                  {item.icon}
+                </div>
+                <h3 className="text-2xl font-bold mb-4 tracking-tight">
+                  {item.title}
                 </h3>
-                <p className="text-slate-500 leading-relaxed">{feature.desc}</p>
-              </div>
+                <p className="text-slate-400 leading-relaxed">{item.desc}</p>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section - Dark & Bold */}
-      <section className="py-24 px-6">
-        <div className="max-w-5xl mx-auto bg-indigo-600 rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl" />
-          <h3 className="text-3xl md:text-5xl font-black text-white mb-10 relative z-10 leading-tight">
-            আপনার সুস্থতাই আমাদের সার্থকতা
-          </h3>
-          <Link
-            href={`/doctors`}
-            className="relative z-10 pt-4 bg-white text-indigo-600 px-12 py-5 rounded-2xl font-black text-xl hover:bg-slate-100 transition-all shadow-xl hover:-translate-y-1 active:scale-95"
-          >
-            আজই অ্যাপয়েন্টমেন্ট নিন
-          </Link>
+      {/* --- Detailed Mission Section --- */}
+      <section className="py-24 lg:py-32 bg-white">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col lg:flex-row gap-20 items-start">
+            {/* Left: Image Side */}
+            <div className="lg:w-2/5 relative">
+              <div className="relative z-10 rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-white">
+                <img
+                  src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=800"
+                  alt="Modern Healthcare"
+                  className="w-full h-[500px] object-cover"
+                />
+              </div>
+              <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-emerald-100 rounded-full -z-10 blur-3xl opacity-60"></div>
+              <div className="absolute -top-10 -left-10 w-48 h-48 bg-blue-100 rounded-full -z-10 blur-3xl opacity-60"></div>
+            </div>
+
+            {/* Right: Content Side */}
+            <div className="lg:w-3/5">
+              <h2 className="text-3xl lg:text-5xl font-bold mb-10 text-slate-900 leading-tight tracking-tight">
+                আমাদের লক্ষ্য: প্রতিটি ইউনিয়নে <br /> ডিজিটাল স্বাস্থ্যসেবা।
+              </h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
+                {missionItems.map((item, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: 10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    className="flex items-start gap-4 group"
+                  >
+                    <div className="bg-emerald-50 p-2 rounded-lg group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-300 shrink-0">
+                      <CheckCircle2
+                        size={18}
+                        className="text-emerald-500 group-hover:text-white transition-colors"
+                      />
+                    </div>
+                    <div>
+                      <h4 className="text-slate-900 font-bold text-lg mb-1 leading-snug">
+                        {item.title}
+                      </h4>
+                      <p className="text-slate-500 text-sm leading-relaxed">
+                        {item.text}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* --- Vision Quote --- */}
+      {/* <section className="py-24 bg-slate-50 border-y border-slate-100">
+        <div className="container mx-auto px-6 text-center max-w-4xl">
+          <h2 className="text-blue-600 font-bold uppercase tracking-widest text-sm mb-10">
+            Visionary Thought
+          </h2>
+          <blockquote className="text-3xl lg:text-4xl italic text-slate-800 leading-[1.4] font-medium tracking-tight">
+            &quot;চিকিৎসা নিতে গিয়ে কাউকে যেন তথ্যের অভাবে হয়রানি হতে না হয়—এই
+            লক্ষ্যেই সুস্থিও-র যাত্রা। আমরা মুনাফা নয়, মানুষের আস্থা অর্জন করতে
+            চাই।&quot;
+          </blockquote>
+          <div className="mt-12 flex flex-col items-center">
+            <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-blue-700 rounded-3xl rotate-12 flex items-center justify-center text-white font-bold text-2xl shadow-xl mb-6">
+              <span className="-rotate-12">S</span>
+            </div>
+            <h4 className="font-bold text-xl text-slate-900">
+              SusthiO Development Team
+            </h4>
+            <p className="text-slate-400 uppercase tracking-[0.2em] text-xs mt-2 font-bold">
+              Innovation for Humanity
+            </p>
+          </div>
+        </div>
+      </section> */}
+
+      {/* --- CTA --- */}
+      <section className="py-24">
+        <div className="container mx-auto px-6">
+          <div className="bg-slate-900 rounded-[3.5rem] p-12 lg:p-24 text-center text-white shadow-2xl relative overflow-hidden border border-slate-800">
+            <div className="relative z-10">
+              <h2 className="text-4xl lg:text-6xl font-bold mb-8 tracking-tight">
+                আমাদের সাথে যুক্ত হতে চান?
+              </h2>
+              <p className="text-slate-400 text-lg lg:text-xl mb-12 max-w-2xl mx-auto leading-relaxed">
+                আপনি যদি একজন চিকিৎসক হন বা একটি ক্লিনিক পরিচালনা করেন, তবে
+                আমাদের নেটওয়ার্কে যুক্ত হয়ে মানুষের সেবায় অংশ নিন।
+              </p>
+              <div className="flex flex-wrap justify-center gap-6">
+                <button className="bg-blue-600 text-white px-10 py-5 rounded-2xl font-bold hover:bg-blue-700 hover:-translate-y-1 transition-all shadow-xl shadow-blue-900/20 active:scale-95">
+                  রেজিস্ট্রেশন করুন
+                </button>
+                <button className="bg-slate-800 text-white px-10 py-5 rounded-2xl font-bold hover:bg-slate-700 border border-slate-700 transition-all active:scale-95">
+                  যোগাযোগ করুন
+                </button>
+              </div>
+            </div>
+            {/* Design Pattern */}
+            <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-blue-600/10 rounded-full blur-[100px]"></div>
+            <div className="absolute -top-24 -right-24 w-96 h-96 bg-emerald-600/10 rounded-full blur-[100px]"></div>
+          </div>
         </div>
       </section>
     </div>

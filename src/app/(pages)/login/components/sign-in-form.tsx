@@ -28,7 +28,7 @@ export default function LoginPageContent() {
     resolver: zodResolver(loginSchema),
     defaultValues: {
       phoneNumber: "",
-      password: "",
+      password: "Password@123",
     },
   });
 
@@ -48,7 +48,7 @@ export default function LoginPageContent() {
       toast.success("লগইন সফল হয়েছে!", { id: toastId });
 
       // রিডাইরেকশন লজিক
-      if (callbackUrl) {
+      if (callbackUrl && callbackUrl.startsWith("/")) {
         router.replace(callbackUrl);
       } else if (user?.role) {
         const dashboardMap: Record<string, string> = {
@@ -59,6 +59,7 @@ export default function LoginPageContent() {
         };
 
         const targetPath = dashboardMap[user.role] || "/";
+
         router.replace(targetPath);
       }
     } catch (err: any) {
@@ -148,7 +149,11 @@ export default function LoginPageContent() {
         <div className="mt-8 text-center text-sm text-slate-600">
           অ্যাকাউন্ট নেই?{" "}
           <Link
-            href="/register"
+            href={
+              callbackUrl
+                ? `/register?callbackUrl=${encodeURIComponent(callbackUrl)}`
+                : "/register"
+            }
             className="font-black text-blue-600 hover:underline underline-offset-4"
           >
             রেজিস্ট্রেশন করুন

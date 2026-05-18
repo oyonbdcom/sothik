@@ -105,3 +105,42 @@ export const ProfileInfo = ({ dashboard = false }: { dashboard?: boolean }) => {
     </DropdownMenu>
   );
 };
+export const DashboardProfile = ({
+  dashboard = false,
+}: {
+  dashboard?: boolean;
+}) => {
+  const mounted = useMounted();
+  const router = useRouter();
+  const [logoutUser] = useLogoutUserMutation();
+  const { user, isLoading } = useAuth();
+
+  if (!mounted || isLoading || !user) return null;
+
+  // ডাইনামিক রাউটিং এর জন্য রোল বের করা
+  const role = user?.role.toLowerCase();
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser().unwrap();
+      // লোকাল স্টোরেজ থেকে তথ্য মুছে ফেলা
+      removeUserInfo();
+
+      router.push("/login");
+      toast.success("সফলভাবে লগআউট করা হয়েছে");
+    } catch (err) {
+      toast.error("লগআউট করতে ব্যর্থ হয়েছে");
+    }
+  };
+
+  return (
+    <button className="focus:outline-none transition-transform active:scale-95">
+      <Avatar className="h-9 w-9 border-2 border-slate-100 shadow-sm">
+        <AvatarImage src={user.image ?? ""} />
+        <AvatarFallback className="bg-blue-50 text-blue-600 font-bold">
+          {user.name?.slice(0, 2).toUpperCase()}
+        </AvatarFallback>
+      </Avatar>
+    </button>
+  );
+};

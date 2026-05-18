@@ -10,6 +10,8 @@ export const tagTypes = {
   area: "area",
   department: "department",
   manager: "manager",
+  feedback: "Feedback",
+  staff: "staff",
 };
 
 export const tagTypesList = Object.values(tagTypes);

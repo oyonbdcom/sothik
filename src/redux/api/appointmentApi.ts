@@ -25,17 +25,38 @@ export const appointmentApi = baseApi.injectEndpoints({
       transformResponse: (response: any) => response,
     }),
 
-    createAppointmentForAdmin: build.mutation({
+    createAppointmentByDiagnosticStaff: build.mutation({
       query: (data) => ({
-        url: `${APPOINTMENT_URL}/admin`,
+        url: `${APPOINTMENT_URL}/staff-apt-create`,
         method: "POST",
         data,
       }),
       // We invalidate appointment tags and potentially user/patient tags
-      invalidatesTags: [tagTypes.appointment, tagTypes.user, tagTypes.patient],
+      invalidatesTags: [
+        tagTypes.appointment,
+        tagTypes.user,
+        tagTypes.patient,
+        tagTypes.staff,
+      ],
 
-      // Optional: Transform response to handle auto-login logic in the component
       transformResponse: (response: any) => response,
+    }),
+    getPatientAppointments: build.query({
+      query: (params) => ({
+        url: `${APPOINTMENT_URL}/patient-appointments`,
+        method: "GET",
+        params,
+      }),
+
+      providesTags: ["appointment"],
+
+      transformResponse: (response: any) => {
+        return {
+          data: response.data,
+          meta: response.meta,
+          queueMap: response.queueMap,
+        };
+      },
     }),
 
     getMyAppointments: build.query({
@@ -56,35 +77,83 @@ export const appointmentApi = baseApi.injectEndpoints({
       providesTags: [tagTypes.appointment],
     }),
 
-    getManagerAreaAppointments: build.query({
-      query: (arg: Record<string, any>) => ({
-        url: "/appointments/manager-appointments",
-        method: "GET",
-        params: arg,
-      }),
-      providesTags: ["appointment"],
-    }),
-
-    exportDoctorDailyPdf: build.query({
-      query: (params: { doctorId: string; date: string; status: string }) => ({
-        url: `${APPOINTMENT_URL}/export`,
+    // coordinator dashboard
+    getCoordinatorDashboard: build.query({
+      query: (params) => ({
+        url: "/appointments/coordinator-dashboard",
         method: "GET",
         params,
-        responseHandler: async (response: { blob: () => any }) => {
-          const blob = await response.blob();
-          return blob;
-        },
       }),
+
       providesTags: [tagTypes.appointment],
     }),
 
+    // getManagerAreaAppointments: build.query({
+    //   query: (arg: Record<string, any>) => ({
+    //     url: "/appointments/manager-appointments",
+    //     method: "GET",
+    //     params: arg,
+    //   }),
+    //   providesTags: ["appointment"],
+    // }),
+    // ======================================================
+    // EMERGENCY REQUEST
+    // ======================================================
+
+    requestEmergency: build.mutation({
+      query: (id: string) => ({
+        url: `${APPOINTMENT_URL}/${id}/request-emergency`,
+        method: "PATCH",
+      }),
+
+      invalidatesTags: [tagTypes.appointment, tagTypes.staff],
+    }),
+
+    // ======================================================
+    // REJECT EMERGENCY
+    // ======================================================
+
+    rejectEmergency: build.mutation({
+      query: (id: string) => ({
+        url: `${APPOINTMENT_URL}/${id}/reject-emergency`,
+        method: "PATCH",
+      }),
+
+      invalidatesTags: [tagTypes.appointment, tagTypes.staff],
+    }),
+    acceptEmergency: build.mutation({
+      query: (id: string) => ({
+        url: `${APPOINTMENT_URL}/${id}/accept-emergency`,
+        method: "PATCH",
+      }),
+
+      invalidatesTags: [tagTypes.appointment, tagTypes.staff],
+    }),
+
+    // ======================================================
+    // COMPLETE APPOINTMENT
+    // ======================================================
+
+    completeAppointment: build.mutation({
+      query: (id: string) => ({
+        url: `${APPOINTMENT_URL}/${id}/complete`,
+        method: "PATCH",
+      }),
+
+      invalidatesTags: [tagTypes.appointment, tagTypes.staff],
+    }),
+    updateDoctorSession: build.mutation({
+      query: (data: any) => ({
+        url: `${APPOINTMENT_URL}/update-doctor-session`,
+        method: "PATCH",
+        data,
+      }),
+
+      invalidatesTags: [tagTypes.appointment],
+    }),
+
     updateAppointment: build.mutation({
-      query: (data: {
-        id: string;
-        times: string | undefined;
-        status: string;
-        serialNumber: number;
-      }) => ({
+      query: (data: any) => ({
         url: `${APPOINTMENT_URL}/${data.id}`,
         method: "PATCH",
         data,
@@ -97,9 +166,14 @@ export const appointmentApi = baseApi.injectEndpoints({
 
 export const {
   useCreateAppointmentMutation,
-  useGetManagerAreaAppointmentsQuery,
-  useCreateAppointmentForAdminMutation,
+  useUpdateDoctorSessionMutation,
+  useRequestEmergencyMutation,
+  useRejectEmergencyMutation,
+  useCompleteAppointmentMutation,
+  useGetPatientAppointmentsQuery,
+  useCreateAppointmentByDiagnosticStaffMutation,
   useGetMyAppointmentsQuery,
-  useExportDoctorDailyPdfQuery,
+  useGetCoordinatorDashboardQuery,
+  useAcceptEmergencyMutation,
   useUpdateAppointmentMutation,
 } = appointmentApi;

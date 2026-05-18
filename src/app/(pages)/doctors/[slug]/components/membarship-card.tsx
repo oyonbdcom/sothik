@@ -1,7 +1,6 @@
 "use client";
 
 import CreateAppointment from "@/components/booking/booking-dialog";
-import { RatingField } from "@/components/ui/rating";
 import { IMembershipResponse } from "@/interface/clinic-membership";
 import { enToBnNumber } from "@/lib/utils/utils";
 import { Building, CheckCircle2, Clock, MapPin } from "lucide-react";
@@ -79,7 +78,7 @@ const MembershipCard = ({
           </div>
 
           {/* Ratings - Compact */}
-          <div className="flex items-center justify-between mt-2 py-1 border-y border-slate-50">
+          {/* <div className="flex items-center justify-between mt-2 py-1 border-y border-slate-50">
             <div className="flex items-center gap-1">
               <RatingField
                 value={membership?.clinic?.averageRating || 0}
@@ -94,7 +93,7 @@ const MembershipCard = ({
               {(membership?.clinic?.reviewsCount || 0).toLocaleString("bn")}{" "}
               রিভিউ
             </span>
-          </div>
+          </div> */}
 
           {/* Schedules - Horizontal scroll on mobile or compact list */}
           <div className="flex  flex-col gap-1.5 mt-2">
@@ -116,9 +115,9 @@ const MembershipCard = ({
             <div className="space-y-1.5">
               <CreateAppointment
                 discount={membership?.discount}
-                doctorId={membership?.doctor?.user?.id}
+                doctorId={membership?.doctor?.id}
                 membershipId={membership?.id}
-                clinicId={membership?.clinic?.user?.id}
+                clinicId={membership?.clinic?.id}
                 disabled={
                   !membership?.schedules || membership.schedules.length === 0
                 }

@@ -24,9 +24,7 @@ export default function UpdateDialog({
   const [serialNumber, setSerialNumber] = useState<number>(
     selectedAppointment?.serialNumber || 0,
   );
-  const [timeSlot, setTimeSlot] = useState<string>(
-    selectedAppointment?.times || "",
-  );
+
   const [updateAppointment, { isLoading: isUpdating }] =
     useUpdateAppointmentMutation();
 
@@ -36,13 +34,12 @@ export default function UpdateDialog({
       await updateAppointment({
         id: selectedAppointment.id,
         status: newStatus,
-        times: timeSlot || "",
         serialNumber: Number(serialNumber) || 0,
       }).unwrap();
       toast.success(`সফলভাবে আপডেট করা হয়েছে`);
       setSelectedAppointment(null);
     } catch (err: any) {
-      toast.error(err?.data?.message || "ব্যর্থ হয়েছে");
+      toast.error(err?.message || "ব্যর্থ হয়েছে");
     }
   };
 
@@ -110,17 +107,6 @@ export default function UpdateDialog({
                 onChange={(e) => setSerialNumber(Number(e.target.value))}
                 className="h-10 rounded-xl bg-slate-50 border-none focus-visible:ring-1 focus-visible:ring-blue-500"
                 placeholder="যেমন: ০৫"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-bold text-slate-500 ml-1">
-                সময় নির্ধারণ
-              </label>
-              <Input
-                type="time"
-                value={timeSlot}
-                onChange={(e) => setTimeSlot(e.target.value)}
-                className="h-10 rounded-xl bg-slate-50 border-none focus-visible:ring-1 focus-visible:ring-blue-500"
               />
             </div>
           </div>

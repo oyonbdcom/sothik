@@ -1,53 +1,42 @@
 import { ReactNode } from "react";
+import { IAreaResponse, IDepartmentResponse } from "./area";
 import { IMedicalRecordResponse } from "./medical-history";
+import { IUserResponse } from "./user";
 
 export interface IAppointmentResponse {
   id: string;
   appointmentDate: Date;
   status: AppointmentStatus | null;
   serialNumber: number;
-  code: string | null;
   patientName: string;
   phoneNumber: string;
-  times: string;
   clinicId: string;
   doctorId: string;
+  isEmergency: boolean;
   createdAt: Date;
   discount: number;
   doctor: {
     id: string;
-    name: string;
-    image: string | null;
-    email?: string;
-    // This allows the profile to be null if the record is missing
-    doctor: {
-      department: string | null;
-      specialization: string | null;
-    } | null;
+    user: IUserResponse;
+
+    department: IDepartmentResponse;
   };
 
-  patient: {
-    id: string;
-    name: string;
-    image: string | null;
-    email?: string;
-  };
+  age: number;
+  emergency?: EmergencyRequestResponse;
 
   clinic: {
     id: string;
-    name: string;
-    image: string | null;
-    clinic: {
-      address: string | null;
-      city: string | null;
-      district: string | null;
-    } | null;
+    user: IUserResponse;
+
+    area: IAreaResponse;
   };
 
   medicalRecords: IMedicalRecordResponse[];
 }
 export type IAppointmentStats = {
   total: number;
+  todayAppointments: number;
   scheduled: number;
   completed: number;
   cancelled: number;
@@ -59,10 +48,28 @@ export type AppointmentStatus =
   | "CONFIRMED"
   | "COMPLETED"
   | "CANCELLED";
+export type PatientType = "NORMAL" | "EMERGENCY";
 
 // Type for the color options in your StatCard
 export type StatColor = "blue" | "emerald" | "amber" | "rose";
+export type EmergencyRequestResponse = {
+  id: string;
 
+  appointmentId: string;
+
+  type: "NORMAL" | "CRITICAL" | "URGENT"; // adjust based on your enum
+
+  status: "PENDING" | "ACCEPT" | "REJECTED";
+
+  transactionId?: string | null;
+
+  paymentStatus: "PENDING" | "PAID" | "FAILED";
+
+  createdById?: string | null;
+
+  createdAt: string;
+  updatedAt: string;
+};
 export interface StatCardProps {
   title: string;
   value: string | number;

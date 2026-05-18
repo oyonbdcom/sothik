@@ -1,6 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { E164Number } from "libphonenumber-js/core";
 import Image from "next/image";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -190,6 +189,7 @@ const RenderInput = ({
           </FormControl>
         </div>
       );
+
     case FormFieldType.PHONE_INPUT:
       return (
         <FormControl>
@@ -198,15 +198,11 @@ const RenderInput = ({
             placeholder={props.placeholder}
             international
             withCountryCallingCode
-            value={field.value as E164Number | undefined}
-            onChange={(value) => {
-              // সরাসরি field.onChange এ ভ্যালু পাস করুন
-              field.onChange(value || "");
-            }}
+            value={field.value ?? ""}
+            onChange={(value) => field.onChange(value ?? "")}
             className="input-phone h-24 focus:border-default-500/50"
             countries={["BD"]}
-            // অতিরিক্ত অপশন যা পেস্ট করতে সাহায্য করে
-            limitMaxLength={true}
+            limitMaxLength
             smartCaret={false}
           />
         </FormControl>
@@ -498,6 +494,7 @@ const RenderInput = ({
     }
     case FormFieldType.PROFILE: {
       const handleFileSelection = async (file: File) => {
+        console.log(field.value);
         if (!file) return;
 
         const allowedTypes = [

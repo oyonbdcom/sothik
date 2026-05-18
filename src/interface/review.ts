@@ -21,7 +21,21 @@ export interface IReviewer {
   name: string;
   image: string | null;
 }
+export type IFeedbackResponse = {
+  id: string;
+  rating: number;
+  comment?: string | null;
 
+  status: "PENDING" | "APPROVED" | "REJECTED";
+
+  createdAt: Date;
+
+  patient: {
+    id: string;
+    name: string;
+    image?: string | null;
+  };
+};
 export interface IReviewReply {
   id: string;
   content: string;

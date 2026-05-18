@@ -22,7 +22,7 @@ const patient = baseApi.injectEndpoints({
 
     getSinglePatient: build.query({
       query: () => ({
-        url: `${PATIENT_URL}/single`,
+        url: `${PATIENT_URL}/me`,
         method: "GET",
       }),
       // এখানে response.data সরাসরি রিটার্ন করলে টাইপ হ্যান্ডেল করা সহজ হয়

@@ -1,5 +1,6 @@
 import { getAllClinics } from "@/service/clinic.service";
 import { getAllDoctors } from "@/service/doctor.service";
+import Link from "next/link";
 import { Suspense } from "react";
 import DiagnosticCenter from "./components/diagnostic-center";
 import FeaturedDoctors from "./components/featured-doctors";
@@ -9,6 +10,7 @@ import { HomeBanner } from "./components/hero";
 import { Searchbar } from "./components/searchbar";
 import Specialties from "./components/Specialites";
 import Testimonial from "./components/testimonial";
+import WhatsAppButton from "./components/whatsapp";
 
 const steps = [
   {
@@ -47,6 +49,7 @@ const steps = [
 export default async function Home() {
   const query = {
     active: true,
+    membership: true,
     limit: 4,
   };
 
@@ -170,12 +173,18 @@ export default async function Home() {
               যোগ দিন
             </p>
             <div className="flex flex-wrap justify-center gap-3">
-              <button className="bg-white text-blue-700 font-bold text-sm px-7 py-3.5 rounded-xl hover:bg-blue-50 transition-colors shadow-lg">
+              <Link
+                href={"/register"}
+                className="bg-white text-blue-700 font-bold text-sm px-7 py-3.5 rounded-xl hover:bg-blue-50 transition-colors shadow-lg"
+              >
                 এখনই রেজিস্ট্রেশন করুন
-              </button>
-              <button className="bg-transparent text-white border-2 border-white/40 font-bold text-sm px-7 py-3.5 rounded-xl hover:bg-white/10 transition-colors">
+              </Link>
+              <Link
+                href={"/contact"}
+                className="bg-transparent text-white border-2 border-white/40 font-bold text-sm px-7 py-3.5 rounded-xl hover:bg-white/10 transition-colors"
+              >
                 ডাক্তার হিসেবে যোগ দিন →
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -185,6 +194,7 @@ export default async function Home() {
           FOOTER
       ══════════════════════════════════════════════════ */}
       <Footer />
+      <WhatsAppButton />
     </div>
   );
 }

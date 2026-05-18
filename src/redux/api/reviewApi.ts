@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { IReviewResponse, IReviewStatsResponse } from "@/interface/review";
+import {
+  IFeedbackResponse,
+  IReviewResponse,
+  IReviewStatsResponse,
+} from "@/interface/review";
 import { IGenericResponse, IMeta } from "@/types";
 import { tagTypes } from "@/types/tagTypes";
 import { baseApi } from "../api/baseApi";
@@ -21,6 +25,25 @@ const reviewApi = baseApi.injectEndpoints({
         { type: tagTypes.doctor, id: data?.doctorId },
       ],
     }),
+
+    createFeedback: build.mutation<IGenericResponse<IFeedbackResponse>, any>({
+      query: (data) => ({
+        url: `/feedbacks`,
+        method: "POST",
+        data,
+      }),
+
+      invalidatesTags: (result) => [tagTypes.feedback],
+    }),
+
+    getFeedbacks: build.query({
+      query: () => ({
+        url: "/feedbacks",
+        method: "GET",
+      }),
+      providesTags: ["Feedback"],
+    }),
+
     replyReview: build.mutation({
       query: ({ id, content }) => ({
         url: `${REVIEW_URL}/${id}/reply`,
@@ -131,6 +154,8 @@ const reviewApi = baseApi.injectEndpoints({
 
 export const {
   useReplyReviewMutation,
+  useGetFeedbacksQuery,
+  useCreateFeedbackMutation,
   useCreateReviewMutation,
   useGetRoleBaseReviewsQuery,
   useGetTargetReviewsQuery,

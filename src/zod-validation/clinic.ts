@@ -23,8 +23,11 @@ export const clinicSchema = z.object({
   address: z
     .string()
     .min(1, "ঠিকানা আবশ্যক")
-    .regex(banglaRegex, "ঠিকানা   অবশ্যই বাংলায় হতে হবে"),
+    .regex(banglaRegex, "ঠিকানা   অবশ্যই বাংলায় হতে হবে")
+    .optional(),
+  website: z.string().url("সঠিক ওয়েবসাইট URL দিন").optional().or(z.literal("")),
 });
+
 export type ClinicFormValues = z.infer<typeof clinicSchema>;
 export const createClinicSchema = clinicSchema;
 

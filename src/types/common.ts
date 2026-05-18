@@ -2,6 +2,7 @@ import { JwtPayload } from "jwt-decode";
 
 // types/common.ts
 export type UserRole = "PATIENT" | "DOCTOR" | "ADMIN" | "CLINIC" | "MANAGER";
+export type StaffType = "RECEPTIONIST" | "COORDINATOR";
 
 export enum Gender {
   MALE = "MALE",

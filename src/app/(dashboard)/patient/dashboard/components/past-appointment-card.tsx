@@ -1,22 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { avatar } from "@/config/site";
 import { IAppointmentResponse } from "@/interface/appointment";
-import { cn, formatTime } from "@/lib/utils/utils";
-import {
-  Building,
-  CalendarDays,
-  Clock,
-  FileText,
-  Hash,
-  Tag,
-  User,
-} from "lucide-react";
-import Image from "next/image";
-import { useState } from "react";
+import { db } from "@/lib/firebase-app";
+import { useRequestEmergencyMutation } from "@/redux/api/appointmentApi";
+import { doc, onSnapshot } from "firebase/firestore";
+import { Activity, Clock, User } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import MedicalRecordGrid from "./image-view";
 import MedicalRecordsAddDialog from "./medical-records-add-dialog";
@@ -24,172 +16,306 @@ import MedicalRecordsAddDialog from "./medical-records-add-dialog";
 export const PastAppointmentCard = ({
   appointment,
 }: {
-  appointment: IAppointmentResponse;
+  appointment: IAppointmentResponse & { doctorSession?: any };
 }) => {
   const [showRecords, setShowRecords] = useState(false);
+  const [liveSession, setLiveSession] = useState(appointment.doctorSession);
+  const router = useRouter();
+  const [requestEmergencyAppointment] = useRequestEmergencyMutation();
 
-  const statusConfig = {
-    PENDING: {
-      label: "পেন্ডিং",
-      class: "bg-amber-100 text-amber-700 border-amber-200",
-    },
-    SCHEDULED: {
-      label: "শিডিউলড",
-      class: "bg-blue-100 text-blue-700 border-blue-200",
-    },
-    COMPLETED: {
-      label: "কমপ্লিটেড",
-      class: "bg-emerald-100 text-emerald-700 border-emerald-200",
-    },
-    CANCELLED: {
-      label: "বাতিল",
-      class: "bg-rose-100 text-rose-700 border-rose-200",
-    },
+  useEffect(() => {
+    const isToday =
+      new Date(appointment.appointmentDate).toDateString() ===
+      new Date().toDateString();
+
+    if (isToday && appointment.status === "SCHEDULED") {
+      const docId = `${appointment.doctorId}_${appointment.clinicId}`;
+      const unsub = onSnapshot(doc(db, "live_sessions", docId), (snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.data();
+          setLiveSession(data);
+          if (data.runningSerial === appointment.serialNumber) {
+            router.refresh();
+          }
+        }
+      });
+      return () => unsub();
+    }
+  }, [
+    appointment.doctorId,
+    appointment.clinicId,
+    appointment.appointmentDate,
+    appointment.status,
+    appointment.serialNumber,
+    router,
+  ]);
+
+  const handleEmergencyRequest = async (appointmentId: string) => {
+    try {
+      await requestEmergencyAppointment(appointmentId).unwrap();
+      toast.success("Emergency request sent");
+    } catch (error: any) {
+      toast.error(error?.message || "Request failed");
+    }
   };
 
-  const config =
-    statusConfig[appointment.status as keyof typeof statusConfig] ||
-    statusConfig.SCHEDULED;
-
   const dateBn = appointment?.appointmentDate
-    ? new Date(appointment.appointmentDate).toLocaleDateString("bn-BD", {
+    ? new Date(appointment.appointmentDate).toLocaleDateString("en-GB", {
         day: "numeric",
-        month: "long",
+        month: "short",
         year: "numeric",
       })
     : "N/A";
 
+  const isToday =
+    new Date(appointment.appointmentDate).toDateString() ===
+    new Date().toDateString();
+  const isEmergency = appointment?.isEmergency;
+
+  // মূল অ্যাপয়েন্টমেন্ট স্ট্যাটাস স্টাইল
+  const statusStyles: any = {
+    COMPLETED: "bg-emerald-100 text-emerald-700 border-emerald-200",
+    PENDING: "bg-amber-100 text-amber-700 border-amber-200",
+    SCHEDULED: "bg-blue-100 text-blue-700 border-blue-200",
+    CANCELLED: "bg-rose-100 text-rose-700 border-rose-200",
+  };
+
+  // ইমার্জেন্সি রিকোয়েস্ট স্ট্যাটাস স্টাইল
+  const emergencyStatusStyles: any = {
+    ACCEPT: "bg-green-600 text-white border-transparent",
+    PENDING: "bg-orange-500 text-white border-transparent animate-pulse",
+  };
+
   return (
-    <Card className="border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all duration-300 bg-white dark:bg-slate-900 rounded-2xl overflow-hidden">
-      <CardContent className="p-4 md:p-6">
-        {/* উপরের অংশ: ডক্টর ইনফো ও স্ট্যাটাস */}
-        <div className="flex items-center gap-3 mb-4">
-          <div className="relative h-14 w-14 shrink-0 rounded-xl overflow-hidden ring-2 ring-slate-50">
-            <Image
-              src={appointment.doctor?.image || avatar}
-              alt="Doctor"
-              fill
-              className="object-cover"
-            />
+    <div
+      className={`relative overflow-hidden bg-white border-l-4 ${isEmergency ? "border-l-red-500" : "border-l-primary"} p-4 rounded-xl shadow-sm mb-3 transition-all hover:shadow-md`}
+    >
+      {/* ১. টপ সেকশন: ইউজার ও প্রধান স্ট্যাটাস */}
+      <div className="flex justify-between items-start">
+        <div className="flex gap-3">
+          <div className="h-12 w-12 bg-slate-100 rounded-full flex items-center justify-center border border-slate-200">
+            <User className="text-slate-600 w-6 h-6" />
           </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="text-base font-bold text-slate-800 dark:text-white truncate">
-              {appointment?.doctor?.name}
-            </h3>
-            <div className="flex items-center gap-1 text-slate-500 text-[11px]">
-              <Building className="w-3 h-3 shrink-0" />
-              <span className="truncate">{appointment?.clinic?.name}</span>
-            </div>
-            <span className="truncate text-xs">
-              {appointment?.clinic?.clinic?.address}
-            </span>
-          </div>
-          <Badge
-            className={cn(
-              "shrink-0 text-[10px] px-2 py-0.5 rounded-md",
-              config.class,
-            )}
-          >
-            {config.label}
-          </Badge>
-        </div>
-
-        {/* মাঝের অংশ: ইনফরমেশন গ্রিড (২ কলাম মোবাইলে) */}
-        <div className="grid grid-cols-2 gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl mb-4 text-[12px]">
-          <div className="space-y-1">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">
-              রোগীর নাম
-            </p>
-            <div className="flex items-center gap-1.5 font-bold text-slate-700 dark:text-slate-200">
-              <User size={12} className="text-blue-500" />
-              <span className="truncate">{appointment.patientName}</span>
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">
-              সিরিয়াল নাঃ
-            </p>
-            <div className="flex items-center gap-1.5 font-bold text-slate-700 dark:text-slate-200">
-              <Hash size={12} className="text-indigo-500" />
-              <span className="bg-indigo-600 text-white px-1.5 py-0.2 rounded text-[10px]">
-                {appointment.serialNumber || "0"}
+          <div className="flex flex-col">
+            {" "}
+            {/* gap-1 কমিয়ে দিয়েছি */}
+            <div className="flex items-center gap-2 leading-none mb-1">
+              {" "}
+              {/* leading-none গ্যাপ কমাবে */}
+              <h3 className="text-sm font-bold text-slate-800">
+                {appointment.patientName}
+              </h3>
+              {/* মেইন স্ট্যাটাস ব্যাজ */}
+              <span
+                className={`text-[10px] px-2 py-[1px] rounded-full font-bold border ${
+                  statusStyles[appointment.status || ""] || "bg-slate-100"
+                }`}
+              >
+                {appointment.status}
               </span>
             </div>
-          </div>
-
-          <div className="space-y-1">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">
-              তারিখ
+            <p className="text-[11px] text-slate-500 font-medium leading-tight">
+              {appointment.phoneNumber} • {appointment?.age}y
             </p>
-            <div className="flex items-center gap-1.5 font-bold text-slate-700 dark:text-slate-200">
-              <CalendarDays size={12} className="text-emerald-500" />
-              <span>{dateBn}</span>
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">
-              সময়
+            <p className="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5 leading-tight">
+              <Clock className="w-3 h-3" /> {dateBn}
             </p>
-            <div className="flex items-center gap-1.5 font-bold text-slate-700 dark:text-slate-200">
-              <Clock size={12} className="text-orange-500" />
-              <span>
-                {appointment?.times
-                  ? `${formatTime(appointment.times)} আসবেন`
-                  : "N/A"}{" "}
+          </div>
+        </div>
+
+        {/* ইমার্জেন্সি ব্যাজ (যদি ইমার্জেন্সি রিকোয়েস্ট থাকে) */}
+        {isEmergency && (
+          <div className="flex flex-col items-end gap-1">
+            {appointment?.status !== "COMPLETED" && (
+              <span
+                className={`text-[9px] px-2 py-1 rounded-md font-black tracking-tighter border ${emergencyStatusStyles[appointment?.emergency?.status || ""] || "bg-red-600 text-white"}`}
+              >
+                {appointment?.emergency?.status === "ACCEPT"
+                  ? "জরুরি অনুমোদিত"
+                  : "জরুরি যাচাই"}
               </span>
-            </div>
-          </div>
-        </div>
-
-        {/* ডিসকাউন্ট সেকশন (Compact) */}
-        <div
-          onClick={() => {
-            navigator.clipboard.writeText("OFFER25");
-            toast.success("কোড কপি হয়েছে!");
-          }}
-          className="flex items-center justify-between bg-primary-50 dark:bg-primary-950/20 p-2 rounded-lg border border-primary-100 dark:border-primary-900/50 mb-4 active:scale-95 transition-transform cursor-pointer"
-        >
-          <div className="flex items-center gap-2">
-            <Tag size={14} className="text-primary-600" />
-            <span className="text-[11px] font-black text-primary-700 uppercase">
-              {appointment?.discount || 0}% ছাড় ({appointment?.code})
-            </span>
-          </div>
-          <span className="text-[9px] bg-white dark:bg-primary-900 px-1.5 py-0.5 rounded shadow-sm font-bold text-primary-600">
-            কপি
-          </span>
-        </div>
-
-        {/* অ্যাকশন বাটনসমূহ (মোবাইলে পাশাপাশি) */}
-        <div className="flex gap-2">
-          <Button
-            onClick={() => setShowRecords(!showRecords)}
-            variant="outline"
-            className={cn(
-              "flex-1 h-10 text-xs font-bold rounded-xl",
-              showRecords && "bg-slate-800 text-white",
             )}
-          >
-            <FileText size={14} className="mr-1.5" />
-            রেকর্ডস
-          </Button>
-          <div className="flex-1">
-            <MedicalRecordsAddDialog appointmentId={appointment.id} />
-          </div>
-        </div>
-
-        {/* রেকর্ডস ডিসপ্লে */}
-        {showRecords && (
-          <div className="mt-4 pt-4 border-t border-slate-100">
-            <MedicalRecordGrid
-              appointment={appointment}
-              showRecords={showRecords}
-            />
+            <span className="text-[8px] text-red-500 font-bold animate-pulse">
+              EMERGENCY
+            </span>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+
+      {/* ২. মিডল সেকশন: সিরিয়াল ট্র্যাকিং ও ইনফো */}
+      <div
+        className={`mt-4 rounded-lg p-3 ${isEmergency ? "bg-red-50/50 border border-red-100" : "bg-slate-50 border border-slate-100"}`}
+      >
+        <div className={`flex justify-between items-center gap-3`}>
+          {" "}
+          {/* gap-4 এর জায়গায় gap-3 */}
+          <div className="flex-1">
+            {isEmergency ? (
+              <div className="flex gap-4">
+                {" "}
+                {/* Grid সরিয়ে Flex ব্যবহার করেছি যাতে গ্যাপ কমানো যায় */}
+                <div>
+                  <p className="text-[9px] text-slate-400 uppercase font-bold leading-none mb-0.5">
+                    পেমেন্ট
+                  </p>
+                  <p
+                    className={`text-[11px] font-bold leading-none ${appointment?.emergency?.paymentStatus === "PAID" ? "text-emerald-600" : "text-amber-600"}`}
+                  >
+                    {appointment?.emergency?.paymentStatus === "PAID"
+                      ? "Paid"
+                      : "Pending"}
+                  </p>
+                </div>
+                {appointment?.emergency?.transactionId && (
+                  <div className="border-l pl-3 border-slate-100">
+                    <p className="text-[9px] text-slate-400 uppercase font-bold leading-none mb-0.5">
+                      TrxID
+                    </p>
+                    <p className="text-[11px] font-mono text-slate-600 leading-none">
+                      {appointment.emergency.transactionId}
+                    </p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              // নরমাল সিরিয়াল ট্র্যাকিং
+              appointment.status === "SCHEDULED" && (
+                <div className="flex items-center gap-4">
+                  <div>
+                    <p className="text-[9px] text-slate-400 uppercase font-bold leading-none mb-1">
+                      আমার সিরিয়াল
+                    </p>
+                    <p className="text-base font-black text-primary leading-none">
+                      {appointment.serialNumber}
+                    </p>
+                  </div>
+                  {liveSession?.status && (
+                    <div className="border-l pl-4 border-slate-200">
+                      {/* ১. সেশন একটিভ থাকলে (চলমান সিরিয়াল) */}
+                      {liveSession.status === "ACTIVE" && (
+                        <>
+                          <p className="text-[9px] text-emerald-600 uppercase font-bold flex items-center gap-1 leading-none mb-1">
+                            <Activity className="w-2.5 h-2.5" /> চলছে
+                          </p>
+                          <p className="text-base font-black text-emerald-700 leading-none">
+                            {liveSession.runningSerial || "---"}
+                          </p>
+                        </>
+                      )}
+
+                      {/* ২. ডক্টর বিরতিতে থাকলে (PAUSED) */}
+                      {liveSession.status === "PAUSED" && (
+                        <>
+                          <p className="text-[9px] text-amber-600 uppercase font-bold flex items-center gap-1 leading-none mb-1">
+                            <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />{" "}
+                            বিরতি
+                          </p>
+                          <p className="text-[10px] font-bold text-amber-700 leading-tight">
+                            সাময়িক বন্ধ
+                          </p>
+                        </>
+                      )}
+
+                      {/* ৩. ডক্টর অনুপস্থিত থাকলে (ABSENT) */}
+                      {liveSession.status === "ABSENT" && (
+                        <>
+                          <p className="text-[9px] text-rose-600 uppercase font-bold flex items-center gap-1 leading-none mb-1">
+                            <span className="w-2 h-2 bg-rose-500 rounded-full" />{" "}
+                            অনুপস্থিত
+                          </p>
+                          <p className="text-[10px] font-bold text-rose-700 leading-tight">
+                            ডক্টর নেই
+                          </p>
+                        </>
+                      )}
+
+                      {/* ৪. সেশন শেষ হয়ে গেলে (ENDED) */}
+                      {liveSession.status === "ENDED" && (
+                        <>
+                          <p className="text-[9px] text-slate-500 uppercase font-bold flex items-center gap-1 leading-none mb-1">
+                            বন্ধ
+                          </p>
+                          <p className="text-[10px] font-bold text-slate-600 leading-tight">
+                            সেশন শেষ
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )
+            )}
+          </div>
+          {/* ডক্টর ইনফো - প্যাডিং এবং মার্জিন কমিয়ে কম্প্যাক্ট করা হয়েছে */}
+          <div className="text-right border-l pl-3 border-slate-200 flex flex-col gap-0.5">
+            <h4 className="text-[11px] font-bold text-slate-800 leading-tight">
+              ডাঃ {appointment?.doctor?.user?.name}
+            </h4>
+            <p className="text-[9px] text-slate-500 leading-tight">
+              {appointment?.doctor?.department?.name}
+            </p>
+            <p className="text-[9px] font-medium text-primary leading-tight">
+              {appointment?.clinic?.user?.name}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ৩. বটম সেকশন: অ্যাকশন বাটনসমূহ */}
+      <div className="flex justify-between items-center mt-4">
+        <div className="flex gap-2">
+          {appointment?.status === "COMPLETED" && (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowRecords(!showRecords)}
+                className="  text-[10px] font-bold"
+              >
+                মেডিকেল রেকর্ড
+              </Button>
+              <MedicalRecordsAddDialog appointmentId={appointment.id} />
+            </>
+          )}
+        </div>
+
+        {/* ইমার্জেন্সি রিকোয়েস্ট বাটন */}
+        {/* ১. কন্ডিশনাল রেন্ডারিং: জরুরি রিকোয়েস্ট বাটন */}
+        {appointment.status === "SCHEDULED" &&
+          !appointment?.emergency &&
+          isToday && (
+            <Button
+              color="destructive"
+              size="sm"
+              className="h-8 text-[10px] font-bold animate-bounce shadow-lg shadow-red-200"
+              onClick={() => handleEmergencyRequest(appointment.id)}
+            >
+              জরুরি রিকোয়েস্ট দিন
+            </Button>
+          )}
+
+        {/* ২. যদি রিজেক্টেড হয় তবে মেসেজ দেখানো */}
+        {appointment?.status !== "COMPLETED" &&
+          appointment?.emergency?.status === "REJECTED" && (
+            <div className="bg-rose-50 border border-rose-100 rounded-lg p-2 flex items-center gap-2">
+              <div className="h-2 w-2 bg-rose-500 rounded-full shrink-0" />
+              <p className="text-[10px] text-rose-600 font-medium leading-tight">
+                আপনার জরুরি রিকোয়েস্টটি কর্তৃপক্ষ বাতিল করেছে। বিস্তারিত জানতে
+                ক্লিনিক ডেস্কে যোগাযোগ করুন।
+              </p>
+            </div>
+          )}
+      </div>
+
+      {/* ৪. মেডিকেল রেকর্ডস গ্রিড */}
+      {showRecords && (
+        <div className="mt-4 pt-4 border-t border-dashed border-slate-200">
+          <MedicalRecordGrid
+            appointment={appointment}
+            showRecords={showRecords}
+          />
+        </div>
+      )}
+    </div>
   );
 };

@@ -1,22 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import Header from "@/components/partials/header";
 import Sidebar from "@/components/partials/sidebar";
 import React from "react";
 
+import Header from "@/components/partials/header";
 import MobileSidebar from "@/components/partials/sidebar/mobile-sidebar";
-import {
-  adminConfig,
-  clinicConfig,
-  doctorConfig,
-  managerConfig,
-  MenuItemProps,
-  patientConfig,
-} from "@/config/menus";
-import { UserRole } from "@/constant/common";
+
+import { getSidebarMenus } from "@/config/sidebar/sidebar.config";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils/utils";
-import { useGetCurrentUserQuery } from "@/redux/api/authApi";
 import { useSidebar } from "@/store";
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
@@ -39,7 +32,7 @@ const DashBoardLayoutProvider = ({
       <Sidebar />
 
       <div className={` ${!collapsed ? "collapsed  " : "not-collapsed "}`}>
-        <div className={cn(" layout-padding px-4 pt-4  page-min-height ")}>
+        <div className={cn(" layout-padding    page-min-height bg-slate-100 ")}>
           <LayoutWrapper
             isMobile={isMobile}
             setOpen={setOpen}
@@ -67,28 +60,9 @@ const LayoutWrapper = ({
   open: boolean;
   location: any;
 }) => {
-  const { data } = useGetCurrentUserQuery(undefined);
+  const { user } = useAuth();
 
-  const user = data?.user;
-
-  const getMenuConfig = (): MenuItemProps[] => {
-    switch (user?.role) {
-      case UserRole.ADMIN:
-        return adminConfig;
-      case UserRole.DOCTOR:
-        return doctorConfig;
-      case UserRole.CLINIC:
-        return clinicConfig;
-      case UserRole.PATIENT:
-        return patientConfig;
-      case UserRole.MANAGER:
-        return managerConfig;
-      default:
-        return [];
-    }
-  };
-
-  const menus = getMenuConfig();
+  const menus = getSidebarMenus(user?.role, user?.staff?.staffType);
 
   return (
     <>

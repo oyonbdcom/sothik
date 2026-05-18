@@ -2,6 +2,7 @@ import z from "zod";
 
 import { IFavoriteDoctor } from "./favorite";
 
+import { UserRole } from "@/types";
 import { updatePatientSchema } from "@/zod-validation/patient";
 import { IAppointmentResponse } from "./appointment";
 import { IMedicalRecordResponse } from "./medical-history";
@@ -13,33 +14,22 @@ export type IPatientResponse = {
   name: string | null;
   phoneNumber: string;
   image: string | null;
-  role: "PATIENT" | "DOCTOR" | "ADMIN" | "MANAGER" | "CLINIC";
+
+  role: UserRole;
   deactivate: boolean;
-  patient: {
+
+  // ================= PATIENTS ARRAY =================
+  patients: {
+    id: string;
     age: number | null;
     gender: "MALE" | "FEMALE" | "OTHER" | null;
     address: string | null;
-    area: {
-      name: string | null;
-      slug: string | null;
-      district: {
-        name: string | null;
-        slug: string | null;
-      };
-    } | null;
-  } | null;
+  }[];
 
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 };
-export interface ILatestAppointment {
-  id: string;
-  date: Date;
-  status: string;
-  doctorName?: string;
-  clinicName?: string;
-  medicalRecordsCount: number;
-}
+
 export type IUpdatePatientRequest = z.infer<typeof updatePatientSchema>;
 
 export interface IPatientWithRelations extends IPatientResponse {
@@ -50,11 +40,7 @@ export interface IPatientWithRelations extends IPatientResponse {
   medicalRecords?: IMedicalRecordResponse[];
   reviews?: IReviewResponse[];
 }
-export interface IPatientStats {
-  total: number;
-  active: number;
-  inactive: number;
-}
+
 export const PatientFilterableFields = ["searchTerm", "district", "active"];
 
 // IMAGE VIEW MODAL

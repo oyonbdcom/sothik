@@ -18,7 +18,13 @@ import {
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-const ROLES = ["ADMIN", "MANAGER", "DOCTOR", "PATIENT", "SUPPORT"];
+const ROLES = [
+  "ADMIN",
+  "AREA_MANAGER",
+  "DIAGNOSTIC_MANAGER",
+  "DOCTOR",
+  "PATIENT",
+];
 
 export default function UserManagementPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -37,7 +43,7 @@ export default function UserManagementPage() {
   const { data: areaData, isLoading: isAreaLoading } = useGetAreasQuery(
     undefined,
     {
-      skip: selectedRole !== "MANAGER",
+      skip: selectedRole !== "AREA_MANAGER",
     },
   );
 
@@ -80,7 +86,7 @@ export default function UserManagementPage() {
   const handleUpdateRole = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (selectedRole === "MANAGER" && !assignedAreaId) {
+    if (selectedRole === "AREA_MANAGER" && !assignedAreaId) {
       toast.error("অনুগ্রহ করে একটি এরিয়া নির্বাচন করুন");
       return;
     }
@@ -90,7 +96,7 @@ export default function UserManagementPage() {
         id: selectedUser.id,
         role: selectedRole,
         // ম্যানেজার হলে এরিয়া আইডি যাবে, না হলে নাল
-        assignedAreaId: selectedRole === "MANAGER" ? assignedAreaId : null,
+        assignedAreaId: selectedRole === "AREA_MANAGER" ? assignedAreaId : null,
       };
 
       await updateUserRole(payload).unwrap();
@@ -193,7 +199,7 @@ export default function UserManagementPage() {
                       </span>
                     </td>
                     <td className="px-6 py-5 text-sm text-slate-600">
-                      {user.role === "MANAGER" ? (
+                      {user.role === "AREA_MANAGER" ? (
                         <div className="flex items-center gap-2">
                           <MapPin size={16} className="text-emerald-500" />
                           {user?.manager?.area ? (
@@ -291,7 +297,7 @@ export default function UserManagementPage() {
                 </select>
               </div>
 
-              {selectedRole === "MANAGER" && (
+              {selectedRole === "AREA_MANAGER" && (
                 <div className="space-y-1.5 animate-in slide-in-from-top-2">
                   <label className="text-xs font-bold text-slate-700 ml-1 uppercase flex items-center gap-1.5">
                     <MapPin size={14} className="text-slate-400" />{" "}

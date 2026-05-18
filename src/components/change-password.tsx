@@ -45,7 +45,7 @@ export default function ChangePasswordPage() {
       }, 1500);
     } catch (err: any) {
       const errorMsg =
-        err?.data?.message || err?.message || "পাসওয়ার্ড পরিবর্তন করা যায়নি";
+        err?.message || err?.message || "পাসওয়ার্ড পরিবর্তন করা যায়নি";
       toast.error(errorMsg);
 
       if (err?.status === 401) {

@@ -13,6 +13,7 @@ export interface IAreaResponse {
   district?: {
     id: string;
     name: string;
+    slug: string;
   };
 }
 

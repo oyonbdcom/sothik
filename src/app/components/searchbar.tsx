@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client";
 
 import CustomFormField, { FormFieldType } from "@/components/custom-form-field";
@@ -9,14 +10,11 @@ import {
 } from "@/redux/api/setup";
 import { MapPin, Search, Stethoscope } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
-// আপনার API স্লাইস থেকে হুকগুলো ইম্পোর্ট করুন
 
 export function Searchbar() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [searchTab, setSearchTab] = useState<"doctor" | "center">("doctor");
 
   // --- API ফেচিং ---
   const { data: deptData, isLoading: isDeptLoading } =
@@ -24,7 +22,7 @@ export function Searchbar() {
   const { data: distData, isLoading: isDistLoading } =
     useGetDistrictsQuery(undefined);
 
-  const departments = deptData?.departments || []; // আপনার API রেসপন্স স্ট্রাকচার অনুযায়ী
+  const departments = deptData?.departments || [];
   const districts = distData?.districts || [];
 
   const form = useForm({
@@ -37,59 +35,42 @@ export function Searchbar() {
 
   const onSubmit = (values: any) => {
     const params = new URLSearchParams();
-    if (values.searchTerm?.trim())
-      params.set("searchTerm", values.searchTerm.trim());
-    if (values.district) params.set("district", values.district);
-    if (searchTab === "doctor" && values.department)
-      params.set("department", values.department);
 
-    const path = searchTab === "doctor" ? "/doctors" : "/diagnostic";
-    router.push(`${path}?${params.toString()}`);
+    if (values.searchTerm?.trim()) {
+      params.set("searchTerm", values.searchTerm.trim());
+    }
+
+    if (values.district) {
+      params.set("district", values.district);
+    }
+
+    if (values.department) {
+      params.set("department", values.department);
+    }
+
+    router.push(`/doctors?${params.toString()}`);
   };
 
   const handleTagClick = (tagValue: string) => {
     form.setValue("department", tagValue);
-    setSearchTab("doctor");
   };
 
   return (
-    <section className="container   relative z-20">
-      <div className="bg-white  mb-6   p-2 lg:p-6">
-        {/* Tabs */}
-        <div className="flex gap-2 mb-6 pt-2">
-          <button
-            type="button"
-            onClick={() => setSearchTab("doctor")}
-            className={`flex items-center gap-2 text-sm font-bold px-6 py-3 rounded-2xl transition-all ${
-              searchTab === "doctor"
-                ? "bg-blue-700 text-white shadow-lg"
-                : "bg-slate-50 text-slate-500"
-            }`}
-          >
+    <section className="container relative z-20">
+      <div className="bg-white m ">
+        {/* Header */}
+        <div className="mb-6 pt-2">
+          <h2 className="text-lg font-bold text-slate-700 flex items-center gap-2">
             🩺 ডাক্তার খুঁজুন
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setSearchTab("center");
-              form.setValue("department", "");
-            }}
-            className={`flex items-center gap-2 text-sm font-bold px-6 py-3 rounded-2xl transition-all ${
-              searchTab === "center"
-                ? "bg-blue-700 text-white shadow-lg"
-                : "bg-slate-50 text-slate-500"
-            }`}
-          >
-            🏥 সেন্টার খুঁজুন
-          </button>
+          </h2>
         </div>
 
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="flex flex-col lg:flex-row items-stretch lg:items-end gap-4  w-full"
+            className="flex flex-col lg:flex-row items-stretch lg:items-end gap-4 w-full"
           >
-            {/* ডায়নামিক জেলা (Districts) */}
+            {/* District */}
             <div className="flex-1 min-w-0">
               <CustomFormField
                 fieldType={FormFieldType.SELECT}
@@ -105,39 +86,35 @@ export function Searchbar() {
               />
             </div>
 
-            {/* ডায়নামিক ডিপার্টমেন্ট (Departments) */}
-            {searchTab === "doctor" && (
-              <div className="flex-1 min-w-0">
-                <CustomFormField
-                  fieldType={FormFieldType.SELECT}
-                  control={form.control}
-                  name="department"
-                  placeholder={isDeptLoading ? "লোডিং..." : "বিশেষজ্ঞতা..."}
-                  options={departments.map((d: any) => ({
-                    label: d.name,
-                    value: d.slug || d.id,
-                  }))}
-                  icon={Stethoscope}
-                  className="h-12 ring-1"
-                />
-              </div>
-            )}
+            {/* Department */}
+            <div className="flex-1 min-w-0">
+              <CustomFormField
+                fieldType={FormFieldType.SELECT}
+                control={form.control}
+                name="department"
+                placeholder={isDeptLoading ? "লোডিং..." : "বিশেষজ্ঞতা..."}
+                options={departments.map((d: any) => ({
+                  label: d.name,
+                  value: d.slug || d.id,
+                }))}
+                icon={Stethoscope}
+                className="h-12 ring-1"
+              />
+            </div>
 
+            {/* Search Input */}
             <div className="flex-[1.5] min-w-0">
               <CustomFormField
                 fieldType={FormFieldType.INPUT}
                 control={form.control}
                 name="searchTerm"
-                placeholder={
-                  searchTab === "doctor"
-                    ? "ডাক্তারের নাম..."
-                    : "সেন্টারের নাম..."
-                }
+                placeholder="ডাক্তারের নাম..."
                 className="h-12 ring-1"
                 icon={Search}
               />
             </div>
 
+            {/* Submit Button */}
             <button
               type="submit"
               className="bg-blue-700 hover:bg-blue-800 text-white text-sm font-bold px-10 rounded-xl transition-all active:scale-95 h-[48px] lg:h-[52px] w-full lg:w-auto"
@@ -148,12 +125,13 @@ export function Searchbar() {
           </form>
         </Form>
 
-        {/* Quick Suggestion Tags - ডায়নামিক ৫টি জনপ্রিয় ডিপার্টমেন্ট */}
-        {searchTab === "doctor" && departments.length > 0 && (
+        {/* Quick Suggestion Tags */}
+        {departments.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 mt-6 px-4">
             <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
               জনপ্রিয়:
             </span>
+
             {departments.slice(0, 5).map((dept: any) => (
               <button
                 key={dept.id}

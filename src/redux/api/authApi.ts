@@ -1,9 +1,6 @@
+import { ILoginResponse } from "./../../../../server/src/app/modules/auth/interface";
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  ILoginRequest,
-  ILoginResponse,
-  IRegisterRequest,
-} from "@/interface/auth";
+import { ILoginRequest, IRegisterRequest } from "@/interface/auth";
 import { IUserResponse } from "@/interface/user";
 import { IGenericResponse, IMeta } from "@/types";
 import { tagTypes } from "@/types/tagTypes";
@@ -14,7 +11,7 @@ const authApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     // ১. REGISTER (ইমেইল ছাড়াই এখন কাজ করবে)
     registerUser: build.mutation<
-      IGenericResponse<IUserResponse>,
+      IGenericResponse<ILoginResponse>,
       IRegisterRequest
     >({
       query: (data) => ({

@@ -239,11 +239,11 @@ export default function AppointmentList() {
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-black text-sm shrink-0">
-                            {apt.patient?.name?.charAt(0)}
+                            {apt.patientName?.charAt(0)}
                           </div>
                           <div className="min-w-0">
                             <p className="text-sm font-bold text-slate-800 dark:text-white truncate">
-                              {apt.patient?.name}
+                              {apt.patientName}
                             </p>
                             <p className="text-[11px] font-medium text-slate-500 flex items-center gap-1 mt-0.5">
                               <Phone size={10} className="text-blue-500" />
@@ -269,12 +269,6 @@ export default function AppointmentList() {
                                 apt?.appointmentDate,
                               ).toLocaleDateString("en-GB")}
                             </span>
-                            {apt?.times && (
-                              <span className="flex items-center gap-1">
-                                <Clock size={10} className="text-slate-400" />
-                                {formatTime12hr(apt?.times || "N/A")}
-                              </span>
-                            )}
                           </div>
                         </div>
                       </td>
@@ -283,11 +277,11 @@ export default function AppointmentList() {
                       <td className="px-4 py-3">
                         <div className="min-w-0">
                           <p className="text-sm font-bold text-slate-700 dark:text-slate-300 truncate">
-                            {apt.doctor?.name}
+                            {apt.doctor?.user?.name}
                           </p>
                           <p className="text-[10px] text-slate-400 flex items-center gap-1 truncate mt-0.5">
                             <Building2 size={11} />
-                            {apt.clinic?.name}
+                            {apt.clinic?.user?.name}
                           </p>
                         </div>
                       </td>

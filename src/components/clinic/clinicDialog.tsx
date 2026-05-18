@@ -30,7 +30,7 @@ import {
   useUpdateClinicMutation,
 } from "@/redux/api/clinicApi";
 import { ClinicFormValues, clinicSchema } from "@/zod-validation/clinic";
-import { Separator } from "../ui/separator";
+import { ScrollArea } from "../ui/scroll-area";
 
 interface ClinicDialogProps {
   clinic?: any;
@@ -86,7 +86,7 @@ export default function ClinicDialog({
       setOpen(false);
       form.reset();
     } catch (error: any) {
-      toast.error(error?.data?.message || "ব্যর্থ হয়েছে");
+      toast.error(error?.message || "ব্যর্থ হয়েছে");
     }
   };
 
@@ -102,114 +102,163 @@ export default function ClinicDialog({
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-xl rounded-3xl p-0 overflow-hidden">
-        <div className="bg-emerald-600 p-6 text-white">
-          <DialogTitle className="text-xl">
+      <DialogContent className="overflow-hidden rounded-3xl border-0 max-h-[95vh] bg-white p-0 shadow-2xl sm:max-w-xl">
+        {/* HEADER */}
+        <div className="border-b border-slate-100 bg-white px-6 py-5">
+          <DialogTitle className="text-xl font-bold text-slate-900">
             {isEditMode ? "এডিট ক্লিনিক" : "নতুন ক্লিনিক"}
           </DialogTitle>
+
+          <p className="mt-1 text-sm text-slate-500">
+            ক্লিনিকের প্রয়োজনীয় তথ্য পূরণ করুন
+          </p>
         </div>
 
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="px-6 space-y-4"
-          >
-            <CustomFormField
-              fieldType={FormFieldType.PROFILE}
-              name="user.image"
-              control={form.control}
-            />
-            <Separator />
-            <div>
-              <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                name="user.name"
-                label="নাম"
-                icon={Building}
-                control={form.control}
-                placeholder="আপনার নাম লিখুন"
-              />
-              <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                name="slug"
-                label="স্লাগ"
-                icon={LayoutGrid}
-                control={form.control}
-                placeholder="clinic-name-slug"
-              />
+        <ScrollArea className="max-h-[75vh]">
+          <div className="px-6 py-5">
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6"
+              >
+                {/* PROFILE */}
+                <div className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <div className="  rounded-2xl border border-slate-200 bg-white">
+                    <CustomFormField
+                      fieldType={FormFieldType.PROFILE}
+                      name="user.image"
+                      control={form.control}
+                    />
+                  </div>
 
-              <CustomFormField
-                fieldType={FormFieldType.PHONE_INPUT}
-                name="user.phoneNumber"
-                label="ফোন"
-                control={form.control}
-                disabled={isEditMode}
-                placeholder="01XXXXXXXXX"
-              />
-              {!isEditMode && (
+                  <div>
+                    <h3 className="text-base font-semibold text-slate-900">
+                      ক্লিনিক লোগো
+                    </h3>
+
+                    <p className="mt-1 text-sm text-slate-500">
+                      একটি পরিষ্কার প্রোফাইল ছবি আপলোড করুন
+                    </p>
+                  </div>
+                </div>
+
+                {/* BASIC INFO */}
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-sm font-semibold text-slate-900">
+                      বেসিক তথ্য
+                    </h3>
+
+                    <p className="text-xs text-slate-500">
+                      ক্লিনিকের সাধারণ তথ্য দিন
+                    </p>
+                  </div>
+
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <CustomFormField
+                      fieldType={FormFieldType.INPUT}
+                      name="user.name"
+                      label="ক্লিনিকের নাম"
+                      icon={Building}
+                      control={form.control}
+                      placeholder="ক্লিনিকের নাম লিখুন"
+                    />
+
+                    <CustomFormField
+                      fieldType={FormFieldType.INPUT}
+                      name="slug"
+                      label="স্লাগ"
+                      icon={LayoutGrid}
+                      control={form.control}
+                      placeholder="clinic-name"
+                    />
+                  </div>
+
+                  <CustomFormField
+                    fieldType={FormFieldType.PHONE_INPUT}
+                    name="user.phoneNumber"
+                    label="ফোন নাম্বার"
+                    control={form.control}
+                    disabled={isEditMode}
+                    placeholder="01XXXXXXXXX"
+                  />
+
+                  {!isEditMode && (
+                    <CustomFormField
+                      fieldType={FormFieldType.INPUT}
+                      name="user.password"
+                      label="পাসওয়ার্ড"
+                      icon={Lock}
+                      control={form.control}
+                      placeholder="পাসওয়ার্ড লিখুন"
+                    />
+                  )}
+                </div>
+
+                {/* STATUS */}
+                {isEditMode && (
+                  <div className="space-y-3">
+                    <h3 className="text-sm font-semibold text-slate-900">
+                      স্ট্যাটাস
+                    </h3>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => form.setValue("user.deactivate", false)}
+                        className={`rounded-2xl border px-4 py-3 text-sm font-medium transition-all ${
+                          !form.watch("user.deactivate")
+                            ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                            : "border-slate-200 bg-white text-slate-500"
+                        }`}
+                      >
+                        সক্রিয়
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => form.setValue("user.deactivate", true)}
+                        className={`rounded-2xl border px-4 py-3 text-sm font-medium transition-all ${
+                          form.watch("user.deactivate")
+                            ? "border-rose-200 bg-rose-50 text-rose-700"
+                            : "border-slate-200 bg-white text-slate-500"
+                        }`}
+                      >
+                        নিষ্ক্রিয়
+                      </button>
+                    </div>
+
+                    <input
+                      type="hidden"
+                      {...form.register("user.deactivate")}
+                    />
+                  </div>
+                )}
                 <CustomFormField
                   fieldType={FormFieldType.INPUT}
-                  name="user.password"
-                  label="পাসওয়ার্ড"
-                  icon={Lock}
+                  name="address"
+                  label="ঠিকানা"
+                  icon={MapPin}
                   control={form.control}
-                  placeholder="পাসওয়ার্ড লিখুন"
                 />
-              )}
-              <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                name="address"
-                label="ঠিকানা"
-                icon={MapPin}
-                control={form.control}
-                placeholder="আপনার সম্পূর্ণ ঠিকানা লিখুন"
-              />
-            </div>
-            {isEditMode && (
-              <div className="mt-4 p-1 bg-slate-100 rounded-2xl flex gap-1">
-                {/* একটিভ বাটন */}
-                <button
-                  type="button"
-                  onClick={() => form.setValue("user.deactivate", false)}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl transition-all ${
-                    !form.watch("user.deactivate")
-                      ? "bg-white text-emerald-600 shadow-sm"
-                      : "text-slate-500"
-                  }`}
-                >
-                  <div
-                    className={`h-2 w-2 rounded-full ${!form.watch("user.deactivate") ? "bg-emerald-500 animate-pulse" : "bg-slate-300"}`}
-                  />
-                  <span className="text-xs font-bold">সক্রিয়</span>
-                </button>
-
-                {/* ইনাক্টিভ বাটন */}
-                <button
-                  type="button"
-                  onClick={() => form.setValue("user.deactivate", true)}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl transition-all ${
-                    form.watch("user.deactivate")
-                      ? "bg-white text-rose-600 shadow-sm"
-                      : "text-slate-500"
-                  }`}
-                >
-                  <div
-                    className={`h-2 w-2 rounded-full ${form.watch("user.deactivate") ? "bg-rose-500" : "bg-slate-300"}`}
-                  />
-                  <span className="text-xs font-bold">নিষ্ক্রিয়</span>
-                </button>
-
-                <input type="hidden" {...form.register("user.deactivate")} />
-              </div>
-            )}
-            <Button
-              disabled={isPending}
-              className="w-full h-11 bg-slate-900 rounded-xl"
-            >
-              {isPending ? <Loader2 className="animate-spin" /> : "সেভ করুন"}
-            </Button>
-          </form>
-        </Form>
+                {/* FOOTER */}
+                <div className="sticky bottom-0 flex items-center justify-end border-t border-slate-100 bg-white pt-4">
+                  <Button
+                    type="submit"
+                    disabled={isPending}
+                    className="h-11 rounded-xl bg-slate-900 px-6 text-sm font-semibold hover:bg-slate-800"
+                  >
+                    {isPending ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      "সেভ করুন"
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

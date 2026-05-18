@@ -15,27 +15,30 @@ export default function SiteLogo() {
   };
 
   return (
-    <button
-      onClick={handleHome}
-      className="flex items-center justify-center group outline-none select-none transition-all active:scale-95"
-    >
-      <div className="flex items-center gap-[2px]">
-        {/* Main Brand Text */}
-        <span className="text-3xl font-black text-[#1A237E] tracking-tighter transition-colors group-hover:text-[#1E293B]">
-          <span className="text-[33px]">s</span>usthi
-        </span>
+    <div>
+      <button
+        onClick={handleHome}
+        className="  group outline-none select-none transition-all active:scale-95"
+      >
+        <div className="flex items-center gap-0.5">
+          {/* Main Brand Text - Deep Professional Slate */}
+          <span className="text-2xl font-black text-[#1A237E] tracking-tighter transition-colors group-hover:text-[#1E293B]">
+            Susthi
+          </span>
 
-        {/* The Icon 'O' - Circle with Background */}
-        <div className="relative flex items-center justify-center">
-          {/* এই div টি এখন নিশ্চিতভাবে দেখা যাবে */}
-          <div className="w-5 h-5 bg-[#15d1d1] rounded-full flex items-center justify-center    ">
-            {/* আইকন কালার white দিন যাতে ব্যাকগ্রাউন্ডে ফুটে ওঠে */}
-            <Stethoscope size={12} strokeWidth={3} className="text-white" />
+          {/* The Icon 'O' - Refined Medical Cyan */}
+          <div className="relative flex items-center justify-center ml-[1px]">
+            <div className="relative w-[20px] h-[20px] border-[3px] border-[#1A237E] rounded-full flex items-center justify-center transition-all duration-300  ">
+              {/* Lucide Stethoscope Icon centered perfectly */}
+              <Stethoscope
+                size={8}
+                strokeWidth={3}
+                className="text-[#06B6D4] transition-colors duration-300  "
+              />
+            </div>
           </div>
-
-          {/* একটি ছোট ডট যোগ করা যেতে পারে প্রাক্টো স্টাইলে */}
         </div>
-      </div>
-    </button>
+      </button>
+    </div>
   );
 }

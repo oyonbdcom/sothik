@@ -143,62 +143,64 @@ export default function ClinicManagement() {
             clinics.map((clinic: IClinicResponse) => (
               <div
                 key={clinic.id}
-                className="group bg-white rounded-[2rem] p-5 border border-slate-100 shadow-sm hover:shadow-md transition-all relative overflow-hidden"
+                className="group rounded-3xl border border-slate-100 bg-white p-4 shadow-sm transition-all hover:border-emerald-100 hover:shadow-lg"
               >
-                {/* স্ট্যাটাস ব্যাজ */}
-                <div
-                  className={`absolute top-0 right-0 px-4 py-1.5 rounded-bl-2xl text-[9px] font-black uppercase ${
-                    clinic.user?.deactivate
-                      ? "bg-rose-50 text-rose-500"
-                      : "bg-emerald-50 text-emerald-500"
-                  }`}
-                >
-                  {clinic.user?.deactivate ? "Inactive" : "Active"}
-                </div>
+                {/* top */}
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-3">
+                    {/* image */}
+                    <div className="relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-emerald-50 text-emerald-600">
+                      {clinic.user?.image ? (
+                        <Image
+                          src={clinic.user.image}
+                          alt={clinic.name}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <Building2 size={24} />
+                      )}
+                    </div>
 
-                <div className="flex items-start gap-4">
-                  <div className="w-16 h-16 relative bg-slate-50 text-emerald-700 rounded-2xl flex items-center justify-center border border-emerald-100/50 group-hover:scale-105 transition-transform overflow-hidden">
-                    {clinic.user?.image ? (
-                      <Image
-                        src={clinic.user.image}
-                        alt={clinic.name}
-                        fill
-                        className="object-cover"
-                      />
-                    ) : (
-                      <Building2 size={30} />
-                    )}
-                  </div>
+                    {/* info */}
+                    <div className="min-w-0">
+                      <h3 className="truncate text-sm font-bold text-slate-800">
+                        {clinic.user?.name}
+                      </h3>
 
-                  <div className="flex-1">
-                    <h3 className="font-bold text-slate-900 text-lg leading-tight group-hover:text-emerald-600">
-                      {clinic.name}
-                    </h3>
-                    <div className="flex items-center gap-1.5 mt-1">
-                      <MapPin size={12} className="text-slate-400" />
-                      <p className="text-[10px] font-bold text-slate-500 uppercase">
-                        {clinic.address}, {clinic.area?.name},{" "}
-                        {clinic.area?.district?.name}
+                      <p className="mt-1 flex items-start gap-1 text-[11px] text-slate-500">
+                        <MapPin size={12} className="mt-0.5 shrink-0" />
+
+                        <span className="line-clamp-2">
+                          {clinic.address}, {clinic.area?.name}
+                        </span>
                       </p>
                     </div>
                   </div>
+
+                  {/* status */}
+                  <span
+                    className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${
+                      clinic.user?.deactivate
+                        ? "bg-rose-100 text-rose-600"
+                        : "bg-emerald-100 text-emerald-600"
+                    }`}
+                  >
+                    {clinic.user?.deactivate ? "Inactive" : "Active"}
+                  </span>
                 </div>
 
-                <div className="mt-5 pt-4 border-t border-dashed border-slate-100 flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">
-                      Clinic Slug
-                    </span>
-                    <span className="text-[11px] font-black text-slate-700">
-                      /{clinic.slug}
-                    </span>
-                  </div>
-
+                {/* bottom */}
+                <div className=" flex items-center justify-between gap-2    ">
+                  <p className="mt-1 text-[10px] font-medium text-slate-400">
+                    /{clinic.slug}
+                  </p>
                   <div className="flex items-center gap-2">
-                    <ClinicDialog clinic={clinic} isEditMode={true} />
+                    {" "}
+                    <ClinicDialog clinic={clinic} isEditMode />
                     <button
                       onClick={() => handleDelete(clinic.id)}
-                      className="p-2.5 bg-rose-50 text-rose-500 rounded-xl hover:bg-rose-600 hover:text-white transition-all shadow-sm"
+                      className="rounded-xl bg-rose-50   text-rose-500 transition-all "
                     >
                       <Trash2 size={16} />
                     </button>

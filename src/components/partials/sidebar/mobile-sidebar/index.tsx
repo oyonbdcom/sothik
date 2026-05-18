@@ -4,7 +4,7 @@ import LogoutButton from "@/components/logout";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { MenuItemProps } from "@/config/menus";
+
 import { useMounted } from "@/hooks/use-mounted";
 import { cn, isLocationMatch } from "@/lib/utils/utils";
 import { useSidebar } from "@/store";
@@ -13,6 +13,7 @@ import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 
 import SiteLogo from "@/components/sitelogo";
+import { MenuItemProps } from "@/config/sidebar/sidebar.types";
 import { useAuth } from "@/hooks/useAuth";
 import MenuLabel from "../common/menu-label";
 import NestedSubMenu from "../common/nested-menus";

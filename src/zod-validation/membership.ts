@@ -2,7 +2,10 @@ import { z } from "zod";
 
 export const membershipSchema = z.object({
   doctorId: z.string().min(1, { message: "ডাক্তার নির্বাচন করা আবশ্যক" }),
-  clinicId: z.string().min(1, { message: "ক্লিনিক নির্বাচন করা আবশ্যক" }),
+  clinicId: z
+    .string()
+    .min(1, { message: "ক্লিনিক নির্বাচন করা আবশ্যক" })
+    .optional(),
 
   fee: z.coerce
     .number({

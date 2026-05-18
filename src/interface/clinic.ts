@@ -18,17 +18,26 @@ export interface IClinicResponse {
   areaId: string;
   area: IAreaResponse;
   memberships: IMembershipResponse[];
-  averageRating: number;
-  stats: IClinicStats;
-  reviewsCount: number;
+  website: string;
+  stats: IDiagnosticManagerStats;
+
   createdAt: string;
   updatedAt: string;
 }
 
-export interface IClinicStats {
-  total: number;
-  active: number;
-  inactive: number;
+export interface IStaffActivity {
+  id: string;
+  name: string;
+  role: string;
+  totalBookings: number;
+}
+
+export interface IDiagnosticManagerStats {
+  totalDoctors: number;
+  todayAppointments: number;
+  completedAppointments: number;
+  totalStaffs: number;
+  staffActivities: IStaffActivity[];
 }
 export type ICreateClinicRequest = z.infer<typeof createClinicSchema>;
 

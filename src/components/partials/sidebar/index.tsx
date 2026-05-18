@@ -1,33 +1,17 @@
 "use client";
 
-import {
-  adminConfig,
-  clinicConfig,
-  doctorConfig,
-  managerConfig,
-  MenuItemProps,
-  patientConfig,
-} from "@/config/menus";
 import { useMediaQuery } from "@/hooks/use-media-query";
 
-import { UserRole } from "@/constant/common";
-import { getUserInfo } from "@/service/auth.service";
+import { getSidebarMenus } from "@/config/sidebar/sidebar.config";
+import { useAuth } from "@/hooks/useAuth";
 import PopoverSidebar from "./desktop-sidebar";
 import MobileSidebar from "./mobile-sidebar";
 
 const Sidebar = () => {
   const isDesktop = useMediaQuery("(min-width: 1280px)");
-  const user = getUserInfo();
+  const { user } = useAuth();
 
-  const roleMap: Record<string, MenuItemProps[]> = {
-    [UserRole.ADMIN]: adminConfig,
-    [UserRole.DOCTOR]: doctorConfig,
-    [UserRole.CLINIC]: clinicConfig,
-    [UserRole.PATIENT]: patientConfig,
-    [UserRole.MANAGER]: managerConfig,
-  };
-
-  const menus = roleMap[user?.role ?? ""] ?? [];
+  const menus = getSidebarMenus(user?.role, user?.staff?.staffType);
 
   return (
     <div>

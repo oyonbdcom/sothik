@@ -20,8 +20,6 @@ export default function DoctorGridCard({
   const imageSrc =
     doctor?.user?.image || (doctor.gender === "MALE" ? avatar : femaleAvatar);
 
-  const isAvailable = doctor?.memberships;
-
   return (
     // ১. 'flex flex-col h-full' নিশ্চিত করে সব কার্ড সমান লম্বা হবে
     <div className="group flex flex-col h-full bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
@@ -36,32 +34,29 @@ export default function DoctorGridCard({
           />
         </div>
 
-        <div
-          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm border ${
-            isAvailable
-              ? "bg-emerald-50 text-emerald-600 border-emerald-100"
-              : "bg-rose-50 text-rose-600 border-rose-100"
-          }`}
-        >
-          <span className="relative flex h-2 w-2">
-            {isAvailable && (
+        {doctor?.position && (
+          <div
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm border bg-emerald-50 text-emerald-600 border-emerald-100`}
+          >
+            <span className="relative flex h-2 w-2">
+              {/* ping animation */}
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            )}
-            <span
-              className={`relative inline-flex rounded-full h-2 w-2 ${
-                isAvailable ? "bg-emerald-500" : "bg-rose-500"
-              }`}
-            />
-          </span>
-          {isAvailable ? "বুকিং চলছে" : "সিরিয়াল পূর্ণ"}
-        </div>
+
+              {/* dot */}
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+
+            {doctor.position}
+          </div>
+        )}
+
         <div className="absolute bottom-3  left-[104px]">
           <VerifiedBadge />
         </div>
       </div>
 
       {/* Body - ২. 'flex-1' ব্যবহার করা হয়েছে যাতে বডি পুরো জায়গা নেয় */}
-      <div className="p-4 flex flex-col flex-1 space-y-3">
+      <div className="p-4 flex flex-col flex-1 space-y-1">
         {/* কন্টেন্ট হোল্ডার - এটি ফাঁকা জায়গা পূরণ করবে */}
         <div className="flex-1 space-y-3">
           {/* Name + Position */}
@@ -69,18 +64,11 @@ export default function DoctorGridCard({
             <h3 className="font-bold text-slate-900 text-sm truncate group-hover:text-blue-600 transition">
               {doctorName}
             </h3>
-            <div className="md:min-h-[32px]">
+            <div className=" ">
               <p className="text-blue-600 text-sm font-medium leading-tight line-clamp-2">
                 {doctor.specialization || "বিশেষজ্ঞ চিকিৎসক"}
               </p>
             </div>
-            {doctor?.position ? (
-              <span className="inline-block text-[10px] font-semibold bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
-                {doctor.position}
-              </span>
-            ) : (
-              <div className="md:h-[18px]" />
-            )}
           </div>
 
           {/* Specialization - ৪. min-h দিয়ে হাইট ফিক্স করা হয়েছে */}
@@ -106,7 +94,7 @@ export default function DoctorGridCard({
         </div>
 
         {doctor?.memberships && doctor.memberships.length > 0 && (
-          <div className="space-y-2 pt-1">
+          <div className="space-y-2 ">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                 <Building className="w-3.5 h-3.5" /> চেমার সমুহ
@@ -124,7 +112,7 @@ export default function DoctorGridCard({
                     return (
                       <div
                         key={member.id}
-                        className="flex items-center w-40 gap-1.5 pr-3 py-1 pl-1 bg-slate-50 border border-slate-100 rounded-full shrink-0 shadow-sm"
+                        className="flex items-center w-34 gap-1.5 pr-3 py-1 pl-1 bg-slate-50 border border-slate-100 rounded-full shrink-0 shadow-sm"
                       >
                         <div className="relative h-7 w-7 rounded-full overflow-hidden border-2 border-white shrink-0 shadow-sm">
                           <Image
@@ -134,13 +122,13 @@ export default function DoctorGridCard({
                             className="object-cover"
                           />
                         </div>
-                        <div className="flex flex-col leading-4 ">
+                        <div className="flex flex-col leading-4 max-w-24 ">
                           <span className="text-[11px] truncate font-black text-slate-700">
                             {shortClinicName}
                           </span>
-                          <span className="text-[11px] font-black truncate text-slate-700">
+                          <span className="text-[9px]  font-black truncate text-slate-700">
                             {member?.clinic?.area?.name},{" "}
-                            {member?.clinic?.area?.district?.name}
+                            {member?.clinic?.area?.district?.name}ffgfgfgfgf
                           </span>
                         </div>
                       </div>

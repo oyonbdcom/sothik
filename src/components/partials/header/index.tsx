@@ -1,40 +1,40 @@
 "use client";
-import { useMediaQuery } from "@/hooks/use-media-query";
-import { useSidebar } from "@/store";
-import FullScreen from "./full-screen";
-
-import ClassicHeader from "./layout/classic-header";
-import MobileMenuHandler from "./mobile-menu-handler";
 
 import SiteLogo from "@/components/sitelogo";
+import { UserRole } from "@/constant/common";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { useAuth } from "@/hooks/useAuth";
+import ClassicHeader from "./layout/classic-header";
+import MobileMenuHandler from "./mobile-menu-handler";
 import { ProfileInfo } from "./profile-info";
-import VerticalHeader from "./vertical-header";
-
-const NavTools = ({ isDesktop }: { isDesktop: boolean }) => (
-  <div className="nav-tools flex items-center gap-2">
-    {isDesktop && <FullScreen />}
-
-    {/* {<NotificationMessage />} */}
-    <ProfileInfo dashboard />
-    {!isDesktop && <MobileMenuHandler />}
-  </div>
-);
 
 const Header = () => {
-  const { collapsed } = useSidebar();
-  const isDesktop = useMediaQuery("(min-width: 1280px)");
-
+  // Logic fix: isDesktop is true if width >= 768px
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const { user } = useAuth();
   return (
-    <ClassicHeader className="sticky top-0">
-      <div className={` ${!collapsed ? "collapsed  " : "not-collapsed "}`}>
-        <div className="w-full bg-card/90 backdrop-blur-lg md:px-6 px-[15px]  h-14 border-b">
-          <div className="flex justify-between   items-center h-full">
-            <div className="lg:hidden">
-              <SiteLogo />
-            </div>
-            <VerticalHeader />
-            <NavTools isDesktop={isDesktop} />
+    <ClassicHeader>
+      <div className="bg-white collapsed border-b border-slate-200 px-4  h-16 z-20 flex justify-between items-center shadow-sm">
+        <div className="flex items-center gap-4">
+          {/* Mobile Hamburger: Only shows on screens smaller than 768px */}
+          {!isDesktop && <MobileMenuHandler />}
+
+          <div>
+            <SiteLogo />
+
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[2px]">
+              {user?.role?.replace(/_/g, " ")}
+              {user?.role === UserRole.STAFF && user?.staff?.staffType && (
+                <> • {user.staff?.staffType}</>
+              )}{" "}
+              Panel
+            </p>
           </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          {/* You can hide certain ProfileInfo details on mobile if needed */}
+          <ProfileInfo />
         </div>
       </div>
     </ClassicHeader>

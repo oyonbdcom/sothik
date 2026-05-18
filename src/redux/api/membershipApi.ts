@@ -22,12 +22,12 @@ const memberShipApi = baseApi.injectEndpoints({
     }),
 
     // 2. Get All Memberships (Filtering & Pagination)
-    getMemberships: build.query<
+    getDiagnosticMembershipsDoctors: build.query<
       { membership: any[]; meta: IMeta | undefined },
       Record<string, any> | void
     >({
       query: (arg) => ({
-        url: MEMBERSHIP_URL,
+        url: `${MEMBERSHIP_URL}/diagnostic-doctors`,
         method: "GET",
         params: arg,
       }),
@@ -39,14 +39,14 @@ const memberShipApi = baseApi.injectEndpoints({
       },
       providesTags: [tagTypes.membership],
     }),
-    getMyDoctors: build.query<any[], void>({
-      query: () => ({
-        url: `${MEMBERSHIP_URL}/my-doctors`,
-        method: "GET",
-      }),
-      transformResponse: (response: IGenericResponse<any[]>) => response.data,
-      providesTags: [tagTypes.membership, tagTypes.doctor],
-    }),
+    // getMyDoctors: build.query<any[], void>({
+    //   query: () => ({
+    //     url: `${MEMBERSHIP_URL}/my-doctors`,
+    //     method: "GET",
+    //   }),
+    //   transformResponse: (response: IGenericResponse<any[]>) => response.data,
+    //   providesTags: [tagTypes.membership, tagTypes.doctor],
+    // }),
     // 3. Get Single Membership By ID
     getMembershipById: build.query<any, { targetId: string; params?: any }>({
       query: ({ targetId, params }) => ({
@@ -91,9 +91,9 @@ const memberShipApi = baseApi.injectEndpoints({
 
 export const {
   useCreateMembershipMutation,
-  useGetMembershipsQuery,
+  useGetDiagnosticMembershipsDoctorsQuery,
   useGetMembershipByIdQuery,
   useUpdateMembershipMutation,
-  useGetMyDoctorsQuery,
+
   useDeleteMembershipMutation,
 } = memberShipApi;

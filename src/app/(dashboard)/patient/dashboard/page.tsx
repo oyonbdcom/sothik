@@ -3,17 +3,27 @@
 
 import DefaultPasswordAlert from "@/components/default-password-alart";
 import { IAppointmentResponse } from "@/interface/appointment";
-import { useGetMyAppointmentsQuery } from "@/redux/api/appointmentApi";
-import { CalendarX, Loader2 } from "lucide-react"; // ইমপোর্ট করা হয়েছে
-import { useState } from "react";
+import { registerNotification } from "@/lib/registernotification";
+import { useGetPatientAppointmentsQuery } from "@/redux/api/appointmentApi";
+import { CalendarX, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react"; // useEffect যোগ করা হয়েছে
 import { PastAppointmentCard } from "./components/past-appointment-card";
 
 export default function MembershipDoctors() {
-  // ১. স্টেট ডিফাইন করা (ফিল্টারিং এবং পেজিনেশনের জন্য)
+  // ১. স্টেট ডিফাইন করা
   const [page] = useState(1);
   const [searchTerm] = useState("");
   const [status] = useState("all");
   const [date] = useState("");
+
+  // 💡 নোটিফিকেশন পারমিশন চাওয়ার ফাংশন
+  useEffect(() => {
+    const requestNotificationPermission = async () => {
+      await registerNotification();
+    };
+
+    requestNotificationPermission();
+  }, []);
 
   const query: Record<string, any> = {
     page,
@@ -23,10 +33,8 @@ export default function MembershipDoctors() {
     ...(date !== "" && { date }),
   };
 
-  // ২. রিডাক্স থেকে ডেটা ফেচিং
-  const { data, isLoading, isError } = useGetMyAppointmentsQuery(query);
+  const { data, isLoading, isError } = useGetPatientAppointmentsQuery(query);
 
-  // ৩. হ্যান্ডেল লোডিং স্টেট
   if (isLoading) {
     return (
       <div className="flex h-60 flex-col items-center justify-center gap-2">
@@ -38,21 +46,18 @@ export default function MembershipDoctors() {
     );
   }
 
-  // ৪. হ্যান্ডেল এরর স্টেট
   if (isError) {
     return (
       <div className="rounded-lg border border-red-100 bg-red-50 p-4 text-center text-red-600">
-        অ্যাপয়েন্টমেন্ট লোড করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।
+        অ্যাপয়েন্টমেন্ট লোড করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।
       </div>
     );
   }
 
-  // ৫. ডেটা অ্যাসাইন করা
-  const appointments = data?.appointments || [];
+  const appointments = data?.data || [];
 
   return (
-    <div className="space-y-6">
-      {/* ডিফল্ট পাসওয়ার্ড নোটিফিকেশন ব্যানার */}
+    <div className="space-y-6 p-4">
       <DefaultPasswordAlert />
 
       <div className="flex items-center justify-between">
@@ -73,7 +78,7 @@ export default function MembershipDoctors() {
             <CalendarX className="h-10 w-10 text-slate-300" />
           </div>
           <h3 className="text-base font-bold text-slate-700">
-            কোনো অ্যাপয়েন্টমেন্ট পাওয়া যায়নি
+            কোনো অ্যাপয়েন্টমেন্ট পাওয়া যায়নি
           </h3>
           <p className="text-sm text-slate-500">
             আপনার বর্তমানে কোনো বুকিং রেকর্ড নেই।

@@ -73,12 +73,12 @@ const doctorApi = baseApi.injectEndpoints({
       },
       providesTags: [tagTypes.doctor],
     }),
-    getAllDoctorForManager: build.query<
+    getAccessibleDoctors: build.query<
       { doctors: IDoctorResponse[] },
       Record<string, any> | void
     >({
       query: (arg) => ({
-        url: `${DOCTOR_URL}/manager-all`,
+        url: `${DOCTOR_URL}/area-diagnostic-doctors`,
         method: "GET",
         params: arg,
       }),
@@ -133,7 +133,7 @@ export const {
   useUpdateDoctorMutation,
   useGetDoctorsQuery,
   useGetSingleDoctorQuery,
-  useGetAllDoctorForManagerQuery,
+  useGetAccessibleDoctorsQuery,
   useAddDoctorToAreaMutation,
   useDeleteDoctorMutation,
   useRemoveDoctorFromAreaMutation,

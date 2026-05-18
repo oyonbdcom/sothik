@@ -10,7 +10,7 @@ import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 export const ClinicCard = ({ clinic }: { clinic: IClinicResponse }) => {
   const clinicLink = `/diagnostic/${clinic?.slug || clinic?.userId}`;
   const clinicName = clinic?.user?.name || "ক্লিনিক";
-  const isAvailable = clinic?.memberships;
+  const isAvailable = !clinic?.user?.deactivate;
 
   return (
     <div className="group flex flex-col h-full bg-white rounded-2xl overflow-hidden border border-slate-200 hover:border-blue-400 shadow-sm hover:shadow-xl transition-all duration-500">

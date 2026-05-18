@@ -5,13 +5,13 @@ import { tagTypes } from "@/types/tagTypes";
 
 import {
   IClinicResponse,
-  IClinicStats,
   ICreateClinicRequest,
+  IDiagnosticManagerStats,
   IUpdateClinicRequest,
 } from "@/interface/clinic";
 import { baseApi } from "../api/baseApi";
 
-const CLINIC_URL = "/clinics";
+const DIAGNOSTIC_URL = "/diagnostic";
 
 const clinicApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -20,7 +20,7 @@ const clinicApi = baseApi.injectEndpoints({
       ICreateClinicRequest
     >({
       query: (data) => ({
-        url: CLINIC_URL,
+        url: DIAGNOSTIC_URL,
         method: "POST",
         data,
       }),
@@ -32,7 +32,7 @@ const clinicApi = baseApi.injectEndpoints({
       { id: string; data: Partial<IUpdateClinicRequest> }
     >({
       query: ({ id, data }) => ({
-        url: `${CLINIC_URL}/${id}`,
+        url: `${DIAGNOSTIC_URL}/${id}`,
         method: "PATCH",
         data,
       }),
@@ -44,7 +44,7 @@ const clinicApi = baseApi.injectEndpoints({
       Record<string, any> | void
     >({
       query: (arg) => ({
-        url: CLINIC_URL,
+        url: DIAGNOSTIC_URL,
         method: "GET",
         params: arg,
       }),
@@ -57,12 +57,12 @@ const clinicApi = baseApi.injectEndpoints({
       },
       providesTags: [tagTypes.clinic],
     }),
-    getManagerClinics: build.query<
+    getAllAreaClinics: build.query<
       { clinics: IClinicResponse[]; meta: IMeta | undefined },
       Record<string, any> | void
     >({
       query: (arg) => ({
-        url: `${CLINIC_URL}/my-clinics`,
+        url: `${DIAGNOSTIC_URL}/area-diagnostic`,
         method: "GET",
         params: arg,
       }),
@@ -74,40 +74,28 @@ const clinicApi = baseApi.injectEndpoints({
       },
       providesTags: [tagTypes.clinic],
     }),
-    getAllClinicsForManager: build.query<
-      { clinics: IClinicResponse[] },
-      Record<string, any> | void
+
+    getDiagnosticManagerStats: build.query<
+      { stats: IDiagnosticManagerStats },
+      void
     >({
-      query: (arg) => ({
-        url: `${CLINIC_URL}/manager-all`,
-        method: "GET",
-        params: arg,
-      }),
-
-      transformResponse: (response: any) => {
-        return {
-          clinics: response.data,
-        };
-      },
-
-      providesTags: [tagTypes.clinic],
-    }),
-    getClinicStats: build.query<{ stats: IClinicStats }, void>({
       query: () => ({
-        url: `${CLINIC_URL}/statistics`,
+        url: `${DIAGNOSTIC_URL}/statistics`,
         method: "GET",
       }),
-      transformResponse: (response: IGenericResponse<IClinicStats>) => {
+      transformResponse: (
+        response: IGenericResponse<IDiagnosticManagerStats>,
+      ) => {
         return {
-          stats: response.data as IClinicStats,
+          stats: response.data as IDiagnosticManagerStats,
         };
       },
-      providesTags: [tagTypes.clinic],
+      providesTags: [tagTypes.staff],
     }),
     // clinicApi.ts
     getSingleClinic: build.query({
-      query: (id) => ({
-        url: `${CLINIC_URL}/${id}`,
+      query: () => ({
+        url: `${DIAGNOSTIC_URL}/single`,
         method: "GET",
       }),
       transformResponse: (response: IGenericResponse<IClinicResponse>) => {
@@ -122,7 +110,7 @@ const clinicApi = baseApi.injectEndpoints({
 
     deleteClinic: build.mutation({
       query: (id) => ({
-        url: `${CLINIC_URL}/${id}`,
+        url: `${DIAGNOSTIC_URL}/${id}`,
         method: "DELETE",
       }),
 
@@ -134,10 +122,10 @@ const clinicApi = baseApi.injectEndpoints({
 export const {
   useAddClinicMutation,
   useUpdateClinicMutation,
-  useGetClinicStatsQuery,
+  useGetDiagnosticManagerStatsQuery,
   useGetClinicsQuery,
-  useGetAllClinicsForManagerQuery,
+
+  useGetAllAreaClinicsQuery,
   useGetSingleClinicQuery,
   useDeleteClinicMutation,
-  useGetManagerClinicsQuery,
 } = clinicApi;

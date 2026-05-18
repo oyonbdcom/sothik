@@ -17,8 +17,9 @@ interface SearchParams {
   rating?: string;
   area?: string;
   gender?: "MALE" | "FEMALE";
+  isEmergency: "true";
 }
-const pagefff = 2222;
+
 // --- SEO: Dynamic Metadata Generation ---
 export async function generateMetadata({
   searchParams,
@@ -34,6 +35,7 @@ export async function generateMetadata({
   const urlParams = new URLSearchParams();
   if (params.department) urlParams.set("department", params.department);
   if (params.district) urlParams.set("district", params.district);
+  urlParams.set("membership", "true");
   if (params.page) urlParams.set("page", params.page);
   const canonicalPath = urlParams.toString()
     ? `/doctors?${urlParams.toString()}`
@@ -64,7 +66,7 @@ export default async function DoctorsPage({
 
   const query = {
     page: Number(params.page) || 1,
-    limit: 12, // Professional standard limit
+    limit: 12,
     department: params.department,
     searchTerm: params.searchTerm,
     district: params.district,
@@ -118,7 +120,7 @@ export default async function DoctorsPage({
       />
 
       <section className="bg-card/30 backdrop-blur-md py-10">
-        <div className="container mx-auto px-4">
+        <div className="container ">
           <aside className="w-full mb-8">
             <DoctorFilterForm />
           </aside>

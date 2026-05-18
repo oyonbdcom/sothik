@@ -35,8 +35,6 @@ export default function MedicalRecordsAddDialog({
     resolver: zodResolver(createMedicalHistorySchema),
     defaultValues: {
       name: "",
-      description: "",
-      date: new Date().toISOString().split("T")[0] as any,
       document: "",
       appointmentId: appointmentId,
     },
@@ -44,12 +42,19 @@ export default function MedicalRecordsAddDialog({
 
   const onSubmit: SubmitHandler<ICreateMedicalRecords> = async (data) => {
     try {
-      await createMedicalRecord({ ...data, appointmentId }).unwrap();
-      toast.success("রেকর্ডটি সফলভাবে সংরক্ষিত হয়েছে");
+      // ডেট বাদ দিলেও ব্যাকএন্ডে যদি ডেট রিকোয়ার্ড থাকে, তবে আজকের ডেট অটো পাঠিয়ে দিচ্ছি
+      const submissionData = {
+        ...data,
+        appointmentId,
+        date: new Date().toISOString(),
+      };
+
+      await createMedicalRecord(submissionData).unwrap();
+      toast.success("রেকর্ডটি সফলভাবে সংরক্ষিত হয়েছে");
       form.reset();
       setOpen(false);
     } catch (error: any) {
-      toast.error(error?.data?.message || "সংরক্ষণ করতে সমস্যা হয়েছে");
+      toast.error(error?.message || "সংরক্ষণ করতে সমস্যা হয়েছে");
     }
   };
 
@@ -58,23 +63,21 @@ export default function MedicalRecordsAddDialog({
       <DialogTrigger asChild>
         <Button
           variant="outline"
-          className="w-full flex items-center justify-center gap-2 py-6 border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-indigo-600 transition-all rounded-lg"
+          size={"sm"}
+          className="text-[10px] uppercase gap-2"
         >
           <Plus className="h-4 w-4" />
-          <span className="font-semibold text-sm">নতুন রিপোর্ট যোগ করুন</span>
+          রেকর্ডস ও প্রেসক্রিশন যোগ করুন
         </Button>
       </DialogTrigger>
 
-      {/* মেইন ফিক্স: flex flex-col এবং max-h-[90vh] ব্যবহার করা হয়েছে 
-          যাতে স্ক্রিন ছোট হলে ডায়ালগ স্ক্রিনের বাইরে চলে না যায়।
-      */}
-      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden rounded-xl border border-slate-200 flex flex-col max-h-[90vh]">
-        {/* Header - Fixed */}
+      <DialogContent className="sm:max-w-[450px] p-0 overflow-hidden rounded-xl border border-slate-200 flex flex-col max-h-[90vh]">
+        {/* Header */}
         <div className="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex-shrink-0">
           <DialogHeader>
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-indigo-50 rounded-lg">
-                <FileUp className="h-5 w-5 text-indigo-600" />
+              <div className="p-2 bg-indigo-50 rounded-lg text-indigo-600">
+                <FileUp className="h-5 w-5" />
               </div>
               <div>
                 <DialogTitle className="text-xl font-bold text-slate-900">
@@ -88,43 +91,33 @@ export default function MedicalRecordsAddDialog({
           </DialogHeader>
         </div>
 
-        {/* Scrollable Form Body - overflow-y-auto ব্যবহার করা হয়েছে */}
+        {/* Form Body */}
         <div className="p-6 overflow-y-auto custom-scrollbar">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <div className="space-y-4">
+              <div className="space-y-5">
                 <CustomFormField
                   fieldType={FormFieldType.INPUT}
                   name="name"
                   control={form.control}
-                  placeholder="উদাঃ রক্ত পরীক্ষা, এক্স-রে"
-                  label="রিপোর্টের নাম"
-                />
-
-                <CustomFormField
-                  fieldType={FormFieldType.INPUT}
-                  name="date"
-                  control={form.control}
-                  type="date"
-                  label="পরীক্ষার তারিখ"
+                  placeholder="উদাঃ প্রেসক্রিপশন, রক্ত পরীক্ষা"
+                  label="ফাইলের নাম বা টাইটেল"
                 />
 
                 <CustomFormField
                   fieldType={FormFieldType.FILE_UPLOAD}
                   name="document"
                   control={form.control}
-                  label="ডকুমেন্ট আপলোড (PDF বা ছবি)"
+                  label="ডকুমেন্ট আপলোড (ছবি বা PDF)"
                 />
-
-                {/* প্রয়োজনে আরও ফিল্ড এখানে যোগ করলেও স্ক্রল হবে */}
               </div>
 
-              {/* Action Buttons - Fixed at bottom of the scroll area or outside */}
+              {/* Action Buttons */}
               <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-50 mt-4">
                 <Button
                   type="button"
-                  variant="outline"
-                  className="px-6 rounded-md font-medium text-slate-600"
+                  variant="ghost"
+                  className="px-6 text-slate-500 hover:text-slate-700"
                   onClick={() => setOpen(false)}
                   disabled={isLoading}
                 >
@@ -133,12 +126,12 @@ export default function MedicalRecordsAddDialog({
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="px-6 bg-primary-600 hover:bg-primary-700 text-white rounded-md font-medium min-w-[120px]"
+                  className="px-6 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md font-medium min-w-[140px] shadow-sm transition-all"
                 >
                   {isLoading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
-                    "রেকর্ড সেভ করুন"
+                    "সংরক্ষণ করুন"
                   )}
                 </Button>
               </div>

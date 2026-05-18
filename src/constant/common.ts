@@ -8,8 +8,13 @@ export const UserRole = {
   PATIENT: "PATIENT",
   DOCTOR: "DOCTOR",
   ADMIN: "ADMIN",
-  CLINIC: "CLINIC",
-  MANAGER: "MANAGER",
+  DIAGNOSTIC_MANAGER: "DIAGNOSTIC_MANAGER",
+  AREA_MANAGER: "AREA_MANAGER",
+  STAFF: "STAFF",
+};
+export const StaffType = {
+  RECEPTIONIST: "RECEPTIONIST",
+  COORDINATOR: "COORDINATOR",
 };
 
 // ফোন নম্বর: ইংরেজি (017...) এবং বাংলা (০১৭১...) উভয় সংখ্যা সাপোর্ট করবে

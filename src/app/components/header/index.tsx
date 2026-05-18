@@ -1,5 +1,5 @@
 "use client";
-import { menus } from "@/config/menus";
+
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { getUserInfo } from "@/service/auth.service";
 import Link from "next/link";
@@ -9,6 +9,7 @@ import MobileMenuHandler from "@/components/partials/header/mobile-menu-handler"
 import { ProfileInfo } from "@/components/partials/header/profile-info";
 import MobileSidebar from "@/components/partials/sidebar/mobile-sidebar";
 import SiteLogo from "@/components/sitelogo";
+import { menus } from "@/config/sidebar/common.sidebar";
 
 const Header = () => {
   const pathname = usePathname();

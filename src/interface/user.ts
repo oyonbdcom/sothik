@@ -10,9 +10,9 @@ export interface IUserResponse {
   role: UserRole;
   deactivate: boolean;
   isDefaultPassword: boolean;
-  lastLoginAt?: Date | null;
-  createdAt: Date | null;
-  updatedAt: Date | null;
+  staff: {
+    staffType: string;
+  };
 
   doctor?: any;
   patient?: any;
