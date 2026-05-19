@@ -12,7 +12,7 @@ export const getAllClinics = async (query: Record<string, any>) => {
     });
 
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/clinics?${queryString.toString()}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/diagnostic?${queryString.toString()}`,
       {
         next: {
           revalidate: 60,
@@ -33,9 +33,9 @@ export const getAllClinics = async (query: Record<string, any>) => {
 };
 // services/doctorService.ts
 
-export const getSingleClinic = async (id: string) => {
+export const getSingleClinic = async (slug: string) => {
   try {
-    const res = await fetch(`${BASE_URL}/clinics/${id}`, {
+    const res = await fetch(`${BASE_URL}/diagnostic/${slug}`, {
       cache: "no-store",
     });
 

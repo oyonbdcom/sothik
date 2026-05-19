@@ -134,7 +134,7 @@ export default function EmergencyAppointmentBooking({
         className="w-full bg-red-600 hover:bg-red-700 text-white font-bold h-12 gap-2 shadow-lg rounded-xl transition-all"
       >
         <Plus size={18} />
-        এমার্জেন্সি বুকিং (৳{fee})
+        এমার্জেন্সি বুকিং
       </Button>
 
       <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden border-none rounded-3xl">

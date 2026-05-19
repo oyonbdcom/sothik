@@ -110,7 +110,8 @@ export default function DoctorGridCard({
                     const shortClinicName = fullClinicName.split(" ")[0];
 
                     return (
-                      <div
+                      <Link
+                        href={`/diagnostic/${member.clinic?.slug}`}
                         key={member.id}
                         className="flex items-center w-34 gap-1.5 pr-3 py-1 pl-1 bg-slate-50 border border-slate-100 rounded-full shrink-0 shadow-sm"
                       >
@@ -128,10 +129,10 @@ export default function DoctorGridCard({
                           </span>
                           <span className="text-[9px]  font-black truncate text-slate-700">
                             {member?.clinic?.area?.name},{" "}
-                            {member?.clinic?.area?.district?.name}ffgfgfgfgf
+                            {member?.clinic?.area?.district?.name}
                           </span>
                         </div>
-                      </div>
+                      </Link>
                     );
                   })}
                 </div>

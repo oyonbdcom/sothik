@@ -301,7 +301,7 @@ export const PastAppointmentCard = ({
               <div className="h-2 w-2 bg-rose-500 rounded-full shrink-0" />
               <p className="text-[10px] text-rose-600 font-medium leading-tight">
                 আপনার জরুরি রিকোয়েস্টটি কর্তৃপক্ষ বাতিল করেছে। বিস্তারিত জানতে
-                ক্লিনিক ডেস্কে যোগাযোগ করুন।
+                ডায়াগনস্টিক ডেস্কে যোগাযোগ করুন।
               </p>
             </div>
           )}
