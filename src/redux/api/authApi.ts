@@ -1,6 +1,9 @@
-import { ILoginResponse } from "./../../../../server/src/app/modules/auth/interface";
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ILoginRequest, IRegisterRequest } from "@/interface/auth";
+import {
+  ILoginRequest,
+  ILoginResponse,
+  IRegisterRequest,
+} from "@/interface/auth";
 import { IUserResponse } from "@/interface/user";
 import { IGenericResponse, IMeta } from "@/types";
 import { tagTypes } from "@/types/tagTypes";
