@@ -17,7 +17,13 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-
+const setClientCookie = (name: string, value: string, days: number) => {
+  if (typeof window !== "undefined") {
+    const maxAge = days * 24 * 60 * 60;
+    const cookieString = `${name}=${value}; path=/; max-age=${maxAge}; SameSite=None; Secure`;
+    document.cookie = cookieString;
+  }
+};
 export default function LoginPageContent() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
@@ -39,35 +45,43 @@ export default function LoginPageContent() {
       const result = await loginUser(values).unwrap();
 
       const accessToken = result?.data?.accessToken;
+      const refreshToken = result?.data?.refreshToken;
       const user = result?.data?.user;
 
+      // ১. এক্সেস টোকেন লোকাল স্টোরেজে সেভ করা (API কলের জন্য)
       if (accessToken) {
         storeUserInfo({ accessToken });
       }
 
-      toast.success("লগইন সফল হয়েছে!", { id: toastId });
+      // ২. রিফ্রেশ টোকেন কুকিতে সেট করা (মিডলওয়্যারের জন্য)
+      if (refreshToken) {
+        setClientCookie("refreshToken", refreshToken, 7);
+      }
 
-      // রিডাইরেকশন লজিক
+      toast.success("লগইন সফল হয়েছে!", { id: toastId });
+
+      // ৩. রিডাইরেকশন লজিক
+      // window.location.href ব্যবহার করা হয়েছে যাতে হার্ড রিফ্রেশ হয় এবং মিডলওয়্যার কুকি পায়
       if (callbackUrl && callbackUrl.startsWith("/")) {
-        router.replace(callbackUrl);
+        router.push(callbackUrl);
       } else if (user?.role) {
         const dashboardMap: Record<string, string> = {
           ADMIN: "/admin/dashboard",
           DOCTOR: "/doctor/dashboard",
           PATIENT: "/patient/dashboard",
           CLINIC: "/clinic/dashboard",
+          AREA_MANAGER: "/area_manager/dashboard",
+          STAFF: "/staff/dashboard",
+          DIAGNOSTIC_MANAGER: "/diagnostic_manager/dashboard",
         };
 
         const targetPath = dashboardMap[user.role] || "/";
-
-        router.replace(targetPath);
+        router.push(targetPath);
       }
     } catch (err: any) {
-      console.log(err);
-      // ব্যাকএন্ড এরর মেসেজ হ্যান্ডলিং
+      console.error("Login Error:", err);
       const errorMessage =
-        err?.message || "লগইন করা সম্ভব হয়নি। আবার চেষ্টা করুন।";
-
+        err?.data?.message || err?.message || "লগইন করা সম্ভব হয়নি।";
       toast.error(errorMessage, { id: toastId });
     }
   };
