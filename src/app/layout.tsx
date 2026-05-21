@@ -1,5 +1,6 @@
 import ReduxProvider from "@/provider/auth.provicer";
 import { Toaster } from "react-hot-toast";
+import WhatsAppButton from "./components/whatsapp";
 import "./globals.css";
 
 export default function RootLayout({
@@ -36,6 +37,7 @@ export default function RootLayout({
         @keyframes ping { 75%,100%{transform:scale(2);opacity:0} }
       `}</style>
         <ReduxProvider>{children}</ReduxProvider>
+        <WhatsAppButton />
         <Toaster />
       </body>
     </html>

@@ -10,7 +10,6 @@ import { HomeBanner } from "./components/hero";
 import { Searchbar } from "./components/searchbar";
 import Specialties from "./components/Specialites";
 import Testimonial from "./components/testimonial";
-import WhatsAppButton from "./components/whatsapp";
 
 const steps = [
   {
@@ -194,7 +193,6 @@ export default async function Home() {
           FOOTER
       ══════════════════════════════════════════════════ */}
       <Footer />
-      <WhatsAppButton />
     </div>
   );
 }
