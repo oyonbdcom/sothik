@@ -62,17 +62,19 @@ const isProtectedRoute = (pathname: string) =>
   PROTECTED_ROUTES.some((route) => pathname.startsWith(route));
 
 const getTokenFromRequest = (req: NextRequest): string | null => {
+  // ১. সরাসরি কুকি থেকে চেক করা
   const cookieToken = req.cookies.get("refreshToken")?.value;
 
+  if (cookieToken) return cookieToken;
+
+  // ২. হেডার থেকে চেক করা (যদি ক্লায়েন্ট সাইড থেকে ম্যানুয়ালি পাঠানো হয়)
   const authHeader = req.headers.get("Authorization");
+  if (authHeader?.startsWith("Bearer ")) {
+    return authHeader.split(" ")[1];
+  }
 
-  const headerToken = authHeader?.startsWith("Bearer ")
-    ? authHeader.split(" ")[1]
-    : null;
-
-  return cookieToken || headerToken || null;
+  return null;
 };
-
 /* -------------------------------- REDIRECT LOGIN -------------------------------- */
 
 const redirectToLogin = (req: NextRequest, pathname: string) => {
@@ -97,7 +99,10 @@ export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   const token = getTokenFromRequest(req);
+  // কনসোলে চেক করুন কুকি আসছে কি না
+  console.log("All Cookies:", req.cookies.getAll());
 
+  console.log("Extracted Token:", token);
   // public route
   if (!token && !isProtectedRoute(pathname)) {
     return NextResponse.next();
