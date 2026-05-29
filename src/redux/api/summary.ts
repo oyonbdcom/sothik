@@ -8,7 +8,7 @@ export interface IManagerDashboardStats {
   area: string;
   stats: {
     doctors: number;
-    clinics: number;
+    diagnostic: number;
     memberships: number;
     appointments: {
       total: number;

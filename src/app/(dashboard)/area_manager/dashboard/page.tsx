@@ -5,7 +5,7 @@ import AppPagination from "@/components/app-pagination";
 import { StatCard } from "@/components/start-card";
 import { useDebounce } from "@/hooks/useDebaunce";
 import { useGetMyAppointmentsQuery } from "@/redux/api/appointmentApi";
-import { useGetAllAreaClinicsQuery } from "@/redux/api/clinicApi";
+import { useGetAllAreaDiagnosticsQuery } from "@/redux/api/diagnosticApi";
 import { useGetAccessibleDoctorsQuery } from "@/redux/api/doctorApi";
 import { format } from "date-fns";
 import { Calendar, ClipboardList, Loader2, Phone, User } from "lucide-react";
@@ -15,7 +15,7 @@ import UpdateStatusDrawer from "./drawer";
 
 export default function ManagerAppointmentsPage() {
   // States
-  const [clinicId, setClinicId] = useState("");
+  const [diagId, setDiagId] = useState("");
   const [doctorId, setDoctorId] = useState("");
   const [date, setDate] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -37,7 +37,7 @@ export default function ManagerAppointmentsPage() {
     query["searchTerm"] = debouncedTerm.searchQuery;
   if (status) query["status"] = status;
   if (doctorId) query["doctorId"] = doctorId;
-  if (clinicId) query["clinicId"] = clinicId;
+  if (diagId) query["diagId"] = diagId;
   if (date) query["date"] = date;
   if (isEmergency !== null) {
     query["isEmergency"] = isEmergency;
@@ -45,15 +45,15 @@ export default function ManagerAppointmentsPage() {
   const { data, isLoading, isFetching } = useGetMyAppointmentsQuery({
     ...query,
   });
-  const { data: allClinics, isLoading: allClinicLoading } =
-    useGetAllAreaClinicsQuery();
+  const { data: allDiagnostics, isLoading: allDiagnosticLoading } =
+    useGetAllAreaDiagnosticsQuery();
   const { data: allDoctors, isLoading: allDoctorLoading } =
     useGetAccessibleDoctorsQuery();
   const appointments = data?.appointments || [];
   const meta = data?.meta;
   const stats = data?.stats;
 
-  if (isLoading || allClinicLoading || allDoctorLoading) {
+  if (isLoading || allDiagnosticLoading || allDoctorLoading) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
         <Loader2 className="animate-spin text-emerald-500" size={40} />
@@ -76,7 +76,7 @@ export default function ManagerAppointmentsPage() {
             এরিয়া অ্যাপয়েন্টমেন্ট সমূহ
           </h1>
           <p className="text-sm text-slate-500 font-medium">
-            আপনার এরিয়ার সকল ক্লিনিক ও ডাক্তারদের বুকিং ম্যানেজ করুন
+            আপনার এরিয়ার সকল ডায়াগনস্টিক ও ডাক্তারদের বুকিং ম্যানেজ করুন
           </p>
         </div>
       </div>
@@ -152,12 +152,12 @@ export default function ManagerAppointmentsPage() {
           <option value="CANCELLED">Cancelled</option>
         </select>
         <select
-          value={clinicId}
-          onChange={(e) => setClinicId(e.target.value)}
+          value={diagId}
+          onChange={(e) => setDiagId(e.target.value)}
           className="px-3 py-2 rounded-xl border text-xs"
         >
-          <option value="">সব ক্লিনিক</option>
-          {allClinics?.clinics?.map((c: any) => (
+          <option value="">সব ডায়াগনস্টিক</option>
+          {allDiagnostics?.diagnostics?.map((c: any) => (
             <option key={c.id} value={c.id}>
               {c.user?.name}
             </option>
@@ -292,21 +292,19 @@ export default function ManagerAppointmentsPage() {
                   </div>
 
                   {/* Payment Status (শুধু ইমার্জেন্সির জন্য) */}
-                  {appt.isEmergency && appt.status !== "COMPLETED" && (
+                  {appt.status !== "COMPLETED" && (
                     <div className="flex items-center justify-between border-t border-slate-50 pt-2 text-[10px]">
                       <span className="text-slate-500">
-                        Payment: {appt.emergency.paymentMethod}
+                        Payment: {appt.paymentMethod}
                       </span>
                       <span
                         className={
-                          appt.emergency.paymentStatus === "PAID"
+                          appt.paymentStatus === "PAID"
                             ? "text-emerald-600 font-bold"
                             : "text-amber-600 font-bold"
                         }
                       >
-                        {appt.emergency.paymentStatus === "PAID"
-                          ? "✓ Paid"
-                          : "Pending"}
+                        {appt.paymentStatus === "PAID" ? "✓ Paid" : "Pending"}
                       </span>
                     </div>
                   )}

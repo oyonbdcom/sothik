@@ -1,7 +1,12 @@
 import { JwtPayload } from "jwt-decode";
 
 // types/common.ts
-export type UserRole = "PATIENT" | "DOCTOR" | "ADMIN" | "CLINIC" | "MANAGER";
+export type UserRole =
+  | "PATIENT"
+  | "DOCTOR"
+  | "ADMIN"
+  | "DIAGNOSTIC"
+  | "MANAGER";
 export type StaffType = "RECEPTIONIST" | "COORDINATOR";
 
 export enum Gender {
@@ -33,7 +38,7 @@ export interface UserJwtPayload extends JwtPayload {
   userId: string;
   name: string;
   email: string;
-  role: "ADMIN" | "CLINIC" | "PATIENT" | "DOCTOR";
+  role: "ADMIN" | "DIAGNOSTIC" | "PATIENT" | "DOCTOR";
   image?: string;
 }
 // types/common.ts

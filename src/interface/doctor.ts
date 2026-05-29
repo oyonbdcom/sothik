@@ -2,7 +2,7 @@
 import { Gender } from "@/types/common";
 
 import { IDoctorAreaResponse } from "./area";
-import { IMembershipResponse } from "./clinic-membership";
+import { IMembershipResponse } from "./diagnostic-membership";
 import { IUserResponse } from "./user";
 
 export interface IDepartmentResponse {
@@ -18,7 +18,7 @@ export interface IDoctorResponse {
   slug: string;
   specialization: string;
   departmentId: string;
-
+  isEmergency: boolean;
   // Optional Fields from Schema
   website: string | null;
   position: string | null;

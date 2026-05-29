@@ -31,7 +31,9 @@ export const registerSchema = z
       .length(6, "৬ ডিজিটের ওটিপি দিন")
       .optional()
       .or(z.literal("")),
-    role: z.enum(["PATIENT", "DOCTOR", "CLINIC", "ADMIN"]).default("PATIENT"),
+    role: z
+      .enum(["PATIENT", "DOCTOR", "DIAGNOSTIC", "ADMIN"])
+      .default("PATIENT"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "পাসওয়ার্ড দুটি মিলছে না",

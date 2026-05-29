@@ -2,9 +2,9 @@ import { z } from "zod";
 
 export const membershipSchema = z.object({
   doctorId: z.string().min(1, { message: "ডাক্তার নির্বাচন করা আবশ্যক" }),
-  clinicId: z
+  diagId: z
     .string()
-    .min(1, { message: "ক্লিনিক নির্বাচন করা আবশ্যক" })
+    .min(1, { message: "ডাইগনস্টিক নির্বাচন করা আবশ্যক" })
     .optional(),
 
   fee: z.coerce
@@ -28,5 +28,5 @@ export const membershipSchema = z.object({
 export type TMembership = z.infer<typeof membershipSchema>;
 export const createMembershipSchema = membershipSchema;
 
-// Schema for updating an existing ClinicMembership
+// Schema for updating an existing
 export const updateMembershipSchema = membershipSchema.partial();

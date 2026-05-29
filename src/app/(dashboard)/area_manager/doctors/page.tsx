@@ -3,6 +3,7 @@
 
 import AppPagination from "@/components/app-pagination";
 import LayoutLoader from "@/components/layout-loader";
+import { siteConfig } from "@/config/site";
 import { IDoctorResponse } from "@/interface/doctor";
 import {
   useAddDoctorToAreaMutation,
@@ -110,7 +111,7 @@ export default function DoctorManagement() {
               ডাক্তার তালিকা
             </h1>
             <p className="text-[10px] md:text-sm text-slate-500 font-medium mt-1 uppercase tracking-wider">
-              SusthiO Management
+              {siteConfig.siteName} Management
             </p>
           </div>
           <DoctorDialog />

@@ -34,7 +34,7 @@ export const RatingField = ({
         <Star
           key={i}
           size={size}
-          className={`cursor-pointer ${
+          className={`${readOnly ? "" : "cursor-pointer "}${
             type !== "empty" ? "text-yellow-500" : "text-gray-300"
           }`}
           fill={type !== "empty" ? "currentColor" : "none"}

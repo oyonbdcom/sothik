@@ -121,8 +121,8 @@ export default function ManagerManagementPage() {
                 </div>
                 <div className="flex flex-col md:flex-row md:gap-8 text-sm">
                   <p>
-                    <span className="text-slate-400">ক্লিনিক:</span>{" "}
-                    <b>{manager.area?._count?.clinics || 0}</b>
+                    <span className="text-slate-400">ডায়াগনস্টিক:</span>{" "}
+                    <b>{manager.area?._count?.diagnostics || 0}</b>
                   </p>
                   <p>
                     <span className="text-slate-400">ডাক্তার:</span>{" "}

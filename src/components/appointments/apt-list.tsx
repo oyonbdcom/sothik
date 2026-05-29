@@ -247,7 +247,7 @@ export default function AppointmentList() {
                             </p>
                             <p className="text-[11px] font-medium text-slate-500 flex items-center gap-1 mt-0.5">
                               <Phone size={10} className="text-blue-500" />
-                              {apt?.phoneNumber || "N/A"}
+                              {apt?.contactNumber || "N/A"}
                             </p>
                           </div>
                         </div>
@@ -281,7 +281,7 @@ export default function AppointmentList() {
                           </p>
                           <p className="text-[10px] text-slate-400 flex items-center gap-1 truncate mt-0.5">
                             <Building2 size={11} />
-                            {apt.clinic?.user?.name}
+                            {apt.diagnostic?.user?.name}
                           </p>
                         </div>
                       </td>

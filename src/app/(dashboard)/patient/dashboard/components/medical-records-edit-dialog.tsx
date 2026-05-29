@@ -17,8 +17,11 @@
 // } from "@/components/ui/dialog";
 // import { Form } from "@/components/ui/form";
 
+// import {
+//   IMedicalRecordResponse,
+//   IUpdateMedicalRecords,
+// } from "@/interface/medical-history";
 // import { updateMedicalHistorySchema } from "@/zod-validation/medical-history";
-// import { IMedicalRecordResponse, IUpdateMedicalRecords } from "@/interface/medical-history";
 
 // interface MedicalRecordsUpdateDialogProps {
 //   medicalHistory: IMedicalRecordResponse;
@@ -34,7 +37,7 @@
 //     defaultValues: {
 //       name: "",
 //       description: "",
-//       date: new Date(),
+
 //       document: "",
 //     },
 //   });
@@ -43,9 +46,9 @@
 //     if (!medicalHistory) return;
 
 //     form.reset({
-//       title: medicalHistory.title || "",
+//       name: medicalHistory.name || "",
 //       description: medicalHistory.description || "",
-//       date: new Date(medicalHistory.date),
+
 //       document: medicalHistory.document || "",
 //     });
 //   }, [medicalHistory, form]);

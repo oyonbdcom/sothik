@@ -32,9 +32,17 @@ export const getAllDoctors = async (query: Record<string, any>) => {
 };
 // services/doctorService.ts
 
-export const getSingleDoctor = async (id: string) => {
+export const getSingleDoctor = async (
+  id: string,
+  page: number = 1,
+  limit: number = 10,
+) => {
   try {
-    const res = await fetch(`${BASE_URL}/doctors/${id}`, {
+    const url = new URL(`${BASE_URL}/doctors/${id}`);
+    url.searchParams.append("page", page.toString());
+    url.searchParams.append("limit", limit.toString());
+
+    const res = await fetch(url.toString(), {
       cache: "no-store",
     });
 
@@ -43,9 +51,11 @@ export const getSingleDoctor = async (id: string) => {
     }
 
     const result = await res.json();
+
+    // আপনার ব্যাকএন্ড ডাটা স্ট্রাকচার অনুযায়ী রিটার্ন
     return result.data;
   } catch (error) {
-    console.log("Error in getSingleDoctor:", error);
+    console.error("Error in getSingleDoctor:", error);
     return null;
   }
 };

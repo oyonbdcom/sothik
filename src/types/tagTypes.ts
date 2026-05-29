@@ -1,7 +1,7 @@
 export const tagTypes = {
   user: "user",
   doctor: "doctor",
-  clinic: "clinic",
+  diagnostic: "diagnostic",
   patient: "patient",
   review: "review",
   membership: "membership",

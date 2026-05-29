@@ -5,6 +5,7 @@ import SearchDoctorCard from "@/app/(pages)/doctors/components/search-doctor-car
 import { Hero } from "@/components/hero";
 import { NotFound } from "@/components/not-found";
 import ServerPagination from "@/components/server-pagination";
+import { siteConfig } from "@/config/site";
 import { IDoctorResponse } from "@/interface/doctor";
 import { getAllDoctors } from "@/service/doctor.service";
 import { Metadata } from "next";
@@ -86,7 +87,7 @@ export default async function DoctorsPage({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Doctor List - SusthiO",
+    name: `Doctor List - ${siteConfig?.siteName}`,
     itemListElement: doctors.map((doc: IDoctorResponse, index: number) => ({
       "@type": "ListItem",
       position: index + 1,
@@ -146,13 +147,14 @@ export default async function DoctorsPage({
 
             {doctors.length > 0 ? (
               <>
-                <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {doctors.map((doctor: IDoctorResponse) => (
-                    <li key={doctor.id} className="h-full">
-                      <SearchDoctorCard doctor={doctor} />
-                    </li>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {doctors.map((doctor: IDoctorResponse, index: number) => (
+                    <SearchDoctorCard
+                      key={doctor?.slug || doctor?.id || index}
+                      doctor={doctor}
+                    />
                   ))}
-                </ul>
+                </div>
 
                 {/* ৩. Professional URL-based Pagination */}
                 {meta && meta.totalPage > 1 && (

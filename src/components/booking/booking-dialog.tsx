@@ -46,13 +46,13 @@ type AppointmentFormValues = z.infer<typeof AppointmentSchema>;
 export default function CreateAppointment({
   discount,
   doctorId,
-  clinicId,
+  diagId,
   membershipId,
   disabled,
 }: {
   discount: number;
   doctorId: string;
-  clinicId: string;
+  diagId: string;
   membershipId: string;
   disabled: boolean;
 }) {
@@ -85,7 +85,7 @@ export default function CreateAppointment({
 
       doctorId,
 
-      clinicId,
+      diagId,
 
       membershipId,
     },
@@ -98,7 +98,7 @@ export default function CreateAppointment({
   // =========================================
   // LOGIN REQUIRED HANDLER
   // =========================================
-  console.log(form.formState.errors);
+
   const handleProtectedOpen = () => {
     const user = getUserInfo();
 
@@ -124,7 +124,7 @@ export default function CreateAppointment({
 
         doctorId,
 
-        clinicId,
+        diagId,
 
         membershipId,
 
@@ -177,7 +177,7 @@ export default function CreateAppointment({
 
       doctorId,
 
-      clinicId,
+      diagId,
 
       membershipId,
     });

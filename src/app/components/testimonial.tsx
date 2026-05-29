@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useGetFeedbacksQuery } from "@/redux/api/reviewApi";
+import { RatingField } from "@/components/ui/rating";
+import { useGetFeedbacksQuery } from "@/redux/api/feedback";
+
 import "swiper/css";
 import "swiper/css/pagination";
 
@@ -55,40 +57,65 @@ export default function Testimonial() {
             ) : (
               feedbacks.map((t: any) => (
                 <SwiperSlide key={t.id} className="h-auto">
-                  <div className="flex h-full min-h-[260px] flex-col rounded-3xl border border-slate-100 bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900">
-                    {/* quote */}
-                    <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 text-2xl font-serif text-blue-600 dark:bg-blue-500/10">
-                      &quot;
+                  <div className="group relative flex h-full min-h-[280px] flex-col rounded-[2rem] border border-slate-200 bg-white p-6 transition-all duration-300 hover:border-[#06B6D4]/30 hover:shadow-xl hover:shadow-cyan-500/5">
+                    {/* Decorative Background Accent */}
+                    <div className="absolute top-0 right-0 -mr-2 -mt-2 h-20 w-20 rounded-full bg-slate-50 opacity-0 transition-opacity group-hover:opacity-100" />
+
+                    {/* Header: Quote Icon & Rating */}
+                    <div className="mb-6 flex items-center justify-between">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1A237E]/5 text-[#1A237E]">
+                        <svg
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H15.017C14.4647 8 14.017 8.44772 14.017 9V12C14.017 12.5523 13.5693 13 13.017 13H11.017C10.4647 13 10.017 12.5523 10.017 12V5C10.017 4.44772 10.4647 4 11.017 4H20.017C21.1216 4 22.017 4.89543 22.017 6V15C22.017 17.2091 20.2261 19 18.017 19H14.017V21H14.017ZM2.017 21L2.017 18C2.017 16.8954 2.91243 16 4.017 16H7.017C7.56928 16 8.017 15.5523 8.017 15V9C8.017 8.44772 7.56928 8 7.017 8H3.017C2.46472 8 2.017 8.44772 2.017 9V12C2.017 12.5523 1.56928 13 1.017 13H-0.983C-1.53528 13 -1.983 12.5523 -1.983 12V5C-1.983 4.44772 -1.53528 4 -0.983 4H7.017C8.12157 4 9.017 4.89543 9.017 6V15C9.017 17.2091 7.22614 19 5.017 19H2.017V21H2.017Z" />
+                        </svg>
+                      </div>
+                      <div className="flex scale-90">
+                        <RatingField value={t?.rating} readOnly />
+                      </div>
                     </div>
 
-                    {/* comment */}
-                    <p className="flex-1 text-sm italic leading-7 text-slate-600 line-clamp-5 dark:text-slate-300">
-                      {t.comment}
-                    </p>
-
-                    {/* stars */}
-                    <div className="mt-4 flex items-center gap-1">
-                      {[...Array(t.rating)].map((_, i) => (
-                        <span key={i} className="text-sm text-amber-400">
-                          ⭐
-                        </span>
-                      ))}
+                    {/* Comment Section */}
+                    <div className="relative flex-1">
+                      <p className="text-[15px] font-medium italic leading-relaxed text-slate-700 line-clamp-4">
+                        &ldquo;{t.comment}&rdquo;
+                      </p>
                     </div>
 
-                    {/* footer */}
-                    <div className="mt-5 flex items-center gap-3 border-t border-slate-100 pt-4 dark:border-slate-800">
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-black text-blue-700 dark:bg-blue-500/10 dark:text-blue-400">
-                        {t.patient?.name?.charAt(0) || "U"}
+                    {/* Profile Footer */}
+                    <div className="mt-8 flex items-center gap-4">
+                      <div className="relative h-12 w-12 shrink-0">
+                        <div className="flex h-full w-full items-center justify-center rounded-2xl bg-gradient-to-br from-[#1A237E] to-[#283593] text-sm font-bold text-white shadow-lg shadow-indigo-100">
+                          {t.patient?.name?.charAt(0) || "U"}
+                        </div>
+                        {/* Verified Badge */}
+                        <div className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-[#06B6D4] text-white">
+                          <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                            className="h-2.5 w-2.5"
+                          >
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        </div>
                       </div>
 
                       <div className="min-w-0">
-                        <h4 className="truncate text-sm font-bold text-slate-800 dark:text-white">
+                        <h4 className="truncate text-[15px] font-bold text-[#1A237E]">
                           {t.patient?.name || "Anonymous"}
                         </h4>
-
-                        <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">
-                          Patient Review
-                        </p>
+                        <div className="flex items-center gap-1.5">
+                          <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#06B6D4]"></span>
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                            Verified Patient
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>

@@ -89,7 +89,7 @@ const doctorApi = baseApi.injectEndpoints({
         };
       },
 
-      providesTags: [tagTypes.clinic],
+      providesTags: [tagTypes.diagnostic],
     }),
     getDoctorStats: build.query<{ stats: IDoctorStats }, void>({
       query: () => ({

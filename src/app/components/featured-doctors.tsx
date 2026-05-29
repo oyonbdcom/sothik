@@ -1,4 +1,5 @@
 import { IDoctorResponse } from "@/interface/doctor";
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import DoctorGridCard from "../(pages)/doctors/components/search-doctor-card";
 
@@ -11,13 +12,9 @@ export default function FeaturedDoctors({
     <section className="bg-slate-50 py-14   ">
       <div className="container  ">
         {/* header */}
-        <div className="mb-10 flex items-end justify-between gap-4">
+        <div className="mb-8 lg:mb-12 flex items-end justify-between gap-4">
           <div className="max-w-lg">
-            <span className="mb-3 inline-flex rounded-full bg-blue-50 px-4 py-1 text-[11px] font-bold uppercase tracking-widest text-blue-700 dark:bg-blue-500/10 dark:text-blue-400">
-              Featured Doctors
-            </span>
-
-            <h2 className="text-3xl font-black leading-tight text-slate-900 dark:text-white">
+            <h2 className="text-2xl lg:text-3xl font-black leading-tight text-slate-900 dark:text-white">
               বিশেষজ্ঞ <span className="text-blue-700">ডাক্তারগণ</span>
             </h2>
 
@@ -25,21 +22,22 @@ export default function FeaturedDoctors({
               ঢাকাসহ সারাদেশের অভিজ্ঞ ও বিশ্বস্ত চিকিৎসকদের খুঁজুন সহজেই।
             </p>
           </div>
-
           <Link
             href="/doctors"
-            className="hidden rounded-2xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-blue-200 hover:text-blue-700 md:flex dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300"
+            className="group flex items-center gap-1 text-sm font-bold text-blue-600 hover:text-blue-700 transition-all"
           >
-            সব ডাক্তার →
+            সব দেখুন
+            <ChevronRight
+              size={16}
+              className="group-hover:translate-x-1 transition-transform"
+            />
           </Link>
         </div>
 
         {/* doctor grid */}
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {doctors.map((doc) => (
-            <div key={doc.id} className="h-full">
-              <DoctorGridCard doctor={doc} />
-            </div>
+            <DoctorGridCard doctor={doc} key={doc?.slug} />
           ))}
         </div>
 

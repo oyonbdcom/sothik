@@ -69,10 +69,9 @@ export default function LoginPageContent() {
           ADMIN: "/admin/dashboard",
           DOCTOR: "/doctor/dashboard",
           PATIENT: "/patient/dashboard",
-          CLINIC: "/clinic/dashboard",
+          DIAGNOSTIC: "/diagnostic/dashboard",
           AREA_MANAGER: "/area_manager/dashboard",
           STAFF: "/staff/dashboard",
-          DIAGNOSTIC_MANAGER: "/diagnostic_manager/dashboard",
         };
 
         const targetPath = dashboardMap[user.role] || "/";

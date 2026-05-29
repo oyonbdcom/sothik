@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useCreateFeedbackMutation } from "@/redux/api/reviewApi";
+import { useCreateFeedbackMutation } from "@/redux/api/feedback";
 import { motion } from "framer-motion";
 import { MessageSquare, Send, Star } from "lucide-react";
 import { useState } from "react";
@@ -10,9 +11,6 @@ const TestimonialForm = () => {
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
 
-  // UI only (not saved in DB)
-  const [name, setName] = useState("");
-  const [location, setLocation] = useState("");
   const [comment, setComment] = useState("");
 
   const [createFeedback, { isLoading }] = useCreateFeedbackMutation();
@@ -35,17 +33,12 @@ const TestimonialForm = () => {
       // reset form
       setRating(0);
       setHover(0);
-      setName("");
-      setLocation("");
+
       setComment("");
 
       toast.success("ধন্যবাদ! আপনার ফিডব্যাক সফলভাবে জমা হয়েছে 🎉");
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        toast.error(err.message || "কিছু সমস্যা হয়েছে!");
-      } else {
-        toast.error("কিছু সমস্যা হয়েছে!");
-      }
+    } catch (err: any) {
+      toast.error(err.message || "কিছু সমস্যা হয়েছে!");
     }
   };
 

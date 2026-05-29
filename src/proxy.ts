@@ -29,14 +29,14 @@ const DASHBOARDS: Record<string, string> = {
 
   admin: "/admin/dashboard",
 
-  clinic: "/clinic/dashboard",
+  diagnostic: "/diagnostic/dashboard",
 
   doctor: "/doctor/dashboard",
 
   manager: "/area_manager/dashboard",
   staff: "/staff/dashboard",
 
-  dmanager: "/diagnostic_manager/dashboard",
+  dmanager: "/diagnostic/dashboard",
 };
 
 const PROTECTED_ROUTES = [
@@ -44,14 +44,14 @@ const PROTECTED_ROUTES = [
 
   "/admin",
 
-  "/clinic",
+  "/diagnostic",
 
   "/doctor",
 
   "/area_manager",
   "/staff",
 
-  "/diagnostic_manager",
+  "/diagnostic",
 
   "/checkout",
 ];
@@ -159,7 +159,7 @@ export const config = {
 
     "/patient/:path*",
 
-    "/clinic/:path*",
+    "/diagnostic/:path*",
 
     "/doctor/:path*",
 

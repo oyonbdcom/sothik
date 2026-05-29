@@ -7,7 +7,7 @@ export const AppointmentStatus = z.enum([
   "COMPLETED",
 ]);
 
-export const UserRole = z.enum(["ADMIN", "DOCTOR", "CLINIC", "PATIENT"]);
+export const UserRole = z.enum(["ADMIN", "DOCTOR", "DIAGNOSTIC", "PATIENT"]);
 
 export const Gender = z.enum(["MALE", "FEMALE"]);
 export const ReviewStatus = z.enum(["APPROVED", "PENDING", "REJECT"]);

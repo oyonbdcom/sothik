@@ -14,7 +14,7 @@ const Specialties = () => {
   // লোডিং অবস্থায় স্কেলিটন দেখানো
   if (isLoading) {
     return (
-      <section className="container py-16 px-6">
+      <section className="container pb-16  ">
         <SpecialtySkeleton />
       </section>
     );
@@ -25,8 +25,8 @@ const Specialties = () => {
 
   return (
     <section className="container py-16 px-6">
-      <div className="flex items-end justify-between mb-8">
-        <div>
+      <div className="flex items-end justify-between  ">
+        <div className="mb-8 lg:mb-12">
           <h2 className="text-2xl font-black text-slate-800 tracking-tight">
             বিশেষজ্ঞতা <span className="text-blue-600">অনুযায়ী</span> খুঁজুন
           </h2>

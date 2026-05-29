@@ -11,7 +11,7 @@ export const doctorSchema = z.object({
     .string()
     .min(1, "স্পেশালাইজেশন দিন")
     .regex(banglaRegex, "স্পেশালাইজেশন অবশ্যই বাংলায় হতে হবে"),
-
+  isEmergency: z.boolean().default(false),
   slug: z
     .string()
     .min(3, "স্লাগ অন্তত ৩ অক্ষরের হবে")

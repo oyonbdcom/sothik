@@ -1,9 +1,10 @@
 "use client";
 
 import CreateAppointment from "@/components/booking/booking-dialog";
-import { IMembershipResponse } from "@/interface/clinic-membership";
+import { VerifiedBadge } from "@/components/verify-badge";
+import { IMembershipResponse } from "@/interface/diagnostic-membership";
 import { enToBnNumber } from "@/lib/utils/utils";
-import { Building, CheckCircle2, Clock, MapPin } from "lucide-react";
+import { Building, Clock, MapPin, Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -13,8 +14,8 @@ const MembershipCard = ({
   membership: IMembershipResponse | undefined;
 }) => {
   if (!membership) return null;
-  const clinicLink = `/diagnostic/${membership?.clinic?.slug || membership?.clinic?.userId}`;
-  const clinicName = membership?.clinic?.user?.name || "ক্লিনিক";
+  const diagnosticLink = `/diagnostics/${membership?.diagnostic?.slug || membership?.diagnostic?.userId}`;
+  const diagnosticName = membership?.diagnostic?.user?.name || "ক্লিনিক";
   const isDiscount = membership?.discount;
 
   return (
@@ -23,10 +24,10 @@ const MembershipCard = ({
       <div className="relative h-20 shrink-0 hero-gradient">
         <div className="absolute -bottom-6 left-3 z-10">
           <div className="relative w-20 h-20 rounded-xl overflow-hidden border-2 border-white shadow-md bg-white">
-            {membership?.clinic?.user?.image ? (
+            {membership?.diagnostic?.user?.image ? (
               <Image
-                src={membership?.clinic?.user?.image}
-                alt={clinicName}
+                src={membership?.diagnostic?.user?.image}
+                alt={diagnosticName}
                 fill
                 className="object-cover transition-transform duration-500 group-hover:scale-110"
               />
@@ -63,37 +64,28 @@ const MembershipCard = ({
       {/* 2. Content Area - Reduced Padding */}
       <div className="pt-8 p-3 flex flex-col flex-1 gap-2">
         <div className="flex-1">
-          <Link href={clinicLink}>
+          <Link href={diagnosticLink}>
             <h3 className="font-bold text-slate-900 text-sm leading-snug group-hover:text-blue-600 transition-colors line-clamp-1">
-              {clinicName}
+              {diagnosticName}
             </h3>
           </Link>
 
           <div className="flex items-center gap-1 mt-0.5 text-slate-500">
             <MapPin className="w-3 h-3 text-blue-500 shrink-0" />
             <p className="text-[10px] font-medium line-clamp-1">
-              {membership?.clinic?.address} ,{membership?.clinic?.area?.name},
-              {membership?.clinic?.area?.district?.name}
+              {membership?.diagnostic?.address} ,
+              {membership?.diagnostic?.area?.name}
             </p>
           </div>
 
           {/* Ratings - Compact */}
-          {/* <div className="flex items-center justify-between mt-2 py-1 border-y border-slate-50">
-            <div className="flex items-center gap-1">
-              <RatingField
-                value={membership?.clinic?.averageRating || 0}
-                readOnly
-                size={12}
-              />
-              <span className="text-[10px] text-slate-700 font-bold">
-                {membership?.clinic?.averageRating?.toFixed(1) || "0.0"}
-              </span>
-            </div>
-            <span className="text-[9px] text-slate-400 font-medium">
-              {(membership?.clinic?.reviewsCount || 0).toLocaleString("bn")}{" "}
-              রিভিউ
+          <div className="flex items-center gap-1 text-amber-500 text-xs font-bold">
+            <Star size={14} fill="currentColor" />{" "}
+            {Number(membership?.diagnostic?.averageRating || 0).toFixed(1)}
+            <span className="text-slate-400">
+              ({membership?.diagnostic?.reviewCount || 0} রিভিউ)
             </span>
-          </div> */}
+          </div>
 
           {/* Schedules - Horizontal scroll on mobile or compact list */}
           <div className="flex  flex-col gap-1.5 mt-2">
@@ -111,13 +103,13 @@ const MembershipCard = ({
 
         {/* 3. Action Button - Tighter spacing */}
         <footer className="mt-2">
-          {membership?.doctor?.id && membership?.clinic?.id && (
+          {membership?.doctor?.id && membership?.diagnostic?.id && (
             <div className="space-y-1.5">
               <CreateAppointment
                 discount={membership?.discount}
                 doctorId={membership?.doctor?.id}
                 membershipId={membership?.id}
-                clinicId={membership?.clinic?.id}
+                diagId={membership?.diagnostic?.id}
                 disabled={
                   !membership?.schedules || membership.schedules.length === 0
                 }
@@ -136,15 +128,5 @@ const MembershipCard = ({
     </div>
   );
 };
-
-const VerifiedBadge = ({ size = "p-1", iconSize = "w-2.5 h-2.5" }) => (
-  <div
-    className={`flex items-center justify-center ${size} rounded-full bg-white shadow-sm border border-slate-100`}
-  >
-    <div className="bg-emerald-500 rounded-full p-0.5">
-      <CheckCircle2 className={`${iconSize} text-white`} />
-    </div>
-  </div>
-);
 
 export default MembershipCard;

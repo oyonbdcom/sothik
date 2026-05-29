@@ -1,7 +1,7 @@
 import { StaffType, UserRole } from "@/constant/common";
 import { adminConfig } from "./admin.sidebar";
-import { clinicConfig } from "./clinic.sidebar";
 import { coordinatorConfig } from "./coordinator.sidebar";
+import { diagnosticConfig } from "./diagnostic.sidebar";
 import { managerConfig } from "./manager.sidebar";
 import { patientConfig } from "./patient.sidebar";
 import { receptionistConfig } from "./receptionist.sidebar";
@@ -19,8 +19,8 @@ export const sidebarConfigs: SidebarConfigType[] = [
   },
 
   {
-    role: UserRole.DIAGNOSTIC_MANAGER,
-    menus: clinicConfig,
+    role: UserRole.DIAGNOSTIC,
+    menus: diagnosticConfig,
   },
 
   {

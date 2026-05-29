@@ -1,7 +1,5 @@
 import z from "zod";
 
-import { IFavoriteDoctor } from "./favorite";
-
 import { UserRole } from "@/types";
 import { updatePatientSchema } from "@/zod-validation/patient";
 import { IAppointmentResponse } from "./appointment";
@@ -36,7 +34,6 @@ export interface IPatientWithRelations extends IPatientResponse {
   appointments?: IAppointmentResponse[];
   user: IUserResponse;
 
-  favoriteDoctors?: IFavoriteDoctor[];
   medicalRecords?: IMedicalRecordResponse[];
   reviews?: IReviewResponse[];
 }

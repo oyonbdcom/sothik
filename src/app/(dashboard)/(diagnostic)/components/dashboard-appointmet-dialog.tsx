@@ -83,7 +83,10 @@ interface Props {
   onClose?: () => void;
 }
 
-export default function AppointmentModal({ appointment, onClose }: Props) {
+export default function CreateAppointmentModal({
+  appointment,
+  onClose,
+}: Props) {
   const isEdit = !!appointment;
 
   const [isOpen, setIsOpen] = useState(false);

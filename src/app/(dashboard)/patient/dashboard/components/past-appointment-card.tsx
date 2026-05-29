@@ -6,7 +6,7 @@ import { IAppointmentResponse } from "@/interface/appointment";
 import { db } from "@/lib/firebase-app";
 import { useRequestEmergencyMutation } from "@/redux/api/appointmentApi";
 import { doc, onSnapshot } from "firebase/firestore";
-import { Activity, Clock, User } from "lucide-react";
+import { Clock, Pause, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -29,7 +29,7 @@ export const PastAppointmentCard = ({
       new Date().toDateString();
 
     if (isToday && appointment.status === "SCHEDULED") {
-      const docId = `${appointment.doctorId}_${appointment.clinicId}`;
+      const docId = `${appointment.doctorId}_${appointment.diagId}`;
       const unsub = onSnapshot(doc(db, "live_sessions", docId), (snapshot) => {
         if (snapshot.exists()) {
           const data = snapshot.data();
@@ -43,7 +43,7 @@ export const PastAppointmentCard = ({
     }
   }, [
     appointment.doctorId,
-    appointment.clinicId,
+    appointment.diagId,
     appointment.appointmentDate,
     appointment.status,
     appointment.serialNumber,
@@ -115,7 +115,7 @@ export const PastAppointmentCard = ({
               </span>
             </div>
             <p className="text-[11px] text-slate-500 font-medium leading-tight">
-              {appointment.phoneNumber} • {appointment?.age}y
+              {appointment.contactNumber} • {appointment?.age}y
             </p>
             <p className="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5 leading-tight">
               <Clock className="w-3 h-3" /> {dateBn}
@@ -144,118 +144,113 @@ export const PastAppointmentCard = ({
 
       {/* ২. মিডল সেকশন: সিরিয়াল ট্র্যাকিং ও ইনফো */}
       <div
-        className={`mt-4 rounded-lg p-3 ${isEmergency ? "bg-red-50/50 border border-red-100" : "bg-slate-50 border border-slate-100"}`}
+        className={`mt-4 rounded-lg p-3 border transition-all ${
+          isEmergency
+            ? "bg-red-50/50 border-red-100"
+            : "bg-slate-50 border-slate-100"
+        }`}
       >
-        <div className={`flex justify-between items-center gap-3`}>
-          {" "}
-          {/* gap-4 এর জায়গায় gap-3 */}
+        <div className="flex justify-between items-center gap-3">
           <div className="flex-1">
-            {isEmergency ? (
-              <div className="flex gap-4">
-                {" "}
-                {/* Grid সরিয়ে Flex ব্যবহার করেছি যাতে গ্যাপ কমানো যায় */}
-                <div>
-                  <p className="text-[9px] text-slate-400 uppercase font-bold leading-none mb-0.5">
-                    পেমেন্ট
-                  </p>
+            {/* সিরিয়াল এবং পেমেন্ট ইনফো */}
+            <div className="flex items-center gap-4">
+              {/* ১. পেমেন্ট ও ট্রানজেকশন */}
+              <div>
+                <p className="text-[9px] text-slate-400 uppercase font-black leading-none mb-1">
+                  পেমেন্ট
+                </p>
+                <div className="flex items-center gap-1.5">
+                  <div
+                    className={`w-1.5 h-1.5 rounded-full ${appointment?.paymentStatus === "PAID" ? "bg-emerald-500" : "bg-amber-500"}`}
+                  />
                   <p
-                    className={`text-[11px] font-bold leading-none ${appointment?.emergency?.paymentStatus === "PAID" ? "text-emerald-600" : "text-amber-600"}`}
+                    className={`text-[10px] font-black leading-none ${appointment?.paymentStatus === "PAID" ? "text-emerald-700" : "text-amber-700"}`}
                   >
-                    {appointment?.emergency?.paymentStatus === "PAID"
-                      ? "Paid"
-                      : "Pending"}
+                    {appointment?.paymentStatus === "PAID" ? "PAID" : "PENDING"}
                   </p>
                 </div>
-                {appointment?.emergency?.transactionId && (
-                  <div className="border-l pl-3 border-slate-100">
-                    <p className="text-[9px] text-slate-400 uppercase font-bold leading-none mb-0.5">
-                      TrxID
-                    </p>
-                    <p className="text-[11px] font-mono text-slate-600 leading-none">
-                      {appointment.emergency.transactionId}
-                    </p>
-                  </div>
+                {appointment?.transactionId && (
+                  <p className="text-[8px] font-mono text-slate-400 mt-1 uppercase">
+                    TXID: {appointment.transactionId}
+                  </p>
                 )}
               </div>
-            ) : (
-              // নরমাল সিরিয়াল ট্র্যাকিং
-              appointment.status === "SCHEDULED" && (
-                <div className="flex items-center gap-4">
-                  <div>
+
+              {/* ২. আপনার সিরিয়াল */}
+              {appointment.status === "SCHEDULED" &&
+                appointment.serialNumber > 0 && (
+                  <div className="border-l pl-4 border-slate-200">
                     <p className="text-[9px] text-slate-400 uppercase font-bold leading-none mb-1">
                       আমার সিরিয়াল
                     </p>
-                    <p className="text-base font-black text-primary leading-none">
-                      {appointment.serialNumber}
+                    <p className="text-base font-black text-slate-900 leading-none">
+                      #{appointment.serialNumber?.toString().padStart(2, "0")}
                     </p>
                   </div>
-                  {liveSession?.status && (
-                    <div className="border-l pl-4 border-slate-200">
-                      {/* ১. সেশন একটিভ থাকলে (চলমান সিরিয়াল) */}
-                      {liveSession.status === "ACTIVE" && (
-                        <>
-                          <p className="text-[9px] text-emerald-600 uppercase font-bold flex items-center gap-1 leading-none mb-1">
-                            <Activity className="w-2.5 h-2.5" /> চলছে
-                          </p>
-                          <p className="text-base font-black text-emerald-700 leading-none">
-                            {liveSession.runningSerial || "---"}
-                          </p>
-                        </>
-                      )}
+                )}
 
-                      {/* ২. ডক্টর বিরতিতে থাকলে (PAUSED) */}
-                      {liveSession.status === "PAUSED" && (
-                        <>
-                          <p className="text-[9px] text-amber-600 uppercase font-bold flex items-center gap-1 leading-none mb-1">
-                            <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />{" "}
-                            বিরতি
-                          </p>
-                          <p className="text-[10px] font-bold text-amber-700 leading-tight">
-                            সাময়িক বন্ধ
-                          </p>
-                        </>
-                      )}
+              {/* ৩. লাইভ সেশন স্ট্যাটাস (স্মার্ট ফিক্স) */}
+              {appointment.status === "SCHEDULED" && liveSession?.status && (
+                <div className="border-l pl-4 border-slate-200">
+                  {liveSession.status === "ACTIVE" && (
+                    <>
+                      <p className="text-[9px] text-emerald-600 uppercase font-bold flex items-center gap-1 leading-none mb-1">
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        চলছে
+                      </p>
+                      <p className="text-base font-black text-emerald-700 leading-none">
+                        #
+                        {liveSession.runningSerial
+                          ?.toString()
+                          .padStart(2, "0") || "---"}
+                      </p>
+                    </>
+                  )}
 
-                      {/* ৩. ডক্টর অনুপস্থিত থাকলে (ABSENT) */}
-                      {liveSession.status === "ABSENT" && (
-                        <>
-                          <p className="text-[9px] text-rose-600 uppercase font-bold flex items-center gap-1 leading-none mb-1">
-                            <span className="w-2 h-2 bg-rose-500 rounded-full" />{" "}
-                            অনুপস্থিত
-                          </p>
-                          <p className="text-[10px] font-bold text-rose-700 leading-tight">
-                            ডক্টর নেই
-                          </p>
-                        </>
-                      )}
+                  {liveSession.status === "PAUSED" && (
+                    <>
+                      <p className="text-[9px] text-amber-600 uppercase font-bold flex items-center gap-1 leading-none mb-1">
+                        <Pause size={10} fill="currentColor" /> বিরতি
+                      </p>
+                      <p className="text-[10px] font-black text-amber-700 leading-tight">
+                        সাময়িক বন্ধ
+                      </p>
+                    </>
+                  )}
 
-                      {/* ৪. সেশন শেষ হয়ে গেলে (ENDED) */}
-                      {liveSession.status === "ENDED" && (
-                        <>
-                          <p className="text-[9px] text-slate-500 uppercase font-bold flex items-center gap-1 leading-none mb-1">
-                            বন্ধ
-                          </p>
-                          <p className="text-[10px] font-bold text-slate-600 leading-tight">
-                            সেশন শেষ
-                          </p>
-                        </>
-                      )}
-                    </div>
+                  {(liveSession.status === "ABSENT" ||
+                    liveSession.status === "ENDED") && (
+                    <>
+                      <p className="text-[9px] text-rose-600 uppercase font-bold leading-none mb-1">
+                        {liveSession.status === "ABSENT"
+                          ? "অনুপস্থিত"
+                          : "সেশন শেষ"}
+                      </p>
+                      <p className="text-[10px] font-black text-rose-700 leading-tight">
+                        {liveSession.status === "ABSENT"
+                          ? "ডক্টর নেই"
+                          : "আজকের মতো শেষ"}
+                      </p>
+                    </>
                   )}
                 </div>
-              )
-            )}
+              )}
+            </div>
           </div>
-          {/* ডক্টর ইনফো - প্যাডিং এবং মার্জিন কমিয়ে কম্প্যাক্ট করা হয়েছে */}
-          <div className="text-right border-l pl-3 border-slate-200 flex flex-col gap-0.5">
-            <h4 className="text-[11px] font-bold text-slate-800 leading-tight">
+
+          {/* ডক্টর ইনফো - কম্প্যাক্ট রাইট সাইড */}
+          <div className="text-right border-l pl-3 border-slate-200 min-w-[100px]">
+            <h4 className="text-[11px] font-black text-slate-800 leading-tight truncate">
               ডাঃ {appointment?.doctor?.user?.name}
             </h4>
-            <p className="text-[9px] text-slate-500 leading-tight">
+            <p className="text-[9px] text-slate-500 leading-tight mt-0.5">
               {appointment?.doctor?.department?.name}
             </p>
-            <p className="text-[9px] font-medium text-primary leading-tight">
-              {appointment?.clinic?.user?.name}
+            <p className="text-[9px] font-bold text-blue-600 uppercase mt-1 tracking-tighter">
+              {appointment?.diagnostic?.user?.name}
             </p>
           </div>
         </div>
@@ -279,32 +274,69 @@ export const PastAppointmentCard = ({
           )}
         </div>
 
-        {/* ইমার্জেন্সি রিকোয়েস্ট বাটন */}
-        {/* ১. কন্ডিশনাল রেন্ডারিং: জরুরি রিকোয়েস্ট বাটন */}
-        {appointment.status === "SCHEDULED" &&
-          !appointment?.emergency &&
-          isToday && (
-            <Button
-              color="destructive"
-              size="sm"
-              className="h-8 text-[10px] font-bold animate-bounce shadow-lg shadow-red-200"
-              onClick={() => handleEmergencyRequest(appointment.id)}
-            >
-              জরুরি রিকোয়েস্ট দিন
-            </Button>
-          )}
+        {!appointment?.isEmergency && (
+          <div>
+            {/* ইমার্জেন্সি রিকোয়েস্ট বাটন */}
+            {/* ১. কন্ডিশনাল রেন্ডারিং: জরুরি রিকোয়েস্ট বাটন */}
+            {appointment.status === "SCHEDULED" &&
+              !appointment?.emergency?.status &&
+              isToday && (
+                <Button
+                  color="destructive"
+                  size="sm"
+                  className="h-8 text-[10px] font-bold animate-bounce shadow-lg shadow-red-200"
+                  onClick={() => handleEmergencyRequest(appointment.id)}
+                >
+                  জরুরি রিকোয়েস্ট দিন
+                </Button>
+              )}
 
-        {/* ২. যদি রিজেক্টেড হয় তবে মেসেজ দেখানো */}
-        {appointment?.status !== "COMPLETED" &&
-          appointment?.emergency?.status === "REJECTED" && (
-            <div className="bg-rose-50 border border-rose-100 rounded-lg p-2 flex items-center gap-2">
-              <div className="h-2 w-2 bg-rose-500 rounded-full shrink-0" />
-              <p className="text-[10px] text-rose-600 font-medium leading-tight">
-                আপনার জরুরি রিকোয়েস্টটি কর্তৃপক্ষ বাতিল করেছে। বিস্তারিত জানতে
-                ডায়াগনস্টিক ডেস্কে যোগাযোগ করুন।
-              </p>
-            </div>
-          )}
+            {/* ২. যদি রিজেক্টেড হয় তবে মেসেজ দেখানো */}
+            {/* ১. রিকোয়েস্ট একসেপ্ট হলে এই মেসেজটি দেখাবে */}
+            {appointment?.status !== "COMPLETED" &&
+              appointment?.emergency?.status === "ACCEPT" && (
+                <div className="bg-emerald-50 border border-emerald-100 rounded-lg p-2 flex items-center gap-2">
+                  <div className="h-2 w-2 bg-emerald-500 rounded-full shrink-0 animate-pulse" />
+                  <div className="flex-1">
+                    <p className="text-[10px] text-emerald-700 font-bold leading-tight">
+                      আপনার জরুরি রিকোয়েস্টটি গ্রহণ করা হয়েছে।
+                    </p>
+                    <p className="text-[9px] text-emerald-600 font-medium leading-tight mt-0.5">
+                      দয়া করে দ্রুত সিরিয়াল কাউন্টারে যোগাযোগ করুন, আপনাকে
+                      অগ্রাধিকার দেওয়া হচ্ছে।
+                    </p>
+                  </div>
+                </div>
+              )}
+            {/* ৩. রিকোয়েস্ট পেন্ডিং থাকলে এই মেসেজটি দেখাবে */}
+            {appointment?.status !== "COMPLETED" &&
+              appointment?.emergency?.status === "PENDING" && (
+                <div className="bg-amber-50 border border-amber-100 rounded-lg p-2 flex items-center gap-2 shadow-sm animate-in fade-in duration-500">
+                  <div className="h-2 w-2 bg-amber-500 rounded-full shrink-0 animate-bounce" />
+                  <div className="flex-1">
+                    <p className="text-[10px] text-amber-700 font-bold leading-tight">
+                      জরুরি রিকোয়েস্ট পাঠানো হয়েছে।
+                    </p>
+                    <p className="text-[9px] text-amber-600 font-medium leading-tight mt-0.5">
+                      কর্তৃপক্ষ আপনার রিকোয়েস্টটি যাচাই করছে। অনুগ্রহ করে
+                      কিছুক্ষণ অপেক্ষা করুন।
+                    </p>
+                  </div>
+                </div>
+              )}
+            {appointment?.status !== "COMPLETED" &&
+              appointment?.emergency?.status === "REJECTED" && (
+                <div className="bg-rose-50 border border-rose-100 rounded-lg p-2 flex items-center gap-2">
+                  <div className="h-2 w-2 bg-rose-500 rounded-full shrink-0" />
+                  <p className="text-[10px] text-rose-600 font-medium leading-tight">
+                    আপনার জরুরি রিকোয়েস্টটি কর্তৃপক্ষ বাতিল করেছে। বিস্তারিত
+                    জানতে ডায়াগনস্টিক ডেস্কে যোগাযোগ করুন।
+                  </p>
+                </div>
+              )}
+          </div>
+        )}
+        {/* ২. রিকোয়েস্ট রিজেক্ট হলে এই মেসেজটি দেখাবে (আপনার আগের কোড) */}
       </div>
 
       {/* ৪. মেডিকেল রেকর্ডস গ্রিড */}

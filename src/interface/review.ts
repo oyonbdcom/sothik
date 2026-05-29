@@ -4,10 +4,10 @@ import {
 } from "@/zod-validation/review";
 import z from "zod";
 export type IReviewStatus = "APPROVED" | "PENDING" | "REJECTED";
-export type IReviewTargetType = "DOCTOR" | "CLINIC";
+export type IReviewTargetType = "DOCTOR" | "DIAGNOSTIC";
 export enum ReviewTargetType {
   DOCTOR = "DOCTOR",
-  CLINIC = "CLINIC",
+  DIAGNOSTIC = "DIAGNOSTIC",
 }
 
 export enum ReviewStatus {

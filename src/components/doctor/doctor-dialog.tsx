@@ -3,6 +3,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  AlertCircle,
   Building2,
   Edit,
   Globe,
@@ -67,7 +68,7 @@ export default function DoctorDialog({
     resolver: zodResolver(doctorSchema),
     defaultValues: {
       user: {
-        name: "ডাঃ",
+        name: "ডাঃ ",
         phoneNumber: "",
         password: "",
         role: "DOCTOR",
@@ -75,9 +76,11 @@ export default function DoctorDialog({
         deactivate: false,
       },
       slug: "",
+      isEmergency: false,
       departmentId: "",
+      position: "",
       gender: "MALE",
-      website: "#",
+      website: "",
       experience: 0,
       specialization: "",
       hospital: "",
@@ -89,15 +92,17 @@ export default function DoctorDialog({
       form.reset({
         ...doctor,
         departmentId: (doctor as any).departmentId || "",
-        experience: Number(doctor.experience) || 0,
+        experience: Number(doctor.experience),
+
         user: {
           name: doctor.user?.name || "",
           phoneNumber: doctor.user?.phoneNumber || "",
-          password: "", // পাসওয়ার্ড সিকিউরিটির জন্য খালি রাখা হয়েছে
+          password: "",
           role: "DOCTOR",
           image: doctor.user?.image || "",
           deactivate: doctor.user?.deactivate ?? false,
         },
+        isEmergency: doctor?.isEmergency,
         website: doctor?.website,
       } as any);
     }
@@ -105,6 +110,8 @@ export default function DoctorDialog({
 
   // ৫. সাবমিট হ্যান্ডলার
   async function onSubmit(values: DoctorFormValues) {
+    console.log(values);
+
     try {
       if (isEditMode && doctor?.id) {
         await updateDoctor({
@@ -158,6 +165,7 @@ export default function DoctorDialog({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* ১. প্রোফাইল ইমেজ - সেন্টারে */}
             <div className="flex justify-center">
               <CustomFormField
                 fieldType={FormFieldType.PROFILE}
@@ -166,72 +174,63 @@ export default function DoctorDialog({
               />
             </div>
 
+            {/* ২. প্রাথমিক পরিচয় (নাম এবং লিঙ্গ) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <CustomFormField
                 fieldType={FormFieldType.INPUT}
                 name="user.name"
-                label="পূর্ণ নাম (বাংলায়)"
+                label="পূর্ণ নাম (বাংলায়)"
+                required
                 placeholder="ডাঃ "
                 icon={User}
                 control={form.control}
               />
-
-              <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                name="slug"
-                label="ইউনিক স্লাগ (English)"
-                placeholder="dr-akash-heart"
-                control={form.control}
-              />
-
-              <CustomFormField
-                fieldType={FormFieldType.PHONE_INPUT}
-                name="user.phoneNumber"
-                label="মোবাইল নম্বর"
-                icon={Phone}
-                control={form.control}
-                disabled={isEditMode}
-              />
-
-              {!isEditMode && (
-                <CustomFormField
-                  fieldType={FormFieldType.INPUT}
-                  name="user.password"
-                  label="পাসওয়ার্ড"
-                  icon={Lock}
-                  control={form.control}
-                />
-              )}
-
-              <CustomFormField
-                fieldType={FormFieldType.SELECT}
-                name="departmentId"
-                label="ডিপার্টমেন্ট"
-                options={departmentOptions}
-                icon={Stethoscope}
-                control={form.control}
-                disabled={isDeptLoading}
-              />
-
-              <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                name="specialization"
-                label="বিশেষজ্ঞ (বাংলায়)"
-                placeholder="যেমন: হৃদরোগ বিশেষজ্ঞ"
-                control={form.control}
-              />
-
               <CustomFormField
                 fieldType={FormFieldType.SELECT}
                 name="gender"
                 label="লিঙ্গ"
+                required
                 options={[
                   { label: "পুরুষ", value: "MALE" },
                   { label: "মহিলা", value: "FEMALE" },
                 ]}
                 control={form.control}
               />
+            </div>
 
+            {/* ৩. কন্টাক্ট এবং সিকিউরিটি */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CustomFormField
+                fieldType={FormFieldType.PHONE_INPUT}
+                name="user.phoneNumber"
+                label="মোবাইল নম্বর"
+                required
+                icon={Phone}
+                control={form.control}
+                disabled={isEditMode}
+              />
+              {!isEditMode && (
+                <CustomFormField
+                  fieldType={FormFieldType.INPUT}
+                  name="user.password"
+                  required
+                  label="পাসওয়ার্ড"
+                  icon={Lock}
+                  control={form.control}
+                />
+              )}
+            </div>
+
+            {/* ৪. প্রফেশনাল তথ্য (স্লাগ এবং অভিজ্ঞতা) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CustomFormField
+                fieldType={FormFieldType.INPUT}
+                name="slug"
+                required
+                label="ইউনিক স্লাগ (English)"
+                placeholder="dr-akash-heart"
+                control={form.control}
+              />
               <CustomFormField
                 fieldType={FormFieldType.INPUT}
                 name="experience"
@@ -240,24 +239,79 @@ export default function DoctorDialog({
                 control={form.control}
               />
             </div>
+            {/* জরুরি সেবার সেকশন - লাইট থিম ফোকাসড */}
+            <div className="p-4    border-2 bg-destructive-700/30  rounded-3xl shadow-sm hover:shadow-md transition-shadow duration-300">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  {/* আইকন কন্টেইনার */}
+                  <div className="bg-indigo-50  p-3 rounded-2xl">
+                    <AlertCircle
+                      size={22}
+                      className="text-indigo-600 dark:text-indigo-400"
+                    />
+                  </div>
 
+                  <div className="flex flex-col">
+                    <label className="text-[13px] font-black text-slate-800   uppercase tracking-tight">
+                      জরুরি সেবা
+                    </label>
+                  </div>
+                </div>
+
+                {/* ইমার্জেন্সি বুলিয়ান ইনপুট */}
+                <div className="flex items-center">
+                  <CustomFormField
+                    fieldType={FormFieldType.CHECKBOX}
+                    name="isEmergency"
+                    label="সক্রিয়"
+                    control={form.control}
+                  />
+                </div>
+              </div>
+            </div>
+            {/* ৫. বিশেষজ্ঞ তথ্য (ডিপার্টমেন্ট এবং বিশেষজ্ঞ ক্ষেত্র) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CustomFormField
+                fieldType={FormFieldType.SELECT}
+                name="departmentId"
+                label="ডিপার্টমেন্ট"
+                required
+                options={departmentOptions}
+                icon={Stethoscope}
+                control={form.control}
+                disabled={isDeptLoading}
+              />
+              <CustomFormField
+                fieldType={FormFieldType.INPUT}
+                name="specialization"
+                label="বিশেষজ্ঞ (বাংলায়)"
+                required
+                placeholder="যেমন: হৃদরোগ বিশেষজ্ঞ"
+                control={form.control}
+              />
+            </div>
+
+            {/* ৬. কর্মস্থল ও শিক্ষা */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <CustomFormField
                 fieldType={FormFieldType.INPUT}
-                name="hospital"
-                label="হাসপাতাল (বাংলায়)"
-                icon={Building2}
+                name="position"
+                label="শিক্ষাগত যোগ্যতা (বাংলায়)"
+                icon={GraduationCap}
                 control={form.control}
+                placeholder="EX: বিভাগীয় প্রধান"
               />
               <CustomFormField
                 fieldType={FormFieldType.INPUT}
-                name="education"
-                label="শিক্ষাগত যোগ্যতা (বাংলায়)"
-                icon={GraduationCap}
+                name="hospital"
+                label="হাসপাতাল (বাংলায়)"
+                required
+                icon={Building2}
                 control={form.control}
-                placeholder="MBBS, FCPS"
               />
             </div>
+
+            {/* ৭. অতিরিক্ত লিংক */}
             <CustomFormField
               fieldType={FormFieldType.INPUT}
               name="website"
@@ -266,10 +320,10 @@ export default function DoctorDialog({
               control={form.control}
               placeholder="https://example.com"
             />
-            {/* Status Toggle - শুধুমাত্র এডিট মোডে দেখাবে */}
+
+            {/* ৮. স্ট্যাটাস টগল - শুধুমাত্র এডিট মোডে */}
             {isEditMode && (
               <div className="mt-4 p-1 bg-slate-100 rounded-2xl flex gap-1">
-                {/* একটিভ বাটন */}
                 <button
                   type="button"
                   onClick={() => form.setValue("user.deactivate", false)}
@@ -282,10 +336,9 @@ export default function DoctorDialog({
                   <div
                     className={`h-2 w-2 rounded-full ${!form.watch("user.deactivate") ? "bg-emerald-500 animate-pulse" : "bg-slate-300"}`}
                   />
-                  <span className="text-xs font-bold">সক্রিয়</span>
+                  <span className="text-xs font-bold">সক্রিয়</span>
                 </button>
 
-                {/* ইনাক্টিভ বাটন */}
                 <button
                   type="button"
                   onClick={() => form.setValue("user.deactivate", true)}
@@ -298,12 +351,13 @@ export default function DoctorDialog({
                   <div
                     className={`h-2 w-2 rounded-full ${form.watch("user.deactivate") ? "bg-rose-500" : "bg-slate-300"}`}
                   />
-                  <span className="text-xs font-bold">নিষ্ক্রিয়</span>
+                  <span className="text-xs font-bold">নিষ্ক্রিয়</span>
                 </button>
-
                 <input type="hidden" {...form.register("user.deactivate")} />
               </div>
             )}
+
+            {/* ৯. সেভ বাটন */}
             <DialogFooter>
               <Button
                 type="submit"

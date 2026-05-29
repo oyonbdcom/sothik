@@ -44,7 +44,7 @@ export default function RecentActivity() {
     {
       id: "3",
       type: "subscription",
-      user: "Westside Clinic",
+      user: "Westside Diagnostic",
       action: "Upgraded to PREMIUM plan",
       details: "Annual subscription",
       time: "1 hour ago",

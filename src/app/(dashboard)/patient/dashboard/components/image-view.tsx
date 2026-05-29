@@ -34,7 +34,7 @@ export default function MedicalRecordGrid({ appointment, showRecords }: any) {
   };
 
   return (
-    <div className="p-5 lg:p-8 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800 animate-in fade-in duration-500">
+    <div className="  bg-white   border-t border-slate-100   animate-in fade-in duration-500">
       {/* Header Info */}
 
       <PhotoProvider
@@ -81,47 +81,39 @@ export default function MedicalRecordGrid({ appointment, showRecords }: any) {
         }}
       >
         {records.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
+          <div className="flex flex-nowrap overflow-x-auto gap-4   px-1 scrollbar-hide snap-x">
             {records.map((item: any, idx: number) => (
               <PhotoView key={idx} src={item.document || ""}>
-                <div className="group relative bg-slate-50 dark:bg-slate-900 rounded-2xl p-2.5 border border-slate-200 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-500 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 cursor-zoom-in">
-                  {/* Image Container */}
-                  <div className="relative aspect-[4/5] rounded-xl overflow-hidden bg-white dark:bg-black border border-slate-100 dark:border-slate-800">
+                <div className="group relative min-w-[140px] max-w-[140px] snap-start bg-white dark:bg-slate-900 rounded-xl p-2 border border-slate-100 dark:border-slate-800 shadow-sm transition-all active:scale-95">
+                  {/* Image Container with Fixed Ratio */}
+                  <div className="relative aspect-square rounded-lg overflow-hidden bg-slate-50 dark:bg-black border border-slate-50 dark:border-slate-800">
                     <Image
                       fill
                       src={item.document}
                       alt={item.name || "Medical Record"}
-                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      className="object-cover"
                     />
 
-                    {/* Floating Badge */}
+                    {/* Compact Prescription Badge */}
                     {(item.isPrescription || item.type === "PRESCRIPTION") && (
-                      <div className="absolute top-2 left-2 shadow-lg">
-                        <span className="bg-indigo-600 text-white text-[8px] font-black px-2 py-0.5 rounded-md uppercase tracking-tighter">
-                          Prescription
+                      <div className="absolute top-1 left-1">
+                        <span className="bg-indigo-600/90 backdrop-blur-sm text-white text-[7px] font-black px-1.5 py-0.5 rounded-sm uppercase">
+                          Rx
                         </span>
                       </div>
                     )}
-
-                    {/* View Overlay */}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
-                      <div className="bg-white text-slate-900 px-3 py-1.5 rounded-full text-[10px] font-bold flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-transform">
-                        <Maximize2 size={12} />
-                        বড় করে দেখুন
-                      </div>
-                    </div>
                   </div>
 
-                  {/* Caption Section */}
-                  <div className="mt-3 px-1">
-                    <p className="text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">
-                      {item.name || "নথিপত্র নাম নেই"}
+                  {/* Minimal Info */}
+                  <div className="mt-2">
+                    <p className="text-[10px] font-bold text-slate-700 dark:text-slate-200 truncate leading-tight">
+                      {item.name || "নথিপত্র..."}
                     </p>
-                    <div className="flex items-center justify-between mt-1 opacity-60">
-                      <span className="text-[9px] font-medium uppercase tracking-widest">
-                        {item.type || "IMAGE"}
+                    <div className="flex items-center justify-between mt-0.5">
+                      <span className="text-[8px] text-slate-400 font-medium uppercase">
+                        {item.type || "IMG"}
                       </span>
-                      <ImageIcon size={10} />
+                      <Maximize2 size={8} className="text-indigo-500" />
                     </div>
                   </div>
                 </div>
@@ -129,12 +121,10 @@ export default function MedicalRecordGrid({ appointment, showRecords }: any) {
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-16 bg-slate-50/50 dark:bg-slate-900/50 border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-3xl">
-            <div className="w-14 h-14 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center shadow-sm mb-4">
-              <ImageIcon size={24} className="text-slate-300" />
-            </div>
-            <p className="text-sm text-slate-400 font-medium italic">
-              কোনো ফাইল খুঁজে পাওয়া যায়নি
+          <div className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-900/50 border border-dashed border-slate-200 dark:border-slate-800 rounded-xl">
+            <ImageIcon size={18} className="text-slate-300" />
+            <p className="text-xs text-slate-400 font-medium italic">
+              এখনো কোনো নথিপত্র নেই
             </p>
           </div>
         )}

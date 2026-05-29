@@ -4,7 +4,6 @@ import { Icon } from "@iconify/react";
 import { motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
-// কাউন্টার অ্যানিমেশন লজিক (একটু উন্নত করা হয়েছে)
 const Counter = ({
   value,
   duration = 2,
@@ -26,9 +25,7 @@ const Counter = ({
           1,
         );
         setCount(Math.floor(progress * value));
-        if (progress < 1) {
-          window.requestAnimationFrame(step);
-        }
+        if (progress < 1) window.requestAnimationFrame(step);
       };
       window.requestAnimationFrame(step);
     }
@@ -39,71 +36,90 @@ const Counter = ({
 
 export default function AchievementStats() {
   return (
-    <section className="py-24 relative overflow-hidden bg-slate-50/50 dark:bg-slate-950">
-      {/* গ্লোয়িং ব্যাকগ্রাউন্ড এলিমেন্টস */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 blur-[120px] rounded-full -z-10" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-emerald-500/10 blur-[120px] rounded-full -z-10" />
+    <section className="relative overflow-hidden bg-white py-14  dark:bg-slate-950">
+      {/* Background Decor - Mesh Gradient Effect */}
+      <div className="absolute -top-[10%] left-[-10%] h-[500px] w-[500px] rounded-full bg-[#06B6D4]/5 blur-[120px] dark:bg-[#06B6D4]/10" />
+      <div className="absolute -bottom-[10%] right-[-10%] h-[500px] w-[500px] rounded-full bg-[#1A237E]/5 blur-[120px] dark:bg-[#1A237E]/10" />
 
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+      <div className="container relative z-10 mx-auto px-4">
+        {/* Section Header */}
+        <div className="mb-8 lg:mb-12 text-start">
+          <motion.h2
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-2xl lg:text-3xl font-black leading-tight text-slate-900"
+          >
+            ডিজিটাল স্বাস্থ্যসেবায় আমাদের <br className="hidden md:block" />
+            <span className="text-[#1A237E]">বর্তমান অবস্থান</span>
+          </motion.h2>
+          <motion.span
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            className="text-xs font-bold uppercase tracking-[0.3em] text-[#06B6D4]"
+          >
+            নির্ভরযোগ্যতার প্রমাণ
+          </motion.span>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
           {stats.map((stat, index) => (
             <motion.div
               key={stat.id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
+              transition={{
+                delay: index * 0.1,
+                duration: 0.6,
+                ease: "easeOut",
+              }}
+              className="group"
             >
-              <div className="group relative h-full">
-                {/* কার্ডের পেছনে ডাইনামিক বর্ডার গ্লো */}
+              <div className="relative h-full overflow-hidden rounded-[2rem] border border-slate-100 bg-white/80 p-8 transition-all duration-500 hover:-translate-y-2 hover:border-transparent hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:border-slate-800 dark:bg-slate-900/50 backdrop-blur-xl">
+                {/* Hover Background Accent */}
                 <div
-                  className={`absolute -inset-[1px] rounded-[2.5rem] bg-gradient-to-br from-slate-200 to-transparent dark:from-slate-800 dark:to-transparent group-hover:from-blue-500/50 transition-all duration-500`}
+                  className={`absolute -right-8 -top-8 h-32 w-32 rounded-full ${stat.bgColor} opacity-0 transition-all duration-500 group-hover:scale-150 group-hover:opacity-20`}
                 />
 
-                <div className="relative h-full p-8 rounded-[2.5rem] bg-white dark:bg-slate-900 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none overflow-hidden flex flex-col items-center sm:items-start text-center sm:text-left transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-blue-500/10">
-                  {/* আইকন বক্স - একটু রিফাইন করা হয়েছে */}
-                  <div className="relative mb-8">
-                    <div
-                      className={`w-16 h-16 ${stat.bgColor} ${stat.color} rounded-2xl flex items-center justify-center relative z-10 transform group-hover:scale-110 group-hover:rotate-[10deg] transition-all duration-500 ease-out`}
-                    >
-                      <Icon icon={stat.icon} className="w-9 h-9" />
-                    </div>
-                    {/* আইকনের পেছনে ছোট শ্যাডো এলিমেন্ট */}
-                    <div
-                      className={`absolute inset-0 blur-xl ${stat.bgColor} opacity-0 group-hover:opacity-60 transition-opacity duration-500`}
-                    />
+                {/* Icon Layout */}
+                <div className="relative z-10 mb-8 flex items-center justify-between">
+                  <div
+                    className={`flex h-14 w-14 items-center justify-center rounded-2xl ${stat.bgColor} ${stat.color} transition-all duration-500 group-hover:rotate-6 group-hover:scale-110`}
+                  >
+                    <Icon icon={stat.icon} className="h-8 w-8" />
                   </div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-slate-300 dark:text-slate-600">
+                    {stat.id.toString().padStart(2, "0")}
+                  </div>
+                </div>
 
-                  {/* ভ্যালু ও সাফিক্স */}
-                  <div className="flex items-baseline gap-1.5 mb-2">
-                    <span className="text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                {/* Content */}
+                <div className="relative z-10">
+                  <div className="mb-1 flex items-baseline gap-1">
+                    <span className="text-4xl font-black tracking-tight text-slate-900 dark:text-white lg:text-5xl">
                       <Counter value={stat.value} />
                     </span>
-                    <span
-                      className={`text-2xl font-bold ${stat.color} opacity-80`}
-                    >
+                    <span className={`text-xl font-bold ${stat.color}`}>
                       {stat.suffix}
                     </span>
                   </div>
 
-                  {/* লেবেল */}
-                  <h3 className="text-sm md:text-base font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-4">
+                  <h3 className="mb-6 text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                     {stat.label}
                   </h3>
 
-                  {/* ইন্টারেক্টিভ প্রগ্রেস লাইন */}
-                  <div className="w-full h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                  {/* Refined Progress Bar */}
+                  <div className="relative h-[6px] w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                     <motion.div
-                      initial={{ width: 0 }}
-                      whileInView={{ width: "40%" }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.5, duration: 1 }}
-                    >
-                      {" "}
-                      <div
-                        className={`h-full bg-gradient-to-r from-transparent to-current ${stat.color}`}
-                      />
-                    </motion.div>
+                      initial={{ x: "-100%" }}
+                      whileInView={{ x: "0%" }}
+                      transition={{
+                        duration: 1.5,
+                        delay: 0.5,
+                        ease: "circOut",
+                      }}
+                      className={`absolute inset-0 h-full w-[70%] rounded-full bg-gradient-to-r from-transparent via-current to-current ${stat.color}`}
+                    />
                   </div>
                 </div>
               </div>
@@ -121,35 +137,35 @@ const stats = [
     label: "নিবন্ধিত ডাক্তার",
     value: 100,
     suffix: "+",
-    icon: "healthicons:doctor-male-outline",
-    color: "text-blue-600",
-    bgColor: "bg-blue-50 dark:bg-blue-900/20",
+    icon: "solar:user-speak-bold-duotone",
+    color: "text-[#1A237E]",
+    bgColor: "bg-indigo-50 dark:bg-indigo-900/30",
   },
   {
     id: 2,
     label: "সন্তুষ্ট পেশেন্ট",
-    value: 4500,
+    value: 1000,
     suffix: "+",
-    icon: "healthicons:people-outline",
-    color: "text-emerald-600",
-    bgColor: "bg-emerald-50 dark:bg-emerald-900/20",
+    icon: "solar:heart-pulse-bold-duotone",
+    color: "text-[#06B6D4]",
+    bgColor: "bg-cyan-50 dark:bg-cyan-900/30",
   },
   {
     id: 3,
     label: "অ্যাক্টিভ চেম্বার",
-    value: 70,
+    value: 50,
     suffix: "+",
-    icon: "healthicons:city-outline",
-    color: "text-purple-600",
-    bgColor: "bg-purple-50 dark:bg-purple-900/20",
+    icon: "solar:hospital-bold-duotone",
+    color: "text-emerald-600",
+    bgColor: "bg-emerald-50 dark:bg-emerald-900/30",
   },
   {
     id: 4,
     label: "স্পেশালাইজড বিভাগ",
     value: 28,
     suffix: "+",
-    icon: "healthicons:ambulatory-clinic-outline",
+    icon: "solar:medical-kit-bold-duotone",
     color: "text-amber-600",
-    bgColor: "bg-amber-50 dark:bg-amber-900/20",
+    bgColor: "bg-amber-50 dark:bg-amber-900/30",
   },
 ];

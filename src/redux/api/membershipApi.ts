@@ -2,7 +2,7 @@
 import {
   IMembershipResponse,
   UpdateMembershipInput,
-} from "@/interface/clinic-membership";
+} from "@/interface/diagnostic-membership";
 import { IGenericResponse, IMeta } from "@/types";
 import { tagTypes } from "@/types/tagTypes";
 import { baseApi } from "../api/baseApi";
@@ -18,7 +18,11 @@ const memberShipApi = baseApi.injectEndpoints({
         method: "POST",
         data,
       }),
-      invalidatesTags: [tagTypes.membership, tagTypes.doctor, tagTypes.clinic],
+      invalidatesTags: [
+        tagTypes.membership,
+        tagTypes.doctor,
+        tagTypes.diagnostic,
+      ],
     }),
 
     // 2. Get All Memberships (Filtering & Pagination)
@@ -74,7 +78,7 @@ const memberShipApi = baseApi.injectEndpoints({
         { type: tagTypes.membership, id },
         tagTypes.membership,
         tagTypes.doctor,
-        tagTypes.clinic,
+        tagTypes.diagnostic,
       ],
     }),
 
@@ -84,7 +88,11 @@ const memberShipApi = baseApi.injectEndpoints({
         url: `${MEMBERSHIP_URL}/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: [tagTypes.membership, tagTypes.doctor, tagTypes.clinic],
+      invalidatesTags: [
+        tagTypes.membership,
+        tagTypes.doctor,
+        tagTypes.diagnostic,
+      ],
     }),
   }),
 });

@@ -41,8 +41,8 @@ export default function ManagerDashboardPage() {
         />
 
         <StatCard
-          title="Clinics"
-          value={dashboard.stats.clinics}
+          title="Diagnostics"
+          value={dashboard.stats.diagnostic}
           icon={<Building2 className="text-purple-500" />}
         />
 
@@ -87,7 +87,7 @@ export default function ManagerDashboardPage() {
         <div className="text-sm text-slate-600 space-y-2">
           <p>📍 Active area: {dashboard.area}</p>
           <p>👨‍⚕️ Doctors are actively growing in this region</p>
-          <p>🏥 Clinics are stable and connected with memberships</p>
+          <p>🏥 Diagnostics are stable and connected with memberships</p>
           <p>📅 Appointment flow is moderate</p>
         </div>
       </div>

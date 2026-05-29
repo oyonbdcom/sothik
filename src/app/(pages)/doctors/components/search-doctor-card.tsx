@@ -3,20 +3,19 @@
 import { Stars } from "@/app/components/featured-doctors";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { avatar, femaleAvatar } from "@/config/site";
-import { IMembershipResponse } from "@/interface/clinic-membership";
+import { IMembershipResponse } from "@/interface/diagnostic-membership";
 import { IDoctorResponse } from "@/interface/doctor";
 import { Building, CheckCircle2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function DoctorGridCard({
+export default function SearchDoctorCard({
   doctor,
 }: {
   doctor: IDoctorResponse;
 }) {
   const doctorName = doctor?.user?.name || "ডাক্তার";
   const profileLink = `/doctors/${doctor.slug}`;
-
   const imageSrc =
     doctor?.user?.image || (doctor.gender === "MALE" ? avatar : femaleAvatar);
 
@@ -66,7 +65,7 @@ export default function DoctorGridCard({
             </h3>
             <div className=" ">
               <p className="text-blue-600 text-sm font-medium leading-tight line-clamp-2">
-                {doctor.specialization || "বিশেষজ্ঞ চিকিৎসক"}
+                {doctor?.specialization || "বিশেষজ্ঞ চিকিৎসক"}
               </p>
             </div>
           </div>
@@ -75,25 +74,25 @@ export default function DoctorGridCard({
 
           {/* Hospital */}
           <p className="text-xs font-bold text-slate-700 truncate flex items-center gap-1">
-            <span>{doctor.hospital || "তথ্য পাওয়া যায়নি"}</span>
+            <span>{doctor?.hospital || "তথ্য পাওয়া যায়নি"}</span>
           </p>
 
           {/* Rating */}
           <div className="flex items-center justify-between ">
             <div className="flex items-center gap-1.5">
-              <Stars rating={doctor.averageRating} />
+              <Stars rating={doctor?.averageRating} />
               <span className="text-xs text-slate-700 font-bold">
-                {doctor.averageRating?.toFixed(1) || "0.0"}
+                {doctor?.averageRating?.toFixed(1) || "0.0"}
               </span>
             </div>
 
             <span className="text-[12px] font-semibold text-slate-400">
-              {(doctor.reviewsCount || 0).toLocaleString("bn")} রিভিউ
+              {(doctor?.reviewsCount || 0).toLocaleString("bn")} রিভিউ
             </span>
           </div>
         </div>
 
-        {doctor?.memberships && doctor.memberships.length > 0 && (
+        {doctor?.memberships && doctor?.memberships?.length > 0 && (
           <div className="space-y-2 ">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -105,31 +104,33 @@ export default function DoctorGridCard({
               {/* ১. স্ক্রলেবল কন্টেইনার */}
               <ScrollArea className="w-full whitespace-nowrap rounded-md border-none">
                 <div className="flex w-max space-x-2 p-1">
-                  {doctor.memberships?.map((member: IMembershipResponse) => {
-                    const fullClinicName = member.clinic?.user?.name || "";
-                    const shortClinicName = fullClinicName.split(" ")[0];
+                  {doctor?.memberships?.map((member: IMembershipResponse) => {
+                    const fullDiagnosticName =
+                      member.diagnostic?.user?.name || "";
+                    const shortDiagnosticName =
+                      fullDiagnosticName?.split(" ")[0];
 
                     return (
                       <Link
-                        href={`/diagnostic/${member.clinic?.slug}`}
-                        key={member.id}
+                        href={`/diagnostics/${member?.diagnostic?.slug}`}
+                        key={member?.id}
                         className="flex items-center w-34 gap-1.5 pr-3 py-1 pl-1 bg-slate-50 border border-slate-100 rounded-full shrink-0 shadow-sm"
                       >
                         <div className="relative h-7 w-7 rounded-full overflow-hidden border-2 border-white shrink-0 shadow-sm">
                           <Image
-                            src={member.clinic?.user?.image || avatar}
-                            alt={shortClinicName}
+                            src={member?.diagnostic?.user?.image || avatar}
+                            alt={shortDiagnosticName}
                             fill
                             className="object-cover"
                           />
                         </div>
                         <div className="flex flex-col leading-4 max-w-24 ">
                           <span className="text-[11px] truncate font-black text-slate-700">
-                            {shortClinicName}
+                            {shortDiagnosticName}
                           </span>
                           <span className="text-[9px]  font-black truncate text-slate-700">
-                            {member?.clinic?.area?.name},{" "}
-                            {member?.clinic?.area?.district?.name}
+                            {member?.diagnostic?.area?.name},{" "}
+                            {member?.diagnostic?.area?.district?.name}
                           </span>
                         </div>
                       </Link>

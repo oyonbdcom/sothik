@@ -6,9 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { IReviewResponse } from "@/interface/review";
 import {
-  useCreateReviewMutation,
-  useUpdateReviewMutation,
-} from "@/redux/api/reviewApi";
+  useCreateDiagnosticReviewMutation,
+  useUpdateDiagnosticReviewMutation,
+} from "@/redux/api/diagnostic-reviewApi";
+import {
+  useCreateDoctorReviewMutation,
+  useUpdateDoctorReviewMutation,
+} from "@/redux/api/doctor-reviewApi";
+// 🔥 ডক্টর এবং ক্লিনিক রিভিউয়ের আলাদা আলাদা রিডাক্স হুক ইমপোর্ট করুন
+
 import { getUserInfo } from "@/service/auth.service";
 import { createReviewSchema } from "@/zod-validation/review";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,31 +25,43 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 interface ReviewFormProps {
-  doctorId: string;
+  targetId: string; // এটি doctorId অথবা diagId হবে
+  type: "doctor" | "diagnostic"; // 🔥 এই প্রপ্সটি নির্ধারণ করবে কোন রিডাক্স ফাংশন চলবে
   review?: IReviewResponse;
-
   setEditingReview?: (review: IReviewResponse | null) => void;
 }
 
 export default function ReviewForm({
-  doctorId,
+  targetId,
+  type,
   review,
-
   setEditingReview,
 }: ReviewFormProps) {
   const user: any = getUserInfo();
 
-  // RTK Query Mutations
-  const [createReview, { isLoading: isCreating }] = useCreateReviewMutation();
-  const [updateReview, { isLoading: isUpdating }] = useUpdateReviewMutation();
-  const isLoading = isCreating || isUpdating;
+  // 🔄 ডক্টর রিডাক্স মিউটেশনস
+  const [createDoctorReview, { isLoading: isDocCreating }] =
+    useCreateDoctorReviewMutation();
+  const [updateDoctorReview, { isLoading: isDocUpdating }] =
+    useUpdateDoctorReviewMutation();
+
+  // 🔄 ক্লিনিক রিডাক্স মিউটেশনস
+  const [createDiagnosticReview, { isLoading: isDiagnosticCreating }] =
+    useCreateDiagnosticReviewMutation();
+  const [updateDiagnosticReview, { isLoading: isDiagnosticUpdating }] =
+    useUpdateDiagnosticReviewMutation();
+
+  // 🔥 টাইপ অনুযায়ী ডাইনামিক লোডিং স্টেট
+  const isLoading =
+    type === "doctor"
+      ? isDocCreating || isDocUpdating
+      : isDiagnosticCreating || isDiagnosticUpdating;
 
   const form = useForm({
     resolver: zodResolver(createReviewSchema),
     defaultValues: {
       comment: review?.comment || "",
-      doctorId,
-
+      targetId,
       rating: review?.rating || 0,
       status: "PENDING",
     },
@@ -53,40 +71,59 @@ export default function ReviewForm({
     if (user?.userId) {
       form.reset({
         comment: review?.comment || "",
-        doctorId,
-
+        targetId,
         rating: review?.rating || 0,
-        status: review?.status,
+        status: review?.status || "PENDING",
       });
     }
-  }, [user?.userId, review, doctorId, form]);
+  }, [user?.userId, review, targetId, form]);
 
   const onSubmit: SubmitHandler<any> = async (data) => {
     try {
       if (review?.id) {
-        await updateReview({
-          id: review.id,
-          data: {
-            rating: data.rating,
-            comment: data.comment,
-          },
-        }).unwrap();
+        // ==================== আপডেট লজিক ====================
+        if (type === "doctor") {
+          await updateDoctorReview({
+            id: review.id,
+            data: { rating: data.rating, comment: data.comment },
+          }).unwrap();
+        } else {
+          await updateDiagnosticReview({
+            id: review.id,
+            data: { rating: data.rating, comment: data.comment },
+          }).unwrap();
+        }
         toast.success("রিভিউ সফলভাবে আপডেট করা হয়েছে");
       } else {
-        await createReview(data).unwrap();
+        // ==================== ক্রিয়েট লজিক ====================
+        if (type === "doctor") {
+          // ডক্টর এপিআই এর বডিতে যদি 'doctorId' চায়, তবে এভাবে ম্যাপ করতে পারেন
+          await createDoctorReview({
+            doctorId: targetId,
+            rating: data.rating,
+            comment: data.comment,
+          }).unwrap();
+        } else {
+          // ক্লিনিক এপিআই এর বডিতে যদি 'diagId' চায়
+          await createDiagnosticReview({
+            diagId: targetId,
+            rating: data.rating,
+            comment: data.comment,
+          }).unwrap();
+        }
         toast.success("রিভিউটি অনুমোদনের জন্য পাঠানো হয়েছে");
       }
 
       form.reset();
       setEditingReview?.(null);
     } catch (error: any) {
-      console.log(error);
+      console.error(error);
       toast.error(error?.message || "প্রক্রিয়াটি সফল হয়নি");
     }
   };
 
   return (
-    <section className="bg-card  p-6  rounded-3xl   border-gray-100  ">
+    <section className="bg-card rounded-3xl border-gray-100">
       <header className="sr-only">
         <h3>{review ? "রিভিউ এডিট করুন" : "নতুন রিভিউ লিখুন"}</h3>
       </header>
@@ -104,17 +141,17 @@ export default function ReviewForm({
                   className="rounded-2xl object-cover border-2 border-primary/10"
                 />
               ) : (
-                <div className="p-2 bg-blue-50   w-12 h-12 rounded-2xl flex items-center justify-center">
+                <div className="p-2 bg-blue-50 w-12 h-12 rounded-2xl flex items-center justify-center">
                   <User className="text-blue-600 w-6 h-6" />
                 </div>
               )}
             </figure>
 
             <div className="flex-1">
-              <label className="text-sm font-bold text-gray-900   mb-1 block">
+              <label className="text-sm font-bold text-gray-900 mb-1 block">
                 {review
-                  ? "আপনার অভিজ্ঞতা আপডেট করুন"
-                  : "আপনার অভিজ্ঞতা রেট করুন"}
+                  ? `আপনার ${type === "doctor" ? "ডক্টর" : "ক্লিনিক"} অভিজ্ঞতা আপডেট করুন`
+                  : `আপনার ${type === "doctor" ? "ডক্টর" : "ক্লিনিক"} অভিজ্ঞতা রেট করুন`}
               </label>
               <CustomFormField
                 fieldType={FormFieldType.RATING}
@@ -129,7 +166,11 @@ export default function ReviewForm({
               fieldType={FormFieldType.TEXTAREA}
               control={form.control}
               name="comment"
-              placeholder="পরামর্শ, অপেক্ষার সময় এবং সেবার মান সম্পর্কে বিস্তারিত লিখুন..."
+              placeholder={
+                type === "doctor"
+                  ? "ডক্টরের পরামর্শ, ব্যবহার এবং সেবার মান সম্পর্কে লিখুন..."
+                  : "ক্লিনিকের পরিচ্ছন্নতা, স্টাফদের ব্যবহার এবং অপেক্ষার সময় সম্পর্কে লিখুন..."
+              }
               required
             />
 

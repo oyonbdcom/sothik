@@ -26,8 +26,8 @@ export const adminConfig: MenuItemProps[] = [
     icon: Calendar,
   },
   {
-    title: "ক্লিনিকসমূহ",
-    href: "clinics",
+    title: "ডায়াগনস্টিকসমূহ",
+    href: "diagnostics",
     icon: Building2,
   },
 

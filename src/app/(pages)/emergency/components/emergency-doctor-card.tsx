@@ -1,9 +1,10 @@
 "use client";
 
 import { Stars } from "@/app/components/featured-doctors";
+import { VerifiedBadge } from "@/components/verify-badge";
 import { avatar, femaleAvatar } from "@/config/site";
 import { IDoctorResponse } from "@/interface/doctor";
-import { Building, CheckCircle2, Video } from "lucide-react";
+import { Building, Video } from "lucide-react";
 import Image from "next/image";
 import EmergencyAppointmentBooking from "./emergency-booking-dialog";
 
@@ -25,12 +26,12 @@ export default function EmergencyDoctorCard({
   return (
     <div className="group flex flex-col h-full bg-white rounded-2xl overflow-hidden border-2 border-red-50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative">
       {/* Emergency Badge - Floating on Top */}
-      <div className="absolute top-3 right-3 z-10 flex flex-col gap-2 items-end">
+      {/* <div className="absolute top-3 right-3 z-10 flex flex-col gap-2 items-end">
         <span className="flex items-center gap-1.5 bg-red-600 text-white text-[10px] font-black px-2.5 py-1.5 rounded-lg shadow-lg animate-pulse uppercase tracking-tighter">
           <span className="w-1.5 h-1.5 bg-white rounded-full animate-ping" />
           Emergency Service
         </span>
-      </div>
+      </div> */}
 
       {/* Top Section - Profile Image & Status */}
       <div className="relative bg-gradient-to-br from-red-50 to-orange-50 h-44 p-4 flex items-end justify-between shrink-0">
@@ -43,12 +44,12 @@ export default function EmergencyDoctorCard({
           />
 
           {/* Online Indicator for Video Call */}
-          {isOnline && (
+          {/* {isOnline && (
             <div className="absolute top-1 right-1 flex h-4 w-4">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-white shadow-sm"></span>
             </div>
-          )}
+          )} */}
         </div>
 
         {doctor?.position && (
@@ -90,7 +91,7 @@ export default function EmergencyDoctorCard({
           </div>
 
           {/* Rating Section */}
-          <div className="flex items-center justify-between pt-1">
+          <div className="flex items-center justify-between pb-4">
             <div className="flex items-center gap-1.5">
               <Stars rating={doctor.averageRating} />
               <span className="text-xs text-slate-700 font-bold">
@@ -115,14 +116,3 @@ export default function EmergencyDoctorCard({
     </div>
   );
 }
-
-const VerifiedBadge = () => (
-  <div className="flex items-center gap-1.5 p-1.5 rounded-full bg-white/95 backdrop-blur-md shadow-sm border border-slate-100">
-    <div className="bg-emerald-500 rounded-full p-0.5">
-      <CheckCircle2 className="w-2.5 h-2.5 text-white" />
-    </div>
-    <span className="text-[9px] font-black text-slate-700 pr-1 uppercase">
-      SusthiO Verified
-    </span>
-  </div>
-);

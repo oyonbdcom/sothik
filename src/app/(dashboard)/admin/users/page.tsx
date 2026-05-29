@@ -18,13 +18,7 @@ import {
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-const ROLES = [
-  "ADMIN",
-  "AREA_MANAGER",
-  "DIAGNOSTIC_MANAGER",
-  "DOCTOR",
-  "PATIENT",
-];
+const ROLES = ["ADMIN", "AREA_MANAGER", "DIAGNOSTIC", "DOCTOR", "PATIENT"];
 
 export default function UserManagementPage() {
   const [searchTerm, setSearchTerm] = useState("");

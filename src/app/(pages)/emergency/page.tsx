@@ -4,6 +4,7 @@ import DoctorFilterForm from "@/app/(pages)/doctors/components/doctor-filter-for
 import { Hero } from "@/components/hero";
 import { NotFound } from "@/components/not-found";
 import ServerPagination from "@/components/server-pagination";
+import { siteConfig } from "@/config/site";
 import { IDoctorResponse } from "@/interface/doctor";
 import { getAllDoctors } from "@/service/doctor.service";
 import { Metadata } from "next";
@@ -30,7 +31,7 @@ export async function generateMetadata({
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://susthio.com";
 
   const deptName = params.department ? `${params.department} ` : "";
-  const cityName = params.district ? `in ${params.district}` : "Bangladesh";
+  const cityName = params.district ? `in ${params.district}` : "dinajpur";
 
   const urlParams = new URLSearchParams();
   if (params.department) urlParams.set("department", params.department);
@@ -42,8 +43,8 @@ export async function generateMetadata({
     : "/doctors";
 
   return {
-    title: `Best ${deptName}Specialist Doctors ${cityName} | বুক করুন অনলাইনে | SusthiO`,
-    description: `Book appointments with the best ${deptName}specialist doctors ${cityName}. View ratings, experience, and chamber details online on SusthiO.`,
+    title: `Best ${deptName}Specialist Doctors ${cityName} | বুক করুন অনলাইনে | ${siteConfig.siteName}`,
+    description: `Book appointments with the best ${deptName}specialist doctors ${cityName}. View ratings, experience, and chamber details online on ${siteConfig.siteName}.`,
     alternates: {
       canonical: `${baseUrl}${canonicalPath}`,
     },
@@ -51,7 +52,7 @@ export async function generateMetadata({
       title: `${deptName}Specialist Doctors ${cityName}`,
       description: `Find and book the best ${deptName}doctors online.`,
       url: `${baseUrl}${canonicalPath}`,
-      siteName: "SusthiO",
+      siteName: `${siteConfig.siteName}`,
       images: [{ url: `${baseUrl}/og-image.jpg` }], // আপনার একটি ডিফল্ট OG ইমেজ থাকা উচিত
       type: "website",
     },
@@ -75,7 +76,6 @@ export default async function DoctorsPage({
     minRating: params.rating,
     deactivate: "false",
     isEmergency: "true",
-    membership: true,
   };
 
   // ১. ডেটা ফেচিং
@@ -116,10 +116,16 @@ export default async function DoctorsPage({
       />
 
       <Hero
-        title={"সেরা বিশেষজ্ঞ ডাক্তার খুঁজুন ও অ্যাপয়েন্টমেন্ট নিন"}
-        breadcrumbs={[{ label: "ডাক্তার তালিকা", href: "/doctors" }]}
+        title={"জরুরি স্বাস্থ্যসেবায় আমরা আছি আপনার পাশে"}
+        description={
+          "দিনাজপুরের সেরা বিশেষজ্ঞ ডাক্তারদের কাছ থেকে তাৎক্ষণিক অ্যাপয়েন্টমেন্ট ও জরুরি পরামর্শ নিন।"
+        }
+        isEmergency
+        breadcrumbs={[
+          { label: "ডাক্তার তালিকা", href: "/doctors" },
+          { label: "জরুরি ডাক্তার", href: "/doctors/emergency" },
+        ]}
       />
-
       <section className="bg-card/30 backdrop-blur-md py-10">
         <div className="container ">
           <aside className="w-full mb-8">

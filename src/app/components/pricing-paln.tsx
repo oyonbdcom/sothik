@@ -34,8 +34,8 @@ export default function PlansPage() {
         <span className="text-blue-600 dark:text-blue-400"> Subscription</span>
       </h1>
       <p className="text-center text-gray-600 dark:text-gray-400 max-w-xl mx-auto mb-12">
-        Scale your clinic with flexible plans. Whether you’re just starting out
-        or running a large healthcare center, we have a plan for you.
+        Scale your diagnostic with flexible plans. Whether you’re just starting
+        out or running a large healthcare center, we have a plan for you.
       </p>
 
       <div className="max-w-4xl mx-auto grid md:grid-cols-2   gap-8">

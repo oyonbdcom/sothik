@@ -60,7 +60,7 @@ export default function AppointmentCard({
       </div>
 
       {/* ===================================================== */}
-      {/* ROW 2: DOCTOR + CLINIC + SOURCE */}
+      {/* ROW 2: DOCTOR + diagnostic + SOURCE */}
       {/* ===================================================== */}
       <div className="flex flex-wrap gap-2 text-[11px]">
         <span className="font-semibold text-blue-600">
@@ -70,7 +70,7 @@ export default function AppointmentCard({
         {/* <span className="text-slate-300">•</span>
 
                 <span className="text-slate-500">
-                  {appt.clinic?.user?.name}
+                  {appt.diagnostic?.user?.name}
                 </span> */}
 
         <span className="text-slate-300">•</span>

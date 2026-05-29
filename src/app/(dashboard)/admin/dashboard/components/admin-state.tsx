@@ -12,14 +12,14 @@ import {
 interface AdminStatsProps {
   doctorsCount: number;
   totalPatient: number;
-  totalClinics: number;
+  totalDiagnostics: number;
   monthlyRevenue?: number;
 }
 
 export default function AdminStats({
   doctorsCount,
   totalPatient,
-  totalClinics,
+  totalDiagnostics,
   monthlyRevenue = 125600,
 }: AdminStatsProps) {
   const stats = [
@@ -40,8 +40,8 @@ export default function AdminStats({
       trend: 8.3,
     },
     {
-      title: "Active Clinics",
-      value: totalClinics,
+      title: "Active Diagnostic",
+      value: totalDiagnostics,
       icon: Building2,
       color: "bg-purple-50 text-purple-600",
       iconColor: "bg-purple-100",

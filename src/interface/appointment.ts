@@ -9,12 +9,15 @@ export interface IAppointmentResponse {
   status: AppointmentStatus | null;
   serialNumber: number;
   patientName: string;
-  phoneNumber: string;
-  clinicId: string;
+  contactNumber: string;
+  diagId: string;
   doctorId: string;
   isEmergency: boolean;
   createdAt: Date;
-  discount: number;
+
+  transactionId?: string | null;
+
+  paymentStatus: "PENDING" | "PAID" | "FAILED";
   doctor: {
     id: string;
     user: IUserResponse;
@@ -25,7 +28,7 @@ export interface IAppointmentResponse {
   age: number;
   emergency?: EmergencyRequestResponse;
 
-  clinic: {
+  diagnostic: {
     id: string;
     user: IUserResponse;
 
@@ -57,15 +60,9 @@ export type EmergencyRequestResponse = {
 
   appointmentId: string;
 
-  type: "NORMAL" | "CRITICAL" | "URGENT"; // adjust based on your enum
+  type: "NORMAL" | "CRITICAL" | "URGENT";
 
   status: "PENDING" | "ACCEPT" | "REJECTED";
-
-  transactionId?: string | null;
-
-  paymentStatus: "PENDING" | "PAID" | "FAILED";
-
-  createdById?: string | null;
 
   createdAt: string;
   updatedAt: string;

@@ -39,7 +39,6 @@ export default function MedicalRecordsAddDialog({
       appointmentId: appointmentId,
     },
   });
-
   const onSubmit: SubmitHandler<ICreateMedicalRecords> = async (data) => {
     try {
       // ডেট বাদ দিলেও ব্যাকএন্ডে যদি ডেট রিকোয়ার্ড থাকে, তবে আজকের ডেট অটো পাঠিয়ে দিচ্ছি
@@ -103,7 +102,13 @@ export default function MedicalRecordsAddDialog({
                   placeholder="উদাঃ প্রেসক্রিপশন, রক্ত পরীক্ষা"
                   label="ফাইলের নাম বা টাইটেল"
                 />
-
+                <CustomFormField
+                  fieldType={FormFieldType.INPUT}
+                  name="date"
+                  type="date"
+                  control={form.control}
+                  label="তারিখ দিন"
+                />
                 <CustomFormField
                   fieldType={FormFieldType.FILE_UPLOAD}
                   name="document"

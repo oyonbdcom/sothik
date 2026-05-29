@@ -6,7 +6,7 @@ export function HomeBanner() {
       <div className="container pt-16    ">
         <div className="grid lg:grid-cols-2 gap-12 items-end">
           {/* Left Content */}
-          <div className="pb-16 fade-up">
+          <div className="pb-24 fade-up">
             {/* Badge */}
             <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-5">
               <span className="relative flex w-2 h-2">
@@ -74,11 +74,11 @@ export function HomeBanner() {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-4 max-w-sm">
+            {/* <div className="grid grid-cols-3 gap-4 max-w-sm">
               {[
-                { num: "২,৫০০+", label: "বিশেষজ্ঞ ডাক্তার" },
-                { num: "৩৮০+", label: "ডায়াগনস্টিক সেন্টার" },
-                { num: "১.২ লক্ষ+", label: "সন্তুষ্ট রোগী" },
+                { num: "1০০+", label: "বিশেষজ্ঞ ডাক্তার" },
+                { num: "5০+", label: "ডায়াগনস্টিক সেন্টার" },
+                { num: "1000 +", label: "সন্তুষ্ট রোগী" },
               ].map((stat) => (
                 <div
                   key={stat.label}
@@ -90,7 +90,7 @@ export function HomeBanner() {
                   </p>
                 </div>
               ))}
-            </div>
+            </div> */}
           </div>
 
           {/* Right - Illustration */}

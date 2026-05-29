@@ -1,5 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { UserRole } from "@/types/common";
+import { IDiagnosticResponse } from "./diagnostic";
+import { IDoctorResponse } from "./doctor";
+import { IPatientResponse } from "./patient";
 
 export interface IUserResponse {
   id: string;
@@ -14,9 +16,9 @@ export interface IUserResponse {
     staffType: string;
   };
 
-  doctor?: any;
-  patient?: any;
-  clinic?: any;
+  doctor?: IDoctorResponse;
+  patient?: IPatientResponse;
+  diagnostic?: IDiagnosticResponse;
 }
 export const UserFilterableFields = [
   "searchTerm",

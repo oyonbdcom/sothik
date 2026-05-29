@@ -13,7 +13,7 @@ const scheduleApi = baseApi.injectEndpoints({
         method: "POST",
         data,
       }),
-      invalidatesTags: [tagTypes.membership, tagTypes.clinic],
+      invalidatesTags: [tagTypes.membership, tagTypes.diagnostic],
     }),
 
     updateSchedule: build.mutation({
@@ -22,7 +22,7 @@ const scheduleApi = baseApi.injectEndpoints({
         method: "PATCH",
         data,
       }),
-      invalidatesTags: [tagTypes.membership, tagTypes.clinic],
+      invalidatesTags: [tagTypes.membership, tagTypes.diagnostic],
     }),
 
     // 5. Delete schedule
@@ -31,7 +31,7 @@ const scheduleApi = baseApi.injectEndpoints({
         url: `${SCHEDULE_URL}/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: [tagTypes.membership, tagTypes.clinic],
+      invalidatesTags: [tagTypes.membership, tagTypes.diagnostic],
     }),
   }),
 });
