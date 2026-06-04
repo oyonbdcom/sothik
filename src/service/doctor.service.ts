@@ -1,4 +1,5 @@
 import { BASE_URL } from "@/constant/common";
+import { IDoctorResponse } from "@/interface/doctor";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const getAllDoctors = async (query: Record<string, any>) => {
@@ -36,7 +37,7 @@ export const getSingleDoctor = async (
   id: string,
   page: number = 1,
   limit: number = 10,
-) => {
+): Promise<IDoctorResponse | null> => {
   try {
     const url = new URL(`${BASE_URL}/doctors/${id}`);
     url.searchParams.append("page", page.toString());

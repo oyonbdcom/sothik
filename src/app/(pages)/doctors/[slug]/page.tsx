@@ -21,12 +21,87 @@ export async function generateMetadata({
   params,
 }: DoctorProps): Promise<Metadata> {
   const { slug } = await params;
+
   const doctor = await getSingleDoctor(slug);
+
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sasthik.com";
+
+  const profileUrl = `${baseUrl}/doctors/${slug}`;
+
+  const imageSrc = doctor?.user?.image
+    ? doctor.user.image
+    : doctor?.gender === "MALE"
+      ? avatar.src
+      : femaleAvatar.src;
+
+  const doctorName = doctor?.user?.name || "ডাক্তার";
+  const specialty = doctor?.department?.name || "বিশেষজ্ঞ চিকিৎসক";
+  const location = doctor?.areas?.[0]?.area?.name || "বাংলাদেশ";
+
+  const title = doctor
+    ? `${doctorName} - ${specialty} ডাক্তার | সিরিয়াল, ফি ও চেম্বার`
+    : "ডাক্তার পাওয়া যায়নি | Sasthik";
+
+  const description = doctor
+    ? `${doctorName} একজন অভিজ্ঞ ${specialty}। ${location} এ চেম্বার করেন। অনলাইনে সিরিয়াল, ফি ও অ্যাপয়েন্টমেন্ট দেখুন।`
+    : "সাস্থিক - বাংলাদেশের ডিজিটাল স্বাস্থ্যসেবা প্ল্যাটফর্ম";
+
   return {
-    title: doctor
-      ? `ডা. ${doctor.user.name} | বিশেষজ্ঞ প্রোফাইল`
-      : "ডাক্তার পাওয়া যায়নি",
-    description: `${doctor?.user?.name} এর অ্যাপয়েন্টমেন্ট নিন। জানুন তার চেম্বার এবং স্পেশালাইজেশন।`,
+    metadataBase: new URL(baseUrl),
+
+    title,
+    description,
+
+    applicationName: "Sasthik",
+    authors: [{ name: "Sasthik" }],
+    creator: "Sasthik",
+    publisher: "Sasthik",
+    category: "Healthcare",
+
+    keywords: doctor
+      ? [
+          doctorName,
+          specialty,
+          `${specialty} doctor`,
+          location,
+          "doctor appointment",
+          "Bangladesh doctor",
+          "online appointment",
+        ]
+      : ["doctor appointment", "Bangladesh doctor", "Sasthik"],
+
+    alternates: {
+      canonical: doctor ? profileUrl : baseUrl,
+    },
+
+    robots: {
+      index: !!doctor,
+      follow: !!doctor,
+    },
+
+    openGraph: {
+      title,
+      description,
+      url: profileUrl,
+      siteName: "Sasthik",
+      locale: "bn_BD",
+      type: "profile",
+      images: [
+        {
+          url: imageSrc,
+          width: 1200,
+          height: 630,
+          alt: doctorName,
+        },
+      ],
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [imageSrc],
+    },
   };
 }
 
@@ -58,7 +133,29 @@ export default async function DoctorDetailsPage({
   const imageSrc =
     doctor?.user?.image || (doctor.gender === "MALE" ? avatar : femaleAvatar);
   const ratingText = Number(doctor.averageRating || 0).toFixed(1);
+  const physicianSchema = {
+    "@context": "https://schema.org",
+    "@type": "Physician",
 
+    name: doctor?.user?.name,
+
+    image: doctor?.user?.image,
+
+    url: `${process.env.NEXT_PUBLIC_SITE_URL}/doctors/${doctor?.slug}`,
+
+    medicalSpecialty: doctor?.department?.name,
+
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: doctor?.areas?.[0]?.area?.name,
+      addressCountry: "BD",
+    },
+
+    worksFor: {
+      "@type": "Organization",
+      name: "Sasthik",
+    },
+  };
   return (
     <div className="min-h-screen bg-[#F8FAFC] pb-24 lg:pb-12">
       <Hero
@@ -68,7 +165,10 @@ export default async function DoctorDetailsPage({
           { label: doctor.user.name, href: "#" },
         ]}
       />
-
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(physicianSchema) }}
+      />
       {/* -mt-12 বা mt-10 দিয়ে হিরোর সাথে লেয়ারিং পোলিশ করা হয়েছে */}
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-20">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">

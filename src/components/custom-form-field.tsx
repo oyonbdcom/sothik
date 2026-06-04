@@ -494,7 +494,6 @@ const RenderInput = ({
     }
     case FormFieldType.PROFILE: {
       const handleFileSelection = async (file: File) => {
-        console.log(field.value);
         if (!file) return;
 
         const allowedTypes = [

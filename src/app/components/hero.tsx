@@ -9,11 +9,8 @@ export function HomeBanner() {
           <div className="pb-24 fade-up">
             {/* Badge */}
             <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-5">
-              <span className="relative flex w-2 h-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
-              </span>
-              বাংলাদেশের ১ নম্বর হেলথকেয়ার প্ল্যাটফর্ম
+              {/* ... (pulse animation icons) */}
+              নিশ্চিত সিরিয়াল ও লাইভ ট্র্যাকিং সুবিধা
             </div>
 
             {/* Headline */}
@@ -21,32 +18,20 @@ export function HomeBanner() {
               সেরা{" "}
               <span className="text-blue-700 relative">
                 ডাক্তার
-                <svg
-                  className="absolute bottom-3 left-0 w-full"
-                  viewBox="0 0 200 8"
-                  fill="none"
-                >
-                  <path
-                    d="M2 6 Q50 2 100 6 Q150 10 198 4"
-                    stroke="#93C5FD"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    fill="none"
-                  />
-                </svg>
+                {/* SVG Underline */}
               </span>{" "}
               খুঁজুন,
               <br />
-              <span className="inline-block mt-4 mb-2">
-                ডায়াগনস্টিক সেন্টারে
-              </span>
+              <span className="inline-block mt-4 mb-2">সিরিয়াল হবে</span>
               <br />
-              <span className="text-teal-600">সরাসরি ভিজিট করুন</span>
+              <span className="text-teal-600">একদম নিশ্চিত</span>
             </h1>
 
+            {/* Paragraph */}
             <p className="text-base text-slate-500 leading-relaxed mb-8 max-w-md">
-              আপনার পাশের ডায়াগনস্টিক সেন্টারে বিশেষজ্ঞ ডাক্তারের সাথে অফলাইন
-              ভিজিটের ব্যবস্থা করুন। দ্রুত, সহজ ও সম্পূর্ণ নির্ভরযোগ্য।
+              আপনার কাছের ডায়াগনস্টিক সেন্টারের বিশেষজ্ঞ ডাক্তারদের সাথে সরাসরি
+              সিরিয়াল বুকিং করুন। লাইভ ট্র্যাকিং ফিচারের মাধ্যমে জানুন আপনার
+              বর্তমান সিরিয়াল নম্বর।
             </p>
 
             {/* CTA Buttons */}
@@ -72,33 +57,15 @@ export function HomeBanner() {
                 ডায়াগনস্টিক সেন্টার দেখুন
               </button>
             </div>
-
-            {/* Stats */}
-            {/* <div className="grid grid-cols-3 gap-4 max-w-sm">
-              {[
-                { num: "1০০+", label: "বিশেষজ্ঞ ডাক্তার" },
-                { num: "5০+", label: "ডায়াগনস্টিক সেন্টার" },
-                { num: "1000 +", label: "সন্তুষ্ট রোগী" },
-              ].map((stat) => (
-                <div
-                  key={stat.label}
-                  className="bg-white/70 backdrop-blur-sm rounded-xl p-3 border border-white shadow-sm text-center"
-                >
-                  <p className="text-xl font-bold text-blue-700">{stat.num}</p>
-                  <p className="text-[11px] text-slate-500 mt-0.5 font-medium">
-                    {stat.label}
-                  </p>
-                </div>
-              ))}
-            </div> */}
           </div>
 
           {/* Right - Illustration */}
           <div className="hidden lg:flex justify-center items-end">
             <div className="relative w-full max-w-lg">
               {/* Floating cards */}
+              {/* Card 1: Verified Status */}
               <div
-                className="absolute top-8 -left-4 z-10 float bg-white rounded-2xl shadow-xl shadow-slate-100 border border-slate-100 p-3.5 flex items-center gap-3 w-52"
+                className="absolute bottom-20 -left-8  z-10 float bg-white rounded-2xl shadow-xl shadow-slate-100 border border-slate-100 p-3.5 flex items-center gap-3 w-52"
                 style={{ animationDelay: "0s" }}
               >
                 <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center text-lg">
@@ -106,18 +73,21 @@ export function HomeBanner() {
                 </div>
                 <div>
                   <p className="text-xs font-bold text-slate-800">
-                    অ্যাপয়েন্টমেন্ট নিশ্চিত
+                    ভেরিফাইড ডাক্তার
                   </p>
-                  <p className="text-[10px] text-slate-400">আজ, বেলা ৩:০০ টা</p>
+                  <p className="text-[10px] text-emerald-600 font-semibold">
+                    ১০০% নির্ভরযোগ্য প্রোফাইল
+                  </p>
                 </div>
               </div>
 
+              {/* Card 2: Ratings & Trust */}
               <div
                 className="absolute top-32 -right-6 z-10 float bg-white rounded-2xl shadow-xl shadow-slate-100 border border-slate-100 p-3.5"
                 style={{ animationDelay: "1.5s" }}
               >
                 <p className="text-[10px] text-slate-400 mb-1">
-                  ডাক্তারের রেটিং
+                  রোগীদের সন্তুষ্টি
                 </p>
                 <div className="flex gap-0.5 mb-1">
                   {[1, 2, 3, 4, 5].map((s) => (
@@ -126,12 +96,17 @@ export function HomeBanner() {
                     </span>
                   ))}
                 </div>
-                <p className="text-xs font-bold text-slate-800">৪.৯ / ৫.০</p>
-                <p className="text-[10px] text-slate-400">১,২৩০ রিভিউ</p>
+                <p className="text-xs font-bold text-slate-800">
+                  শীর্ষ রেটেড সার্ভিস
+                </p>
+                <p className="text-[10px] text-slate-400">
+                  হাজারো ইউজারের আস্থা
+                </p>
               </div>
 
+              {/* Card 3: Intelligent Queue/Location */}
               <div
-                className="absolute bottom-20 -left-8 z-10 float bg-white rounded-2xl shadow-xl shadow-slate-100 border border-slate-100 p-3 flex items-center gap-2.5 w-44"
+                className="absolute top-8 -left-4 z-10 float bg-white rounded-2xl shadow-xl shadow-slate-100 border border-slate-100 p-3 flex items-center gap-2.5 w-44"
                 style={{ animationDelay: "0.8s" }}
               >
                 <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center text-base">
@@ -139,10 +114,10 @@ export function HomeBanner() {
                 </div>
                 <div>
                   <p className="text-[11px] font-bold text-slate-800">
-                    কাছের সেন্টার
+                    স্মার্ট সিরিয়াল
                   </p>
                   <p className="text-[10px] text-blue-600 font-semibold">
-                    মাত্র ১.২ কি.মি.
+                    লাইভ ট্র্যাকিং সুবিধা
                   </p>
                 </div>
               </div>

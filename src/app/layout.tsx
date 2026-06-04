@@ -1,8 +1,56 @@
 import ReduxProvider from "@/provider/auth.provicer";
 import { Toaster } from "react-hot-toast";
-import WhatsAppButton from "./components/whatsapp";
 import "./globals.css";
+export const metadata = {
+  title: {
+    default: "Sasthik - স্মার্ট ডিজিটাল স্বাস্থ্যসেবা",
+    template: "%s | Sasthik",
+  },
+  description:
+    "দিনাজপুরের সেরা ডাক্তার এবং ডায়াগনস্টিক সেন্টারের তথ্য ও সিরিয়াল বুকিং করুন Sasthik (সাস্থিক)-এ। আমরা স্বাস্থ্যসেবাকে করছি সহজ এবং ডিজিটাল।",
+  keywords: [
+    "Sasthik",
+    "সাস্থিক",
+    "Doctor Booking Bangladesh",
+    "Dinajpur Healthcare",
+    "Digital Prescription",
+    "দিনাজপুর ডাক্তার বুকিং",
+  ],
+  // --- Global Open Graph (Social Media Preview) ---
+  openGraph: {
+    title: "Sasthik - সাস্থিক | স্মার্ট ডিজিটাল স্বাস্থ্যসেবা",
+    description:
+      "দিনাজপুরের স্বাস্থ্যসেবাকে ডিজিটাল করতে বিশেষজ্ঞ ডাক্তার ও রোগীদের মাঝে এক নিরাপদ সেতুবন্ধন।",
+    url: "https://sasthik.com",
+    siteName: "Sasthik",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Sasthik - Digital Healthcare Bangladesh",
+      },
+    ],
+    locale: "bn_BD",
+    type: "website",
+  },
 
+  twitter: {
+    card: "summary_large_image",
+    title: "Sasthik - স্মার্ট ডিজিটাল স্বাস্থ্যসেবা",
+    description: "দিনাজপুরের স্বাস্থ্যসেবা এখন আপনার হাতের মুঠোয়।",
+    images: ["/og-image.jpg"],
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
+};
 export default function RootLayout({
   children,
 }: {
@@ -37,7 +85,7 @@ export default function RootLayout({
         @keyframes ping { 75%,100%{transform:scale(2);opacity:0} }
       `}</style>
         <ReduxProvider>{children}</ReduxProvider>
-        <WhatsAppButton />
+
         <Toaster />
       </body>
     </html>

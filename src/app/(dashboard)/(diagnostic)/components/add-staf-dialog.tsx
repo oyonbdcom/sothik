@@ -66,7 +66,7 @@ interface StaffDialogProps {
 const AddStaffDialog = ({ staff }: StaffDialogProps) => {
   const isEditMode = !!staff;
   const [isOpen, setIsOpen] = useState(false);
-  console.log(staff);
+
   const [createStaff, { isLoading: isCreating }] = useCreateStaffMutation();
   const [updateStaff, { isLoading: isUpdating }] = useUpdateStaffMutation();
   const { data } = useGetAccessibleDoctorsQuery({});

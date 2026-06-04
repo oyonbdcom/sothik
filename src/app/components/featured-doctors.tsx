@@ -19,7 +19,7 @@ export default function FeaturedDoctors({
             </h2>
 
             <p className="mt-3 text-sm leading-7 text-slate-500 dark:text-slate-400">
-              ঢাকাসহ সারাদেশের অভিজ্ঞ ও বিশ্বস্ত চিকিৎসকদের খুঁজুন সহজেই।
+              দিনাজপুরের অভিজ্ঞ ও বিশ্বস্ত চিকিৎসকদের খুঁজুন সহজেই।
             </p>
           </div>
           <Link

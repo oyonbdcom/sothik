@@ -59,7 +59,7 @@ export function Searchbar() {
     <section className="container relative z-20">
       <div className="bg-white m ">
         {/* Header */}
-        <div className="mb-6 pt-2">
+        <div className="mb-6 lg:pt-2">
           <h2 className="text-lg font-bold text-slate-700 flex items-center gap-2">
             🩺 ডাক্তার খুঁজুন
           </h2>

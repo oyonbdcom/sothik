@@ -22,13 +22,50 @@ export async function generateMetadata({
   params,
 }: DiagnosticsProps): Promise<Metadata> {
   const { slug } = await params;
+
   const diagnostic = await getDiagnosticByIdentifier(slug);
-  const diagnosticName = diagnostic?.user?.name || "ডায়াগনস্টিক প্রোফাইল";
+
+  const name = diagnostic?.user?.name || "ডায়াগনস্টিক প্রোফাইল";
+
+  const rating = Number(diagnostic?.averageRating ?? 0).toFixed(1);
+  const reviews = diagnostic?.reviewsCount ?? 0;
+
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sasthik.com";
+
+  const url = `${baseUrl}/diagnostic/${slug}`;
+
+  const title = `${name} | হেলথ-পোর্টাল | ⭐ ${rating} (${reviews})`;
+
+  const description = `${name} এ অভিজ্ঞ ডাক্তারদের সাথে অ্যাপয়েন্টমেন্ট বুক করুন। গড় রেটিং ${rating}/5 (${reviews} রিভিউ)।`;
 
   return {
-    title: `${diagnosticName} | হেলথ-পোর্টাল`,
-    description: `${diagnosticName} এ অভিজ্ঞ ডাক্তারদের সাথে অ্যাপয়েন্টমেন্ট বুক করুন।`,
-    alternates: { canonical: `/diagnostic/${slug}` },
+    metadataBase: new URL(baseUrl),
+
+    title,
+    description,
+
+    alternates: {
+      canonical: url,
+    },
+
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: "Health Portal",
+      type: "website",
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+
+    robots: {
+      index: true,
+      follow: true,
+    },
   };
 }
 

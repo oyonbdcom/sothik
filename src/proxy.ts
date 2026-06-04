@@ -100,9 +100,9 @@ export async function proxy(req: NextRequest) {
 
   const token = getTokenFromRequest(req);
   // কনসোলে চেক করুন কুকি আসছে কি না
-  console.log("All Cookies:", req.cookies.getAll());
+  // console.log("All Cookies:", req.cookies.getAll());
 
-  console.log("Extracted Token:", token);
+  // console.log("Extracted Token:", token);
   // public route
   if (!token && !isProtectedRoute(pathname)) {
     return NextResponse.next();

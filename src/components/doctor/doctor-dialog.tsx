@@ -110,8 +110,6 @@ export default function DoctorDialog({
 
   // ৫. সাবমিট হ্যান্ডলার
   async function onSubmit(values: DoctorFormValues) {
-    console.log(values);
-
     try {
       if (isEditMode && doctor?.id) {
         await updateDoctor({

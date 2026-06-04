@@ -31,7 +31,7 @@ export default function ReviewPage({ targetId, type }: ReviewPageProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const limit = 10;
   const formRef = useRef<HTMLDivElement>(null);
-  console.log({ type, targetId });
+
   // 🔄 টাইপ অনুযায়ী সঠিক রিডাক্স হুক ডাইনামিকালি কল করুন
   const doctorQuery = useGetTargetDoctorReviewsQuery(
     {
