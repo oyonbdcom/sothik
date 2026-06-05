@@ -4,9 +4,9 @@
 import AppPagination from "@/components/app-pagination";
 import { useDebounce } from "@/hooks/useDebaunce";
 import { useGetMyAppointmentsQuery } from "@/redux/api/appointmentApi";
-import { Loader2 } from "lucide-react";
 import { useState } from "react";
 
+import Loader from "@/components/loader";
 import { useGetAccessibleDoctorsQuery } from "@/redux/api/doctorApi";
 import CreateAppointmentModal from "../../components/dashboard-appointmet-dialog";
 import AppointmentCard from "./staff-apt-card";
@@ -73,11 +73,7 @@ const ReceptionistDashboard = () => {
   // =====================================================
 
   if (isLoading) {
-    return (
-      <div className="h-[70vh] flex items-center justify-center">
-        <Loader2 className="animate-spin text-blue-500" />
-      </div>
-    );
+    return <Loader />;
   }
 
   return (

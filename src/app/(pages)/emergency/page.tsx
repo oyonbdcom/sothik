@@ -10,6 +10,7 @@ import { getAllDoctors } from "@/service/doctor.service";
 import { Metadata } from "next";
 import EmergencyDoctorCard from "./components/emergency-doctor-card";
 
+// --- SEO: Dynamic Metadata Generation ---
 interface SearchParams {
   searchTerm?: string;
   page?: string;
@@ -17,11 +18,11 @@ interface SearchParams {
   district?: string;
   rating?: string;
   area?: string;
-  isEmergency: "true";
   gender?: "MALE" | "FEMALE";
+  isEmergency?: "true";
 }
 
-// --- SEO: Dynamic Metadata Generation ---
+// --- SEO: Highly Optimized Dynamic Metadata ---
 export async function generateMetadata({
   searchParams,
 }: {
@@ -30,40 +31,75 @@ export async function generateMetadata({
   const params = await searchParams;
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://susthio.com";
 
-  const deptName = params.department ? `${params.department} ` : "";
-  const cityName = params.district ? `in ${params.district}` : "dinajpur";
+  // ১. ইমার্জেন্সি স্ট্যাটাস চেক
+  const isEmergency = "true";
+
+  // ২. ডাইনামিক ভ্যালু প্রিপারেশন
+  const emergencyEn = isEmergency ? "Emergency " : "";
+  const emergencyBn = isEmergency ? "জরুরি " : "";
+
+  const deptEn = params.department ? `${params.department} ` : "";
+  const deptBn = params.department ? `${params.department} বিশেষজ্ঞ ` : "";
+  const cityEn = params.district ? `in ${params.district}` : "Bangladesh";
+  const cityBn = params.district ? `${params.district}-এ` : "বাংলাদেশে";
 
   const urlParams = new URLSearchParams();
   if (params.department) urlParams.set("department", params.department);
   if (params.district) urlParams.set("district", params.district);
+  if (isEmergency) urlParams.set("isEmergency", "true"); // জরুরি প্যারামিটারে যোগ করা হলো
   urlParams.set("membership", "true");
   if (params.page) urlParams.set("page", params.page);
+
   const canonicalPath = urlParams.toString()
     ? `/doctors?${urlParams.toString()}`
     : "/doctors";
 
+  const fullUrl = `${baseUrl}${canonicalPath}`;
+
+  // টাইটেল ও ডেসক্রিপশন সেটআপ
+  const pageTitle = `Best ${emergencyEn}${deptEn}Specialist Doctors ${cityEn} | সেরা ${emergencyBn}${deptBn}ডাক্তার তালিকা ${cityBn} | ${siteConfig.siteName}`;
+  const pageDesc = `${cityBn} সেরা, অভিজ্ঞ এবং রেজিস্টার্ড ${emergencyBn}${deptBn}ডাক্তারদের খুঁজুন। ডাক্তারদের চেম্বারের ঠিকানা, ভিজিট ফি, রেটিং দেখুন এবং ঘরে বসেই সহজে সিরিয়াল বুকিং করুন অনলাইনে।`;
+
   return {
-    title: `Best ${deptName}Specialist Doctors ${cityName} | বুক করুন অনলাইনে | ${siteConfig.siteName}`,
-    description: `Book appointments with the best ${deptName}specialist doctors ${cityName}. View ratings, experience, and chamber details online on ${siteConfig.siteName}.`,
+    title: pageTitle,
+    description: pageDesc,
     alternates: {
-      canonical: `${baseUrl}${canonicalPath}`,
+      canonical: fullUrl,
     },
     openGraph: {
-      title: `${deptName}Specialist Doctors ${cityName}`,
-      description: `Find and book the best ${deptName}doctors online.`,
-      url: `${baseUrl}${canonicalPath}`,
+      title: pageTitle,
+      description: pageDesc,
+      url: fullUrl,
       siteName: `${siteConfig.siteName}`,
-      images: [{ url: `${baseUrl}/og-image.jpg` }], // আপনার একটি ডিফল্ট OG ইমেজ থাকা উচিত
+      images: [
+        {
+          url: `https://res.cloudinary.com/dnpcna4up/image/upload/v1780641866/sasthik/doctor-listing_n5h9wp.png`,
+          width: 1200,
+          height: 630,
+          alt: `Find Best ${deptEn}Doctors ${cityEn} on SusthiO`,
+        },
+      ],
+      locale: "bn_BD",
       type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: pageTitle,
+      description: pageDesc,
+      images: [
+        `https://res.cloudinary.com/dnpcna4up/image/upload/v1780641866/sasthik/doctor-listing_n5h9wp.png`,
+      ],
     },
   };
 }
+
 export default async function DoctorsPage({
   searchParams,
 }: {
   searchParams: Promise<SearchParams>;
 }) {
   const params = await searchParams;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://susthio.com";
 
   const query = {
     page: Number(params.page) || 1,
@@ -87,24 +123,40 @@ export default async function DoctorsPage({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Doctor List - SusthiO",
-    itemListElement: doctors.map((doc: IDoctorResponse, index: number) => ({
-      "@type": "ListItem",
-      position: index + 1,
-      item: {
-        "@type": "Physician",
-        name: doc.user.name,
-        medicalSpecialty: doc.specialization,
-        image: doc.user.image,
-        aggregateRating: {
-          "@type": "AggregateRating",
-          ratingValue: doc.averageRating,
-          bestRating: "5",
-          worstRating: "1",
-          ratingCount: "10", // Example
+    name: params.department
+      ? `${params.department} Specialist Doctors List - SusthiO`
+      : `Doctor List - ${siteConfig?.siteName || "SusthiO"}`,
+    description:
+      "অনলাইনে সহজে বিশেষজ্ঞ ডাক্তার খুঁজুন এবং অ্যাপয়েন্টমেন্ট বুক করুন।",
+    numberOfItems: doctors.length,
+    itemListElement: doctors.map((doc: IDoctorResponse, index: number) => {
+      const doctorUrl = `${baseUrl}/doctors/${doc.slug || doc.id}`;
+
+      return {
+        "@type": "ListItem",
+        position: index + 1,
+        item: {
+          "@type": "Physician",
+          "@id": doctorUrl,
+          name: doc.user.name,
+          medicalSpecialty: doc.specialization,
+          image: doc.user.image || `${baseUrl}/images/default-doctor.png`,
+          url: doctorUrl,
+          telephone: siteConfig?.contact.phone || "",
+          ...(doc.averageRating && Number(doc.averageRating) > 0
+            ? {
+                aggregateRating: {
+                  "@type": "AggregateRating",
+                  ratingValue: doc.averageRating,
+                  reviewCount: doc.averageRating || 1,
+                  bestRating: "5",
+                  worstRating: "1",
+                },
+              }
+            : {}),
         },
-      },
-    })),
+      };
+    }),
   };
 
   return (

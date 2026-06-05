@@ -2,7 +2,7 @@ import { Hero } from "@/components/hero";
 import ReviewPage from "@/components/reviews/review-page";
 import ServerPagination from "@/components/server-pagination";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { avatar, femaleAvatar } from "@/config/site";
+import { avatar, femaleAvatar, siteConfig } from "@/config/site";
 import { IMembershipResponse } from "@/interface/diagnostic-membership";
 import { getSingleDoctor } from "@/service/doctor.service";
 import { getMembershipsBySlug } from "@/service/membership.service";
@@ -31,8 +31,8 @@ export async function generateMetadata({
   const imageSrc = doctor?.user?.image
     ? doctor.user.image
     : doctor?.gender === "MALE"
-      ? avatar.src
-      : femaleAvatar.src;
+      ? siteConfig.maleDoctor
+      : siteConfig.femaleDoctor;
 
   const doctorName = doctor?.user?.name || "ডাক্তার";
   const specialty = doctor?.department?.name || "বিশেষজ্ঞ চিকিৎসক";
@@ -133,17 +133,62 @@ export default async function DoctorDetailsPage({
   const imageSrc =
     doctor?.user?.image || (doctor.gender === "MALE" ? avatar : femaleAvatar);
   const ratingText = Number(doctor.averageRating || 0).toFixed(1);
+
+  // আপনার physicianSchema-তে নিচের logic টি যুক্ত করুন
+
   const physicianSchema = {
     "@context": "https://schema.org",
     "@type": "Physician",
 
     name: doctor?.user?.name,
 
-    image: doctor?.user?.image,
-
-    url: `${process.env.NEXT_PUBLIC_SITE_URL}/doctors/${doctor?.slug}`,
-
+    imageSrc: doctor?.user?.image
+      ? doctor.user.image
+      : doctor?.gender === "MALE"
+        ? siteConfig.maleDoctor
+        : siteConfig.femaleDoctor,
+    url: `${process.env.NEXT_PUBLIC_APP_URL}/doctors/${doctor?.slug}`,
     medicalSpecialty: doctor?.department?.name,
+    ...(Number(doctor.averageRating) > 0 && doctor.reviewsCount > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: Number(doctor.averageRating).toFixed(1),
+            reviewCount: doctor.reviewsCount,
+            bestRating: "5",
+            worstRating: "1",
+          },
+        }
+      : {}),
+    // এখানেই আমরা ডায়াগনস্টিক সেন্টার বা হাসপাতালগুলোর তথ্য যোগ করব
+    practiceLocation: memberships?.map((center: IMembershipResponse) => {
+      const diag = center.diagnostic; // সুবিধার্থে একটি ভেরিয়েবলে নিলাম
+
+      return {
+        "@type": "MedicalBusiness",
+        name: diag?.user?.name || "ডায়াগনস্টিক সেন্টার",
+
+        // সেন্টারের রেটিং অংশ (যদি রেটিং থাকে)
+        ...(Number(diag?.averageRating) > 0 && diag && diag?.reviewsCount > 0
+          ? {
+              aggregateRating: {
+                "@type": "AggregateRating",
+                ratingValue: Number(diag.averageRating).toFixed(1),
+                reviewCount: diag.reviewsCount,
+                bestRating: "5",
+                worstRating: "1",
+              },
+            }
+          : {}),
+
+        address: {
+          "@type": "PostalAddress",
+          // যদি সেন্টারের আলাদা এরিয়া থাকে সেটিই ব্যবহার করা ভালো
+          addressLocality: diag?.area?.name || doctor?.areas?.[0]?.area?.name,
+          addressCountry: "BD",
+        },
+      };
+    }),
 
     address: {
       "@type": "PostalAddress",
@@ -156,6 +201,7 @@ export default async function DoctorDetailsPage({
       name: "Sasthik",
     },
   };
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] pb-24 lg:pb-12">
       <Hero

@@ -2,6 +2,7 @@
 
 // নতুন Mutation হুকটি ইমপোর্ট করুন (আপনার API ফাইল অনুযায়ী নাম ঠিক করে নিন)
 import AppPagination from "@/components/app-pagination";
+import Loader from "@/components/loader";
 import { IMembershipResponse } from "@/interface/diagnostic-membership";
 import { IScheduleResponse } from "@/interface/schedule";
 import { enToBnNumber } from "@/lib/utils/utils";
@@ -70,13 +71,7 @@ export default function MembershipMainPage() {
     deleteSchedule(id);
   };
 
-  if (isLoading)
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <Loader2 className="animate-spin text-indigo-500" size={40} />
-        <p className="mt-2 text-slate-500 font-medium">লোড হচ্ছে...</p>
-      </div>
-    );
+  if (isLoading) return <Loader />;
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] pb-24 relative overflow-x-hidden">

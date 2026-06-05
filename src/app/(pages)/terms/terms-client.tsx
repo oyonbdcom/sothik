@@ -23,7 +23,7 @@ const policyData = [
     text: "আপনার ব্যক্তিগত তথ্যের ওপর আপনার পূর্ণ নিয়ন্ত্রণ রয়েছে। আপনি যেকোনো সময় আপনার প্রোফাইল আপডেট অথবা ডাটাবেজ থেকে একাউন্ট মুছে ফেলার অনুরোধ করতে পারেন।",
   },
 ];
-export default function SimpleTerms() {
+export default function TermsClient() {
   return (
     <div className="bg-white dark:bg-slate-950 min-h-screen">
       <div className="max-w-3xl mx-auto px-6 py-20">

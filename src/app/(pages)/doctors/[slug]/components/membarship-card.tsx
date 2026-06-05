@@ -83,7 +83,7 @@ const MembershipCard = ({
             <Star size={14} fill="currentColor" />{" "}
             {Number(membership?.diagnostic?.averageRating || 0).toFixed(1)}
             <span className="text-slate-400">
-              ({membership?.diagnostic?.reviewCount || 0} রিভিউ)
+              ({membership?.diagnostic?.reviewsCount || 0} রিভিউ)
             </span>
           </div>
 

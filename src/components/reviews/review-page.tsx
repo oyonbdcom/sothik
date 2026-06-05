@@ -16,6 +16,7 @@ import { CheckCircle2, Edit2, Loader2, Star, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { toast } from "react-hot-toast";
+import Loader from "../loader";
 import { Separator } from "../ui/separator";
 import ReviewForm from "./review-form";
 
@@ -99,14 +100,7 @@ export default function ReviewPage({ targetId, type }: ReviewPageProps) {
   if (!mounted) return null;
 
   if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20">
-        <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
-        <p className="mt-4 text-gray-500">
-          {type === "doctor" ? "ডক্টরের" : "ক্লিনিকের"} রিভিউ লোড হচ্ছে...
-        </p>
-      </div>
-    );
+    return <Loader />;
   }
 
   return (

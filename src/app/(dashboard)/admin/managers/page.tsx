@@ -2,18 +2,12 @@
 "use client";
 
 import AppPagination from "@/components/app-pagination";
+import Loader from "@/components/loader";
 import {
   useGetManagersQuery,
   useUpdateUserRoleMutation,
 } from "@/redux/api/user";
-import {
-  Loader2,
-  MapPin,
-  Phone,
-  Power,
-  Search,
-  ShieldCheck,
-} from "lucide-react";
+import { MapPin, Phone, Power, Search, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -92,9 +86,7 @@ export default function ManagerManagementPage() {
 
       {/* --- Main Content --- */}
       {isLoading ? (
-        <div className="flex justify-center p-20">
-          <Loader2 className="animate-spin text-emerald-500" size={40} />
-        </div>
+        <Loader />
       ) : (
         <>
           <div>

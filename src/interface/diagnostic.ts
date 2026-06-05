@@ -15,7 +15,7 @@ export interface IDiagnosticResponse {
   name: string;
   slug: string;
   averageRating: number;
-  reviewCount: number;
+  reviewsCount: number;
   address: string;
   areaId: string;
   area: IAreaResponse;

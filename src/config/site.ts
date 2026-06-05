@@ -31,14 +31,19 @@ export const siteConfig = {
 
   // Social & Images
   twitterHandle: "@DoccareApp",
-  ogImage: `/assets/logo.png`,
+  ogImage: `https://res.cloudinary.com/dnpcna4up/image/upload/v1780635711/sasthik/og-image_a8zzcr.png`,
+  maleDoctor:
+    "https://res.cloudinary.com/dnpcna4up/image/upload/v1780645348/sasthik/doctor_rg8vdx.png",
+  femaleDoctor:
+    "https://res.cloudinary.com/dnpcna4up/image/upload/v1780645348/sasthik/doctor_rg8vdx.png",
+  building:
+    "https://res.cloudinary.com/dnpcna4up/image/upload/v1780647388/sasthik/print-392401977_eatmov.webp",
   logo: `/assets/logo.jpeg`,
 
   // Contact Information
   contact: {
-    // officeAddress: "Medical college mor , Sodor ,Dinajpur",
+    officeAddress: "Medical college mor , Sodor ,Dinajpur",
     phone: "+8801737813575",
-    email: "support@Doccare.com",
   },
 
   socialLinks: [

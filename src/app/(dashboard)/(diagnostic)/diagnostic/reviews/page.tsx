@@ -2,6 +2,7 @@
 "use client";
 
 import AppPagination from "@/components/app-pagination";
+import Loader from "@/components/loader";
 import { useDebounce } from "@/hooks/useDebaunce";
 import { IReviewResponse } from "@/interface/review";
 import {
@@ -109,11 +110,7 @@ export default function ManagerReviewsPage() {
   };
 
   if (isLoading || allDoctorLoading) {
-    return (
-      <div className="flex h-[60vh] items-center justify-center">
-        <Loader2 className="animate-spin text-emerald-500" size={40} />
-      </div>
-    );
+    return <Loader />;
   }
 
   return (

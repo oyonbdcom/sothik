@@ -1,4 +1,3 @@
-// app/doctors/page.tsx
 import DoctorFilterForm from "@/app/(pages)/doctors/components/doctor-filter-form";
 import SearchDoctorCard from "@/app/(pages)/doctors/components/search-doctor-card";
 
@@ -18,10 +17,10 @@ interface SearchParams {
   rating?: string;
   area?: string;
   gender?: "MALE" | "FEMALE";
-  isEmergency: "true";
+  isEmergency?: "true";
 }
 
-// --- SEO: Dynamic Metadata Generation ---
+// --- SEO: Highly Optimized Dynamic Metadata ---
 export async function generateMetadata({
   searchParams,
 }: {
@@ -30,40 +29,67 @@ export async function generateMetadata({
   const params = await searchParams;
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://susthio.com";
 
-  const deptName = params.department ? `${params.department} ` : "";
-  const cityName = params.district ? `in ${params.district}` : "Bangladesh";
+  // এসইও এবং লোকাল কিওয়ার্ড টার্গেটিংয়ের জন্য ডায়নামিক ভ্যালু প্রিপারেশন
+  const deptEn = params.department ? `${params.department} ` : "";
+  const deptBn = params.department ? `${params.department} বিশেষজ্ঞ ` : "";
+  const cityEn = params.district ? `in ${params.district}` : "Bangladesh";
+  const cityBn = params.district ? `${params.district}-এ` : "বাংলাদেশে";
 
   const urlParams = new URLSearchParams();
   if (params.department) urlParams.set("department", params.department);
   if (params.district) urlParams.set("district", params.district);
   urlParams.set("membership", "true");
   if (params.page) urlParams.set("page", params.page);
+
   const canonicalPath = urlParams.toString()
     ? `/doctors?${urlParams.toString()}`
     : "/doctors";
 
+  const fullUrl = `${baseUrl}${canonicalPath}`;
+
+  const pageTitle = `Best ${deptEn}Specialist Doctors ${cityEn} | সেরা ${deptBn}ডাক্তার তালিকা ${cityBn} | ${siteConfig.siteName}`;
+  const pageDesc = `${cityBn} সেরা, অভিজ্ঞ এবং রেজিস্টার্ড ${deptBn}ডাক্তারদের খুঁজুন। ডাক্তারদের চেম্বারের ঠিকানা, ভিজিট ফি, রেটিং দেখুন এবং ঘরে বসেই সহজে সিরিয়াল বুকিং করুন অনলাইনে।`;
+
   return {
-    title: `Best ${deptName}Specialist Doctors ${cityName} | বুক করুন অনলাইনে | SusthiO`,
-    description: `Book appointments with the best ${deptName}specialist doctors ${cityName}. View ratings, experience, and chamber details online on SusthiO.`,
+    title: pageTitle,
+    description: pageDesc,
     alternates: {
-      canonical: `${baseUrl}${canonicalPath}`,
+      canonical: fullUrl,
     },
     openGraph: {
-      title: `${deptName}Specialist Doctors ${cityName}`,
-      description: `Find and book the best ${deptName}doctors online.`,
-      url: `${baseUrl}${canonicalPath}`,
-      siteName: "SusthiO",
-      images: [{ url: `${baseUrl}/og-image.jpg` }], // আপনার একটি ডিফল্ট OG ইমেজ থাকা উচিত
+      title: pageTitle,
+      description: pageDesc,
+      url: fullUrl,
+      siteName: `${siteConfig.siteName}`,
+      images: [
+        {
+          url: `https://res.cloudinary.com/dnpcna4up/image/upload/v1780641866/sasthik/doctor-listing_n5h9wp.png`,
+          width: 1200,
+          height: 630,
+          alt: `Find Best ${deptEn}Doctors ${cityEn} on SusthiO`,
+        },
+      ],
+      locale: "bn_BD",
       type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: pageTitle,
+      description: pageDesc,
+      images: [
+        `https://res.cloudinary.com/dnpcna4up/image/upload/v1780641866/sasthik/doctor-listing_n5h9wp.png`,
+      ],
     },
   };
 }
+
 export default async function DoctorsPage({
   searchParams,
 }: {
   searchParams: Promise<SearchParams>;
 }) {
   const params = await searchParams;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://susthio.com";
 
   const query = {
     page: Number(params.page) || 1,
@@ -83,28 +109,48 @@ export default async function DoctorsPage({
   const doctors = response?.data || [];
   const meta = response?.meta;
 
-  // ২. SEO: JSON-LD Structured Data for Physician List
+  // ২. SEO: JSON-LD Structured Data for ItemList & Physician
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: `Doctor List - ${siteConfig?.siteName}`,
-    itemListElement: doctors.map((doc: IDoctorResponse, index: number) => ({
-      "@type": "ListItem",
-      position: index + 1,
-      item: {
-        "@type": "Physician",
-        name: doc.user.name,
-        medicalSpecialty: doc.specialization,
-        image: doc.user.image,
-        aggregateRating: {
-          "@type": "AggregateRating",
-          ratingValue: doc.averageRating,
-          bestRating: "5",
-          worstRating: "1",
-          ratingCount: "10", // Example
+    name: params.department
+      ? `${params.department} Specialist Doctors List - SusthiO`
+      : `Doctor List - ${siteConfig?.siteName || "SusthiO"}`,
+    description:
+      "অনলাইনে সহজে বিশেষজ্ঞ ডাক্তার খুঁজুন এবং অ্যাপয়েন্টমেন্ট বুক করুন।",
+    numberOfItems: doctors.length,
+    itemListElement: doctors.map((doc: IDoctorResponse, index: number) => {
+      const doctorUrl = `${baseUrl}/doctors/${doc.slug || doc.id}`;
+
+      return {
+        "@type": "ListItem",
+        position: index + 1,
+        item: {
+          "@type": "Physician",
+          "@id": doctorUrl,
+          name: doc.user.name,
+          medicalSpecialty: doc.specialization,
+          imageSrc: doc?.user?.image
+            ? doc.user.image
+            : doc?.gender === "MALE"
+              ? siteConfig.maleDoctor
+              : siteConfig.femaleDoctor,
+          url: doctorUrl,
+          telephone: siteConfig?.contact.phone || "",
+          ...(doc.averageRating && Number(doc.averageRating) > 0
+            ? {
+                aggregateRating: {
+                  "@type": "AggregateRating",
+                  ratingValue: doc.averageRating,
+                  reviewCount: doc.averageRating || 1,
+                  bestRating: "5",
+                  worstRating: "1",
+                },
+              }
+            : {}),
         },
-      },
-    })),
+      };
+    }),
   };
 
   return (
@@ -121,7 +167,7 @@ export default async function DoctorsPage({
       />
 
       <section className="bg-card/30 backdrop-blur-md py-10">
-        <div className="container ">
+        <div className="container mx-auto px-4">
           <aside className="w-full mb-8">
             <DoctorFilterForm />
           </aside>
@@ -141,7 +187,7 @@ export default async function DoctorsPage({
                 <span className="text-emerald-600 font-bold">
                   {meta?.total || 0}
                 </span>{" "}
-                জন ডাক্তার পাওয়া গেছে
+                জন ডাক্তার পাওয়া গেছে
               </p>
             </header>
 
@@ -156,9 +202,9 @@ export default async function DoctorsPage({
                   ))}
                 </div>
 
-                {/* ৩. Professional URL-based Pagination */}
+                {/* ৩. URL-based Pagination */}
                 {meta && meta.totalPage > 1 && (
-                  <nav className="flex justify-center   border-slate-100">
+                  <nav className="flex justify-center mt-10 border-slate-100">
                     <ServerPagination meta={meta} />
                   </nav>
                 )}
@@ -166,7 +212,7 @@ export default async function DoctorsPage({
             ) : (
               <NotFound
                 title="কোনো ডাক্তার পাওয়া যায়নি"
-                description="দুঃখিত, আপনার দেওয়া ফিল্টার অনুযায়ী কোনো তথ্য পাওয়া যায়নি। অন্যভাবে চেষ্টা করুন।"
+                description="দুঃখিত, আপনার দেওয়া ফিল্টার অনুযায়ী কোনো তথ্য পাওয়া যায়নি। অন্যভাবে চেষ্টা করুন।"
               />
             )}
           </article>

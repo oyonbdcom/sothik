@@ -25,7 +25,7 @@ export const metadata = {
     siteName: "Sasthik",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "https://res.cloudinary.com/dnpcna4up/image/upload/v1780635711/sasthik/og-image_a8zzcr.png",
         width: 1200,
         height: 630,
         alt: "Sasthik - Digital Healthcare Bangladesh",

@@ -2,6 +2,7 @@ import { Hero } from "@/components/hero";
 import ReviewPage from "@/components/reviews/review-page";
 import ServerPagination from "@/components/server-pagination";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { siteConfig } from "@/config/site";
 import { IMembershipResponse } from "@/interface/diagnostic-membership";
 import { getDiagnosticByIdentifier } from "@/service/diagnostic.service";
 import { getMembershipsBySlug } from "@/service/membership.service";
@@ -97,9 +98,77 @@ export default async function DiagnosticsDetailsPage({
   const meta = membershipResponse?.meta;
 
   const ratingText = Number(diagnostic.averageRating || 0).toFixed(1);
+  const diagnosticSchema = {
+    "@context": "https://schema.org",
+    "@type": "MedicalBusiness",
 
+    name: diagnostic?.user?.name || "ডায়াগনস্টিক সেন্টার",
+    image: diagnostic?.user?.image || siteConfig.building,
+    url: `${process.env.NEXT_PUBLIC_APP_URL}/diagnostic-centers/${diagnostic?.slug}`,
+
+    // ১. ডায়াগনস্টিক সেন্টারের নিজস্ব রেটিং
+    ...(Number(diagnostic?.averageRating) > 0 && diagnostic?.reviewsCount > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: Number(diagnostic.averageRating).toFixed(1),
+            reviewCount: diagnostic.reviewsCount,
+            bestRating: "5",
+            worstRating: "1",
+          },
+        }
+      : {}),
+
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: diagnostic?.address || "বিস্তারিত ঠিকানা",
+      addressLocality: diagnostic?.area?.name,
+      addressCountry: "BD",
+    },
+
+    // ২. ডাক্তারদের রেটিং এবং অন্যান্য তথ্য
+    employee: memberships?.map((membership: IMembershipResponse) => {
+      const doc = membership.doctor;
+
+      return {
+        "@type": "Physician",
+        name: doc?.user?.name || "নাম নেই",
+
+        image:
+          doc?.user?.image ||
+          (doc?.gender === "MALE"
+            ? siteConfig.maleDoctor
+            : siteConfig.femaleDoctor),
+
+        url: `${process.env.NEXT_PUBLIC_APP_URL}/doctors/${doc?.slug}`,
+        medicalSpecialty: doc?.department?.name || "সাধারণ",
+
+        // ডাক্তারদের নিজস্ব রেটিং
+        ...(Number(doc?.averageRating) > 0 && doc && doc?.reviewsCount > 0
+          ? {
+              aggregateRating: {
+                "@type": "AggregateRating",
+                ratingValue: Number(doc?.averageRating).toFixed(1),
+                reviewCount: doc?.reviewsCount,
+                bestRating: "5",
+                worstRating: "1",
+              },
+            }
+          : {}),
+      };
+    }),
+
+    worksFor: {
+      "@type": "Organization",
+      name: "Sasthik",
+    },
+  };
   return (
     <div className="min-h-screen bg-[#F8FAFC]  ">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(diagnosticSchema) }}
+      />
       <Hero
         title={diagnostic?.user?.name}
         breadcrumbs={[

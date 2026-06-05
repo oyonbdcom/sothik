@@ -4,6 +4,7 @@
 import { Loader2, Stethoscope, Trash2, Users } from "lucide-react";
 import toast from "react-hot-toast";
 
+import Loader from "@/components/loader";
 import { useGetDiagnosticManagerStatsQuery } from "@/redux/api/diagnosticApi";
 import {
   useDeleteStaffMutation,
@@ -40,11 +41,7 @@ const ManagerDashboard = () => {
 
   // Global Page Loading: Shell skeleton layer only triggers when critical layout metrics are missing
   if (isStatsLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-      </div>
-    );
+    return <Loader />;
   }
 
   return (
