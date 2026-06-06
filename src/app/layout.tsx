@@ -2,6 +2,9 @@ import ReduxProvider from "@/provider/auth.provicer";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
 export const metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || "https://sasthik.com",
+  ),
   title: {
     default: "Sasthik - স্মার্ট ডিজিটাল স্বাস্থ্যসেবা",
     template: "%s | Sasthik",

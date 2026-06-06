@@ -59,7 +59,7 @@ const AboutClient = () => {
               </span>
             </h1>
             <p className="text-lg lg:text-xl text-slate-600 leading-relaxed max-w-2xl mb-10">
-              সুস্থিও (SusthiO) শুধু একটি ডিরেক্টরি নয়; এটি একটি স্মার্ট
+              সাস্থিক (Sasthik) শুধু একটি ডিরেক্টরি নয়; এটি একটি স্মার্ট
               ইকোসিস্টেম। আমরা রোগী ও চিকিৎসকের দূরত্ব কমিয়ে স্বাস্থ্যসেবাকে
               করেছি দ্রুত, সহজ এবং ডিজিটাল।
             </p>
@@ -124,7 +124,7 @@ const AboutClient = () => {
               <div className="relative z-10 rounded-[3rem] overflow-hidden shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] border-[12px] border-white">
                 <img
                   src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=800"
-                  alt="SusthiO Digital Healthcare"
+                  alt="Sasthik Digital Healthcare"
                   className="w-full h-[600px] object-cover scale-105 hover:scale-100 transition-transform duration-700"
                 />
               </div>

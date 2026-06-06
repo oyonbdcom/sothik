@@ -5,10 +5,11 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import thumbnail from "@/public/images/thumbnail.png";
+import { thumbnail } from "@/config/site";
 import { Icon } from "@iconify/react";
 import { X } from "lucide-react";
 import Image from "next/image";
+
 const AddBlock = ({
   className,
   image = thumbnail,
@@ -26,7 +27,7 @@ const AddBlock = ({
       <div
         className={cn(
           "bg-primary dark:bg-default-400 text-primary-foreground pt-5 pb-4 px-4  rounded  m-3 hidden xl:block",
-          className
+          className,
         )}
       >
         <div className={cn("text-base font-semibold text-primary-foreground")}>
@@ -40,6 +41,8 @@ const AddBlock = ({
             alt="footer-thumbnail"
             className="w-full h-full"
             priority={true}
+            width={500}
+            height={400}
           />
           <Button
             size="icon"

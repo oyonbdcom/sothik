@@ -114,7 +114,7 @@ export default function DoctorManagement() {
               ডাক্তার তালিকা
             </h1>
             <p className="text-[10px] md:text-sm text-slate-500 font-medium mt-1 uppercase tracking-wider">
-              SusthiO Management
+              Sasthik Management
             </p>
           </div>
           <DoctorDialog />

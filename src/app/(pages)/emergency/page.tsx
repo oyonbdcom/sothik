@@ -29,7 +29,7 @@ export async function generateMetadata({
   searchParams: Promise<SearchParams>;
 }): Promise<Metadata> {
   const params = await searchParams;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://susthio.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://Sasthik.com";
 
   // ১. ইমার্জেন্সি স্ট্যাটাস চেক
   const isEmergency = "true";
@@ -76,7 +76,7 @@ export async function generateMetadata({
           url: `https://res.cloudinary.com/dnpcna4up/image/upload/v1780641866/sasthik/doctor-listing_n5h9wp.png`,
           width: 1200,
           height: 630,
-          alt: `Find Best ${deptEn}Doctors ${cityEn} on SusthiO`,
+          alt: `Find Best ${deptEn}Doctors ${cityEn} on Sasthik`,
         },
       ],
       locale: "bn_BD",
@@ -99,7 +99,7 @@ export default async function DoctorsPage({
   searchParams: Promise<SearchParams>;
 }) {
   const params = await searchParams;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://susthio.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://Sasthik.com";
 
   const query = {
     page: Number(params.page) || 1,
@@ -124,8 +124,8 @@ export default async function DoctorsPage({
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: params.department
-      ? `${params.department} Specialist Doctors List - SusthiO`
-      : `Doctor List - ${siteConfig?.siteName || "SusthiO"}`,
+      ? `${params.department} Specialist Doctors List - Sasthik`
+      : `Doctor List - ${siteConfig?.siteName || "Sasthik"}`,
     description:
       "অনলাইনে সহজে বিশেষজ্ঞ ডাক্তার খুঁজুন এবং অ্যাপয়েন্টমেন্ট বুক করুন।",
     numberOfItems: doctors.length,

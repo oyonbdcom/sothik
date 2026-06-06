@@ -80,7 +80,7 @@ export default function EmergencyDoctorCard({
           <div className="flex items-center gap-2 text-xs font-bold text-slate-500 bg-slate-50 p-2 rounded-lg">
             <Building className="w-3.5 h-3.5" />
             <span className="truncate">
-              {doctor.hospital || "SusthiO Emergency Care"}
+              {doctor.hospital || "Sasthik Emergency Care"}
             </span>
           </div>
 

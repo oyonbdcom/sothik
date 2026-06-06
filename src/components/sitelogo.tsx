@@ -1,7 +1,7 @@
 "use client";
 
+import { logo } from "@/config/site";
 import { useMounted } from "@/hooks/use-mounted";
-import logo from "@/public/images/logo.png"; // Your image file
 import Image from "next/image"; // Import Image component
 import { useRouter } from "next/navigation";
 

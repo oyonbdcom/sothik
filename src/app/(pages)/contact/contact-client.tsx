@@ -38,10 +38,10 @@ const ContactClient = () => {
     },
     {
       title: "অফিশিয়াল ইমেইল",
-      info: "hello@susthio.com",
+      info: "hello@Sasthik.com",
       description: "পার্টনারশিপ বা বিজনেস প্রপোজালের জন্য আমাদের মেইল করুন।",
       icon: <Mail className="text-purple-600" size={24} />,
-      link: "mailto:hello@susthio.com",
+      link: "mailto:hello@Sasthik.com",
       bg: "bg-purple-50",
     },
   ];

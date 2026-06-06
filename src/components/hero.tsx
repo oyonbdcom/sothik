@@ -38,13 +38,13 @@ export const Hero = ({
         "@type": "ListItem",
         position: 1,
         name: "হোম",
-        item: "https://susthio.com", // আপনার ডোমেইন নাম দিন
+        item: "https://Sasthik.com", // আপনার ডোমেইন নাম দিন
       },
       ...breadcrumbs.map((crumb, index) => ({
         "@type": "ListItem",
         position: index + 2,
         name: crumb.label,
-        item: crumb.href ? `https://susthio.com${crumb.href}` : undefined,
+        item: crumb.href ? `https://Sasthik.com${crumb.href}` : undefined,
       })),
     ],
   };

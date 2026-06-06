@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import lightImage from "@/public/images/error/light-401.png";
 import Image from "next/image";
+import lightImage from "/error/light-401.png";
 const ErrorPage = () => {
   const reset = () => {
     window.location.reload();

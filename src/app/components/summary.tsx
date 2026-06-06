@@ -1,8 +1,8 @@
 "use client";
-import work from "@/public/images/work-img.png";
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import work from "/work-img.png";
 
 export default function Summary() {
   const steps = [

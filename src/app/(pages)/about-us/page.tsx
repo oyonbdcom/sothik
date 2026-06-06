@@ -1,3 +1,4 @@
+import { ogAbout } from "@/config/site";
 import AboutClient from "./about-client";
 export const metadata = {
   title: "আমাদের সম্পর্কে | Sasthik",
@@ -21,7 +22,7 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "https://res.cloudinary.com/dnpcna4up/image/upload/v1780636523/sasthik/about_bymamq.png",
+        url: ogAbout,
         width: 1200,
         height: 630,
         alt: "Sasthik About Us",
@@ -34,9 +35,7 @@ export const metadata = {
     title: "আমাদের সম্পর্কে | Sasthik",
     description:
       "আধুনিক প্রযুক্তির মাধ্যমে বাংলাদেশের প্রতিটি মানুষের জন্য সহজ ও মানসম্মত স্বাস্থ্যসেবা নিশ্চিত করতে সাস্থিক-এর মিশন ও উদ্যোগ সম্পর্কে জানুন।",
-    images: [
-      "https://res.cloudinary.com/dnpcna4up/image/upload/v1780636523/sasthik/about_bymamq.png",
-    ],
+    images: [ogAbout],
   },
 };
 export default function Page() {

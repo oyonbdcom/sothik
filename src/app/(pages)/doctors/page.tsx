@@ -4,7 +4,7 @@ import SearchDoctorCard from "@/app/(pages)/doctors/components/search-doctor-car
 import { Hero } from "@/components/hero";
 import { NotFound } from "@/components/not-found";
 import ServerPagination from "@/components/server-pagination";
-import { siteConfig } from "@/config/site";
+import { ogDoctorListing, siteConfig } from "@/config/site";
 import { IDoctorResponse } from "@/interface/doctor";
 import { getAllDoctors } from "@/service/doctor.service";
 import { Metadata } from "next";
@@ -27,7 +27,7 @@ export async function generateMetadata({
   searchParams: Promise<SearchParams>;
 }): Promise<Metadata> {
   const params = await searchParams;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://susthio.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://Sasthik.com";
 
   // এসইও এবং লোকাল কিওয়ার্ড টার্গেটিংয়ের জন্য ডায়নামিক ভ্যালু প্রিপারেশন
   const deptEn = params.department ? `${params.department} ` : "";
@@ -47,7 +47,7 @@ export async function generateMetadata({
 
   const fullUrl = `${baseUrl}${canonicalPath}`;
 
-  const pageTitle = `Best ${deptEn}Specialist Doctors ${cityEn} | সেরা ${deptBn}ডাক্তার তালিকা ${cityBn} | ${siteConfig.siteName}`;
+  const pageTitle = `Best ${deptEn}Specialist Doctors ${cityEn} | সেরা ${deptBn}ডাক্তার তালিকা ${cityBn}  `;
   const pageDesc = `${cityBn} সেরা, অভিজ্ঞ এবং রেজিস্টার্ড ${deptBn}ডাক্তারদের খুঁজুন। ডাক্তারদের চেম্বারের ঠিকানা, ভিজিট ফি, রেটিং দেখুন এবং ঘরে বসেই সহজে সিরিয়াল বুকিং করুন অনলাইনে।`;
 
   return {
@@ -63,10 +63,10 @@ export async function generateMetadata({
       siteName: `${siteConfig.siteName}`,
       images: [
         {
-          url: `https://res.cloudinary.com/dnpcna4up/image/upload/v1780641866/sasthik/doctor-listing_n5h9wp.png`,
+          url: ogDoctorListing,
           width: 1200,
           height: 630,
-          alt: `Find Best ${deptEn}Doctors ${cityEn} on SusthiO`,
+          alt: `Find Best ${deptEn}Doctors ${cityEn} on ${siteConfig.siteName}`,
         },
       ],
       locale: "bn_BD",
@@ -76,9 +76,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: pageTitle,
       description: pageDesc,
-      images: [
-        `https://res.cloudinary.com/dnpcna4up/image/upload/v1780641866/sasthik/doctor-listing_n5h9wp.png`,
-      ],
+      images: [ogDoctorListing],
     },
   };
 }
@@ -89,7 +87,7 @@ export default async function DoctorsPage({
   searchParams: Promise<SearchParams>;
 }) {
   const params = await searchParams;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://susthio.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://Sasthik.com";
 
   const query = {
     page: Number(params.page) || 1,
@@ -114,8 +112,8 @@ export default async function DoctorsPage({
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: params.department
-      ? `${params.department} Specialist Doctors List - SusthiO`
-      : `Doctor List - ${siteConfig?.siteName || "SusthiO"}`,
+      ? `${params.department} Specialist Doctors List - Sasthik`
+      : `Doctor List - ${siteConfig?.siteName || "Sasthik"}`,
     description:
       "অনলাইনে সহজে বিশেষজ্ঞ ডাক্তার খুঁজুন এবং অ্যাপয়েন্টমেন্ট বুক করুন।",
     numberOfItems: doctors.length,
