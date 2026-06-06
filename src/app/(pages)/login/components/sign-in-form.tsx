@@ -45,17 +45,12 @@ export default function LoginPageContent() {
       const result = await loginUser(values).unwrap();
 
       const accessToken = result?.data?.accessToken;
-      const refreshToken = result?.data?.refreshToken;
+
       const user = result?.data?.user;
 
       // ১. এক্সেস টোকেন লোকাল স্টোরেজে সেভ করা (API কলের জন্য)
       if (accessToken) {
         storeUserInfo({ accessToken });
-      }
-
-      // ২. রিফ্রেশ টোকেন কুকিতে সেট করা (মিডলওয়্যারের জন্য)
-      if (refreshToken) {
-        setClientCookie("refreshToken", refreshToken, 7);
       }
 
       toast.success("লগইন সফল হয়েছে!", { id: toastId });
