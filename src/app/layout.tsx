@@ -1,4 +1,3 @@
-import { ogImage } from "@/config/site";
 import ReduxProvider from "@/provider/auth.provicer";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
@@ -26,7 +25,7 @@ export const metadata = {
     siteName: "Sasthik",
     images: [
       {
-        url: ogImage,
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "Sasthik - Digital Healthcare Bangladesh",
@@ -40,7 +39,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Sasthik - স্মার্ট ডিজিটাল স্বাস্থ্যসেবা",
     description: "দিনাজপুরের স্বাস্থ্যসেবা এখন আপনার হাতের মুঠোয়।",
-    images: [ogImage],
+    images: ["/og-image.png"],
   },
 
   robots: {
