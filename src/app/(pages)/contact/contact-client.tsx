@@ -1,5 +1,6 @@
 "use client";
 
+import { siteConfig } from "@/config/site";
 import { motion } from "framer-motion";
 import {
   Clock,
@@ -21,11 +22,11 @@ const ContactClient = () => {
   const contactMethods = [
     {
       title: "সরাসরি কথা বলুন",
-      info: "+৮৮০ ১৭৩৭-৮১৩৫৭৫",
+      info: siteConfig.contact?.phone,
       description:
         "যেকোনো জরুরি জিজ্ঞাসা বা সিরিয়াল সংক্রান্ত সহায়তার জন্য কল করুন।",
       icon: <Phone className="text-blue-600" size={24} />,
-      link: "tel:+8801737813575",
+      link: `tel:${siteConfig.contact.phone}`,
       bg: "bg-blue-50",
     },
     {
@@ -33,7 +34,7 @@ const ContactClient = () => {
       info: "লাইভ চ্যাট এভেলেবল",
       description: "দ্রুত ফিডব্যাকের জন্য আমাদের হোয়াটসঅ্যাপে মেসেজ দিন।",
       icon: <MessageCircle className="text-emerald-600" size={24} />,
-      link: "https://wa.me/8801737813575",
+      link: `https://wa.me/${siteConfig.contact?.phone}`,
       bg: "bg-emerald-50",
     },
     {
@@ -41,7 +42,7 @@ const ContactClient = () => {
       info: "hello@Sasthik.com",
       description: "পার্টনারশিপ বা বিজনেস প্রপোজালের জন্য আমাদের মেইল করুন।",
       icon: <Mail className="text-purple-600" size={24} />,
-      link: "mailto:hello@Sasthik.com",
+      link: `mailto:${siteConfig.contact?.email}`,
       bg: "bg-purple-50",
     },
   ];

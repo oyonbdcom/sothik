@@ -54,6 +54,7 @@ export const siteConfig = {
   contact: {
     officeAddress: "Medical college mor , Sodor ,Dinajpur",
     phone: "+8801737813575",
+    email: "sasthik@mail.com",
   },
 
   socialLinks: [
