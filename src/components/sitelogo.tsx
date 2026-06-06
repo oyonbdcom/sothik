@@ -1,6 +1,8 @@
 "use client";
 
 import { useMounted } from "@/hooks/use-mounted";
+import logo from "@/public/images/logo.png"; // Your image file
+import Image from "next/image"; // Import Image component
 import { useRouter } from "next/navigation";
 
 export default function SiteLogo() {
@@ -17,21 +19,16 @@ export default function SiteLogo() {
     <div className="flex items-center">
       <button
         onClick={handleHome}
-        className="group flex items-center gap-2 transition-opacity hover:opacity-80 active:scale-[0.98] outline-none"
+        className="group flex items-center transition-opacity hover:opacity-80 active:scale-[0.98] outline-none"
       >
-        {/* Minimalist Medical Icon - Very Clean like Global Health Brands */}
-
-        {/* Typography Section - The "Practo" Style Focus */}
-        <div className="flex items-baseline gap-0">
-          <span className="text-2xl font-bold text-[#1A237E] tracking-tight">
-            Sasthi
-          </span>
-          <span className="text-2xl font-medium text-[#06B6D4] tracking-tight">
-            k
-          </span>
-          {/* Subtle accent dot */}
-          <span className="ml-0.5 text-[#06B6D4] font-bold text-2xl">.</span>
-        </div>
+        <Image
+          src={logo}
+          alt="Sasthik Logo"
+          width={100} // Adjust width as needed
+          height={30} // Adjust height as needed
+          priority
+          className="h-auto w-auto"
+        />
       </button>
     </div>
   );

@@ -1,10 +1,14 @@
 import avatar from "@/public/images/doctor.png";
 import femaleAvatar from "@/public/images/female-doctor.png";
+import ogAbout from "@/public/images/og-about.png";
+import ogContact from "@/public/images/og-contact.png";
+import ogDoctorListing from "@/public/images/og-doctor-listing.png";
+import ogImage from "@/public/images/og-image.png";
 import facebook from "@/public/images/social/facebook-1.png";
 import linkedin from "@/public/images/social/linkedin-1.png";
 import twitter from "@/public/images/social/twitter-1.png";
 import youtube from "@/public/images/social/youtube.png";
-export { avatar, femaleAvatar };
+export { avatar, femaleAvatar, ogAbout, ogContact, ogDoctorListing, ogImage };
 export const siteConfig = {
   sidebarBg: "none",
   siteName: "sasthik",
