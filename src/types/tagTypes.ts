@@ -12,6 +12,7 @@ export const tagTypes = {
   manager: "manager",
   feedback: "Feedback",
   staff: "staff",
+  wallet: "wallet",
 };
 
 export const tagTypesList = Object.values(tagTypes);

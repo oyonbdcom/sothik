@@ -62,11 +62,9 @@ const isProtectedRoute = (pathname: string) =>
   PROTECTED_ROUTES.some((route) => pathname.startsWith(route));
 
 const getTokenFromRequest = (req: NextRequest): string | null => {
-  console.log("cookies", req.cookies.getAll());
-
-  const token = req.cookies.get("refreshToken")?.value;
-
-  console.log("token", token);
+  console.log("URL:", req.url);
+  console.log("COOKIE HEADER:", req.headers.get("cookie"));
+  console.log("COOKIES:", req.cookies.getAll());
   // ১. সরাসরি কুকি থেকে চেক করা
   const cookieToken = req.cookies.get("refreshToken")?.value;
 

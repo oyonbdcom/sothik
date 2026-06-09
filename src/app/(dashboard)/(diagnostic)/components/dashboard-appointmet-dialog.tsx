@@ -9,8 +9,6 @@ import { Form } from "@/components/ui/form";
 import { phoneRegex } from "@/constant/common";
 import { format } from "date-fns";
 
-import { bdStartOfDay } from "@/lib/utils/utils";
-
 import {
   useCreateAppointmentByDiagnosticStaffMutation,
   useUpdateAppointmentMutation,
@@ -51,12 +49,7 @@ const appointmentSchema = z.object({
     .min(11, "ফোন নম্বর অন্তত ১১ ডিজিটের হতে হবে")
     .regex(phoneRegex, "সঠিক মোবাইল নম্বর প্রদান করুন"),
 
-  appointmentDate: z.coerce
-    .date()
-    .refine((date) => date >= bdStartOfDay(new Date()), {
-      message: "Past date দেওয়া যাবে না",
-    }),
-
+  appointmentDate: z.date(),
   address: z.string().optional(),
 
   doctorId: z.string().min(1, {
@@ -81,11 +74,13 @@ type TAppointmentForm = z.infer<typeof appointmentSchema>;
 interface Props {
   appointment?: any;
   onClose?: () => void;
+  text?: string;
 }
 
 export default function CreateAppointmentModal({
   appointment,
   onClose,
+  text,
 }: Props) {
   const isEdit = !!appointment;
 
@@ -121,7 +116,7 @@ export default function CreateAppointmentModal({
       patientName: "",
       doctorId: "",
       phoneNumber: "",
-      appointmentDate: "" as any,
+      appointmentDate: new Date(),
       address: "",
       ptAge: undefined,
     },
@@ -204,8 +199,8 @@ export default function CreateAppointmentModal({
           <Pencil size={18} />
         </button>
       ) : (
-        <Button onClick={() => setIsOpen(true)} size="icon">
-          <Plus size={20} />
+        <Button onClick={() => setIsOpen(true)} size="lg">
+          <Plus size={20} /> {text}
         </Button>
       )}
 
@@ -304,23 +299,14 @@ export default function CreateAppointmentModal({
                     control={form.control}
                   />
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <CustomFormField
-                      fieldType={FormFieldType.INPUT}
-                      name="appointmentDate"
-                      required
-                      label="তারিখ"
-                      type="date"
-                      control={form.control}
-                    />
-                    <CustomFormField
-                      fieldType={FormFieldType.INPUT}
-                      name="ptAge"
-                      label="বয়স (অপশনাল) "
-                      placeholder="বয়স  লিখুন"
-                      control={form.control}
-                    />
-                  </div>
+                  <CustomFormField
+                    fieldType={FormFieldType.INPUT}
+                    name="ptAge"
+                    label="বয়স   "
+                    placeholder="বয়স  লিখুন"
+                    required
+                    control={form.control}
+                  />
 
                   <CustomFormField
                     fieldType={FormFieldType.SELECT}
@@ -335,13 +321,15 @@ export default function CreateAppointmentModal({
                       value: doctor?.id,
                     }))}
                   />
-                  <CustomFormField
-                    fieldType={FormFieldType.INPUT}
-                    name="address"
-                    label="ঠিকানা"
-                    placeholder="ঠিকানা দিন"
-                    control={form.control}
-                  />
+                  {isEdit && (
+                    <CustomFormField
+                      fieldType={FormFieldType.INPUT}
+                      name="address"
+                      label="ঠিকানা"
+                      placeholder="ঠিকানা দিন"
+                      control={form.control}
+                    />
+                  )}
                   {/* BUTTONS */}
                   <div className="flex gap-3 pt-2">
                     <button

@@ -136,7 +136,7 @@ const CoordinatorDashboard = () => {
           {/* LEFT */}
           <div className="leading-tight flex-1 min-w-0">
             <h1 className="text-base font-bold truncate text-slate-800">
-              Dr. {doctor?.name || "Unknown"}
+              {doctor?.name || "Unknown"}
             </h1>
             <p className="text-[11px] text-slate-400 truncate mt-0.5">
               {doctor?.department || "No Department"}
@@ -378,7 +378,7 @@ const CoordinatorDashboard = () => {
                   ${isSessionInactive ? "opacity-30 grayscale cursor-not-allowed" : ""}
                 `}
                       >
-                        {isEmergencyPending ? "ACCEPT EMERGENCY" : "MARK DONE"}
+                        {isEmergencyPending ? "ACCEPT EM" : "MARK DONE"}
                         <Check size={16} strokeWidth={3} />
                       </button>
                     </>

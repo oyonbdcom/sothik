@@ -81,11 +81,12 @@ const diagnosticApi = baseApi.injectEndpoints({
 
     getDiagnosticManagerStats: build.query<
       { stats: IDiagnosticManagerStats },
-      void
+      any
     >({
-      query: () => ({
+      query: (arg) => ({
         url: `${DIAGNOSTIC_URL}/statistics`,
         method: "GET",
+        params: arg,
       }),
       transformResponse: (
         response: IGenericResponse<IDiagnosticManagerStats>,

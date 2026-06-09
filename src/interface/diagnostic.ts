@@ -33,13 +33,38 @@ export interface IStaffActivity {
   role: string;
   totalBookings: number;
 }
+export interface IStaffActivity {
+  staffId: string;
+  name: string;
+  role: string;
+  appointmentCount: number;
+  status: "Active" | "Away";
+}
+
+export interface IDoctorPerformance {
+  doctorId: string;
+  name: string;
+  specialty: string;
+  appointmentCount: number;
+}
+
+export interface IChartData {
+  date: string;
+  bookings: number;
+}
 
 export interface IDiagnosticManagerStats {
-  totalDoctors: number;
-  todayAppointments: number;
-  completedAppointments: number;
-  totalStaffs: number;
-  staffActivities: IStaffActivity[];
+  summary: {
+    totalBookings: number;
+    completedCount: number;
+    cancelledCount: number;
+    platformBookings: number;
+    staffManualBookings: number;
+  };
+  walletBalance: number;
+  doctorPerformance: IDoctorPerformance[];
+  staffPerformance: IStaffActivity[];
+  chartData: IChartData[];
 }
 export type ICreateDiagnosticRequest = z.infer<typeof createDiagnosticSchema>;
 
