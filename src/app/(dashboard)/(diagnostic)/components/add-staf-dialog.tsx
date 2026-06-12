@@ -19,7 +19,7 @@ import toast from "react-hot-toast";
 
 import CustomFormField, { FormFieldType } from "@/components/custom-form-field";
 import { Form } from "@/components/ui/form";
-import { useGetAccessibleDoctorsQuery } from "@/redux/api/doctorApi";
+import { useGetDiagnosticDoctorsNameQuery } from "@/redux/api/doctorApi";
 import {
   useCreateStaffMutation,
   useUpdateStaffMutation,
@@ -69,7 +69,7 @@ const AddStaffDialog = ({ staff }: StaffDialogProps) => {
 
   const [createStaff, { isLoading: isCreating }] = useCreateStaffMutation();
   const [updateStaff, { isLoading: isUpdating }] = useUpdateStaffMutation();
-  const { data } = useGetAccessibleDoctorsQuery({});
+  const { data } = useGetDiagnosticDoctorsNameQuery({});
 
   const isLoading = isCreating || isUpdating;
 

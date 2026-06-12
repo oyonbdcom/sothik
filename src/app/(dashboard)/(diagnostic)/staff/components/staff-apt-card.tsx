@@ -37,15 +37,15 @@ export default function AppointmentCard({
             <div className="flex flex-wrap items-center gap-2">
               <p className="text-[11px] text-slate-500 flex items-center gap-1">
                 <Phone size={10} />
-                {appt.phoneNumber}
+                {appt.contactNumber}
               </p>
 
-              {appt.ptAge && (
+              {appt.age && (
                 <>
                   <span className="text-slate-300">•</span>
 
                   <span className="text-[11px] text-slate-500">
-                    বয়স: {appt.ptAge}
+                    বয়স: {appt.age}
                   </span>
                 </>
               )}

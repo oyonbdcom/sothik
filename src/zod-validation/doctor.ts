@@ -50,7 +50,16 @@ export const doctorSchema = z.object({
       (val) => !val || /^https?:\/\/.+/.test(val),
       "সঠিক ইউআরএল (URL) দিন",
     ),
-
+  educations: z
+    .array(
+      z.object({
+        degree: z.string().min(1, "ডিগ্রি আবশ্যক"),
+        institution: z.string().min(1, "প্রতিষ্ঠান আবশ্যক"),
+        subject: z.string().optional(),
+        passingYear: z.coerce.number().optional(),
+      }),
+    )
+    .optional(),
   // --- Nested User Fields ---
   user: z.object({
     name: z

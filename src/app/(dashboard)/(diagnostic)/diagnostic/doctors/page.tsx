@@ -7,7 +7,7 @@ import LayoutLoader from "@/components/layout-loader";
 import { IDoctorResponse } from "@/interface/doctor";
 import {
   useAddDoctorToAreaMutation,
-  useGetDoctorsQuery,
+  useGetDoctorDirectoryQuery,
   useRemoveDoctorFromAreaMutation,
 } from "@/redux/api/doctorApi";
 import {
@@ -64,7 +64,7 @@ export default function DoctorManagement() {
   // }, [district]);
 
   // --- Main API Call for Doctors ---
-  const { data, isLoading } = useGetDoctorsQuery({
+  const { data, isLoading } = useGetDoctorDirectoryQuery({
     searchTerm: searchTerm || undefined,
     department: department || undefined, // slug
     area: area || undefined, // slug

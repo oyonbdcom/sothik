@@ -4,8 +4,7 @@ export const patientProfileSchema = z.object({
   name: z
     .string()
     .min(2, "নাম অন্তত ২ অক্ষরের হতে হবে")
-    .max(100, "নাম ১০০ অক্ষরের বেশি হওয়া সম্ভব নয়")
-    .regex(/^[ঀ-৿\s]+$/, "নাম অবশ্যই বাংলায় হতে হবে"),
+    .max(100, "নাম ১০০ অক্ষরের বেশি হওয়া সম্ভব নয়"),
   age: z.coerce.number().min(1).max(120),
   gender: z.enum(["MALE", "FEMALE", "OTHER"]),
   image: z.any().optional(),

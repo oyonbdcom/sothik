@@ -2,6 +2,7 @@ import { StaffType, UserRole } from "@/constant/common";
 import { adminConfig } from "./admin.sidebar";
 import { coordinatorConfig } from "./coordinator.sidebar";
 import { diagnosticConfig } from "./diagnostic.sidebar";
+import { doctorConfig } from "./doctor.sidebar";
 import { managerConfig } from "./manager.sidebar";
 import { patientConfig } from "./patient.sidebar";
 import { receptionistConfig } from "./receptionist.sidebar";
@@ -26,6 +27,10 @@ export const sidebarConfigs: SidebarConfigType[] = [
   {
     role: UserRole.AREA_MANAGER,
     menus: managerConfig,
+  },
+  {
+    role: UserRole.DOCTOR,
+    menus: doctorConfig,
   },
 
   {

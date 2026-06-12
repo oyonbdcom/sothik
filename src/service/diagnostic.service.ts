@@ -43,7 +43,7 @@ export const getDiagnosticByIdentifier = async (identifier: string) => {
     const result = await res.json();
     return result.data;
   } catch (error) {
-    console.error("Error in getSingleDoctor:", error);
+    console.error("Error in get Doctor BySlug:", error);
     return null;
   }
 };

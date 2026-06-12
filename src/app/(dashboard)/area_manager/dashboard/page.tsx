@@ -3,10 +3,10 @@
 
 import AppPagination from "@/components/app-pagination";
 import { StatCard } from "@/components/start-card";
-import { useDebounce } from "@/hooks/useDebaunce";
-import { useGetMyAppointmentsQuery } from "@/redux/api/appointmentApi";
-import { useGetAllAreaDiagnosticsQuery } from "@/redux/api/diagnosticApi";
-import { useGetAccessibleDoctorsQuery } from "@/redux/api/doctorApi";
+import { bdStartOfDay } from "@/lib/utils/utils";
+import { useGetAreaManagerAppointmentsQuery } from "@/redux/api/appointmentApi";
+import { useGetAllAreaDiagnosticsNameQuery } from "@/redux/api/diagnosticApi";
+import { useGetAreaManagerDoctorsNameQuery } from "@/redux/api/doctorApi";
 import { format } from "date-fns";
 import { Calendar, ClipboardList, Loader2, Phone, User } from "lucide-react";
 import { useState } from "react";
@@ -17,15 +17,14 @@ export default function ManagerAppointmentsPage() {
   // States
   const [diagId, setDiagId] = useState("");
   const [doctorId, setDoctorId] = useState("");
-  const [date, setDate] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [date, setDate] = useState<any>(bdStartOfDay(new Date()));
+
   const [isEmergency, setIsEmergency] = useState<boolean | null>(null);
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
   const size = 10;
 
   // Debounce for search
-  const debouncedTerm = useDebounce({ searchQuery: searchTerm, delay: 600 });
 
   // API Query
   const query: Record<string, any> = {
@@ -33,8 +32,6 @@ export default function ManagerAppointmentsPage() {
     limit: size,
   };
 
-  if (debouncedTerm?.searchQuery)
-    query["searchTerm"] = debouncedTerm.searchQuery;
   if (status) query["status"] = status;
   if (doctorId) query["doctorId"] = doctorId;
   if (diagId) query["diagId"] = diagId;
@@ -42,13 +39,13 @@ export default function ManagerAppointmentsPage() {
   if (isEmergency !== null) {
     query["isEmergency"] = isEmergency;
   }
-  const { data, isLoading, isFetching } = useGetMyAppointmentsQuery({
+  const { data, isLoading, isFetching } = useGetAreaManagerAppointmentsQuery({
     ...query,
   });
   const { data: allDiagnostics, isLoading: allDiagnosticLoading } =
-    useGetAllAreaDiagnosticsQuery();
+    useGetAllAreaDiagnosticsNameQuery();
   const { data: allDoctors, isLoading: allDoctorLoading } =
-    useGetAccessibleDoctorsQuery();
+    useGetAreaManagerDoctorsNameQuery();
   const appointments = data?.appointments || [];
   const meta = data?.meta;
   const stats = data?.stats;
@@ -82,14 +79,9 @@ export default function ManagerAppointmentsPage() {
       </div>
 
       {/* Filters Section */}
-      <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatCard label="মোট" value={stats?.total || 0} color="slate" />
-        <StatCard
-          label="আজকের"
-          value={stats?.todayAppointments || 0}
-          color="emerald"
-        />
-        <StatCard label="Pending" value={stats?.pending || 0} color="amber" />
+
         <StatCard
           label="Scheduled"
           value={stats?.scheduled || 0}

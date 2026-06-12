@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Gender } from "@/types/common";
 
 import { IDoctorAreaResponse } from "./area";
@@ -22,7 +21,7 @@ export interface IDoctorResponse {
   // Optional Fields from Schema
   website: string | null;
   position: string | null;
-  education: any;
+  educations: { degree: string; institution: string; passingYear: string }[];
   hospital: string | null;
   gender: Gender | null;
   experience: number;
@@ -40,6 +39,32 @@ export interface IDoctorResponse {
   department?: IDepartmentResponse;
   areas?: IDoctorAreaResponse[]; // DoctorArea[] রিলেশন
   memberships?: IMembershipResponse[]; // আপনার প্রয়োজন অনুযায়ী Membership টাইপ যোগ করতে পারেন
+}
+
+export interface Doctor {
+  id: string;
+  slug: string;
+  specialization: string;
+  department: { name: string };
+  position: string;
+  hospital: string;
+  website: string;
+  experience: number;
+  gender: "MALE" | "FEMALE";
+  isEmergency: boolean;
+  averageRating: number;
+  reviewsCount: number;
+  user: { name: string; phoneNumber: string; image: string | null };
+  practices: { area: string; centers: string[] }[];
+  educations: { degree: string; institution: string; passingYear: string }[];
+  schedule: { day: string; slots: string[] }[];
+  reviews: {
+    id: number;
+    name: string;
+    rating: number;
+    date: string;
+    comment: string;
+  }[];
 }
 export interface IDepartmentStat {
   name: string;

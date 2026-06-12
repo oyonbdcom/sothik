@@ -27,18 +27,6 @@ const diagnosticApi = baseApi.injectEndpoints({
       invalidatesTags: [tagTypes.diagnostic],
     }),
 
-    updateDiagnostic: build.mutation<
-      IGenericResponse<IDiagnosticResponse>,
-      { id: string; data: Partial<IUpdateDiagnosticRequest> }
-    >({
-      query: ({ id, data }) => ({
-        url: `${DIAGNOSTIC_URL}/${id}`,
-        method: "PATCH",
-        data,
-      }),
-      invalidatesTags: [tagTypes.diagnostic],
-    }),
-
     getDiagnostics: build.query<
       { diagnostics: IDiagnosticResponse[]; meta: IMeta | undefined },
       Record<string, any> | void
@@ -59,12 +47,29 @@ const diagnosticApi = baseApi.injectEndpoints({
       },
       providesTags: [tagTypes.diagnostic],
     }),
+
+    getAllAreaDiagnosticsName: build.query<
+      { diagnostics: IDiagnosticResponse[] },
+      Record<string, any> | void
+    >({
+      query: (arg) => ({
+        url: `${DIAGNOSTIC_URL}/area-diagnostics-name`,
+        method: "GET",
+        params: arg,
+      }),
+      transformResponse: (response: any) => {
+        return {
+          diagnostics: response?.data,
+        };
+      },
+      providesTags: [tagTypes.diagnostic],
+    }),
     getAllAreaDiagnostics: build.query<
       { diagnostics: IDiagnosticResponse[]; meta: IMeta | undefined },
       Record<string, any> | void
     >({
       query: (arg) => ({
-        url: `${DIAGNOSTIC_URL}/area-diagnostic`,
+        url: `${DIAGNOSTIC_URL}/area-diagnostics`,
         method: "GET",
         params: arg,
       }),
@@ -112,7 +117,17 @@ const diagnosticApi = baseApi.injectEndpoints({
       // Fix: Add ID-specific tags
       providesTags: (result, error, id) => [{ type: tagTypes.diagnostic, id }],
     }),
-
+    updateDiagnostic: build.mutation<
+      IGenericResponse<IDiagnosticResponse>,
+      { id: string; data: Partial<IUpdateDiagnosticRequest> }
+    >({
+      query: ({ id, data }) => ({
+        url: `${DIAGNOSTIC_URL}/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: [tagTypes.diagnostic],
+    }),
     deleteDiagnostics: build.mutation({
       query: (id) => ({
         url: `${DIAGNOSTIC_URL}/${id}`,
@@ -126,6 +141,7 @@ const diagnosticApi = baseApi.injectEndpoints({
 
 export const {
   useAddDiagnosticMutation,
+  useGetAllAreaDiagnosticsNameQuery,
   useDeleteDiagnosticsMutation,
   useGetDiagnosticsQuery,
   useUpdateDiagnosticMutation,

@@ -7,7 +7,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { UserRole } from "@/constant/common";
 import { useAuth } from "@/hooks/useAuth";
 import { IDoctorResponse } from "@/interface/doctor";
-import { useGetDoctorsQuery } from "@/redux/api/doctorApi";
+import { useGetDoctorDirectoryQuery } from "@/redux/api/doctorApi";
 import {
   useCreateMembershipMutation,
   useUpdateMembershipMutation,
@@ -92,13 +92,14 @@ export default function MembershipPro({
   // API
   const { data: deptData } = useGetDepartmentsQuery(undefined);
 
-  const { data: doctorData, isFetching: docFetching } = useGetDoctorsQuery({
-    searchTerm: doctorSearch,
-    departmentId: deptId || undefined,
-    gender: gender || undefined,
-    myAreaOnly: "true",
-    limit: 20,
-  });
+  const { data: doctorData, isFetching: docFetching } =
+    useGetDoctorDirectoryQuery({
+      searchTerm: doctorSearch,
+      departmentId: deptId || undefined,
+      gender: gender || undefined,
+      myAreaOnly: "true",
+      limit: 20,
+    });
 
   const [createMembership, { isLoading: isCreating }] =
     useCreateMembershipMutation();

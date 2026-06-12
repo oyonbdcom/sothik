@@ -8,6 +8,7 @@ export const diagnosticConfig: MenuItemProps[] = [
   { title: "ডাক্তার সমূহ", icon: Stethoscope, href: "memberships" },
   { title: "স্টাপ সমূহ", icon: Stethoscope, href: "staff" },
   { title: "অ্যাপয়েন্টমেন্ট তালিকা", icon: CreditCard, href: "appointments" },
+  { title: "রিভিউ", icon: CreditCard, href: "reviews" },
   { title: "প্রোফাইল ", icon: Star, href: "profile" },
   passwordMenu,
 ];

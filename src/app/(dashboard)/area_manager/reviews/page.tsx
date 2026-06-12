@@ -11,7 +11,7 @@ import {
   useUpdateDoctorReviewMutation,
 } from "@/redux/api/doctor-reviewApi";
 
-import { useGetAccessibleDoctorsQuery } from "@/redux/api/doctorApi";
+import { useGetAreaManagerDoctorsNameQuery } from "@/redux/api/doctorApi";
 import { format } from "date-fns";
 import {
   AlertCircle,
@@ -66,7 +66,7 @@ export default function ManagerReviewsPage() {
     useReplyDoctorReviewMutation();
   const reviews = data?.reviews || [];
   const { data: allDoctors, isLoading: allDoctorLoading } =
-    useGetAccessibleDoctorsQuery();
+    useGetAreaManagerDoctorsNameQuery();
   // স্ট্যাটাস আপডেট হ্যান্ডলার
   const handleUpdateStatus = async (id: string, newStatus: string) => {
     try {

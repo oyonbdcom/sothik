@@ -2,6 +2,7 @@
 "use client";
 
 import CustomFormField, { FormFieldType } from "@/components/custom-form-field";
+import ImageUpload from "@/components/imageupload";
 import LayoutLoader from "@/components/layout-loader";
 import { Form } from "@/components/ui/form";
 import { useMounted } from "@/hooks/use-mounted";
@@ -12,15 +13,15 @@ import {
 } from "@/redux/api/diagnosticApi";
 import { updateDiagnosticSchema } from "@/zod-validation/diagnostic";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Building2, Globe, Loader2, MapPin, Phone, Save } from "lucide-react";
-import { useMemo } from "react";
+import { Building2, Globe, Loader2, MapPin, Save } from "lucide-react";
+import { useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 export default function DiagnosticProfileForm() {
   const { user } = useAuth();
   const mounted = useMounted();
-
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [updateDiagnostic, { isLoading: isUpdating }] =
     useUpdateDiagnosticMutation();
 
@@ -50,12 +51,19 @@ export default function DiagnosticProfileForm() {
 
   const onSubmit: SubmitHandler<any> = async (values) => {
     if (!diagnostic?.id) return;
+    const finalData = {
+      ...values,
+      user: {
+        ...values.user,
+        image: photoPreview || values.user.image,
+      },
+    };
 
     try {
-      await updateDiagnostic({
+      updateDiagnostic({
         id: diagnostic.id,
-        data: values,
-      }).unwrap();
+        data: finalData,
+      });
 
       toast.success("ক্লিনিক প্রোফাইল আপডেট হয়েছে");
       form.reset(values);
@@ -69,7 +77,7 @@ export default function DiagnosticProfileForm() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-6 pb-28">
+    <div className="container      min-h-screen bg-slate-50">
       {/* HEADER */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-slate-900">ক্লিনিক প্রোফাইল</h1>
@@ -78,39 +86,34 @@ export default function DiagnosticProfileForm() {
           আপনার ক্লিনিকের তথ্য আপডেট করুন
         </p>
       </div>
+      <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm mb-5">
+        <ImageUpload
+          label={diagnostic?.user?.name}
+          value={diagnostic?.user?.image || ""}
+          setPhotoPreview={(url) => setPhotoPreview(url)}
+        />
 
+        {/* <div>
+            <h2 className="text-xl font-bold text-slate-900">
+              {diagnostic?.user?.name}
+            </h2>
+
+            <div className="mt-2 space-y-1 text-sm text-slate-500">
+              <div className="flex items-center gap-2">
+                <Phone size={14} />
+                {diagnostic?.user?.phoneNumber}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <MapPin size={14} />
+                {diagnostic?.address}
+              </div>
+            </div>
+          </div> */}
+      </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
           {/* PROFILE */}
-          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="flex gap-5">
-              <div className="h-24 w-24 overflow-hidden rounded-2xl border bg-slate-50">
-                <CustomFormField
-                  fieldType={FormFieldType.PROFILE}
-                  name="user.image"
-                  control={form.control}
-                />
-              </div>
-
-              <div>
-                <h2 className="text-xl font-bold text-slate-900">
-                  {diagnostic?.user?.name}
-                </h2>
-
-                <div className="mt-2 space-y-1 text-sm text-slate-500">
-                  <div className="flex items-center gap-2">
-                    <Phone size={14} />
-                    {diagnostic?.user?.phoneNumber}
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <MapPin size={14} />
-                    {diagnostic?.address}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
 
           {/* BASIC INFO */}
           <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -130,7 +133,7 @@ export default function DiagnosticProfileForm() {
               />
 
               <CustomFormField
-                fieldType={FormFieldType.INPUT}
+                fieldType={FormFieldType.PHONE_INPUT}
                 name="user.phoneNumber"
                 label="ফোন নাম্বার"
                 control={form.control}
@@ -157,7 +160,7 @@ export default function DiagnosticProfileForm() {
           </div>
 
           {/* ACTION */}
-          <div className="fixed bottom-5 left-1/2 z-50 w-[92%] max-w-3xl -translate-x-1/2">
+          <div className="  ">
             <div className="flex items-center justify-between rounded-2xl border bg-white px-4 py-3 shadow-xl">
               <p className="text-[11px] text-slate-500">
                 {form.formState.isDirty

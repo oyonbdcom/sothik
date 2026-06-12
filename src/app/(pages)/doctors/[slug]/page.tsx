@@ -4,7 +4,7 @@ import ServerPagination from "@/components/server-pagination";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { avatar, femaleAvatar, siteConfig } from "@/config/site";
 import { IMembershipResponse } from "@/interface/diagnostic-membership";
-import { getSingleDoctor } from "@/service/doctor.service";
+import { getDoctorBySlug } from "@/service/doctor.service";
 import { getMembershipsBySlug } from "@/service/membership.service";
 import { ExternalLink, Globe, MapPin, Star, Stethoscope } from "lucide-react";
 import { Metadata } from "next";
@@ -22,7 +22,7 @@ export async function generateMetadata({
 }: DoctorProps): Promise<Metadata> {
   const { slug } = await params;
 
-  const doctor = await getSingleDoctor(slug);
+  const doctor = await getDoctorBySlug(slug);
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sasthik.com";
 
@@ -116,7 +116,7 @@ export default async function DoctorDetailsPage({
 
   // সমান্তরালভাবে ডাটা ফেচিং (Parallel Fetching)
   const [doctor, membershipResponse] = await Promise.all([
-    getSingleDoctor(slug),
+    getDoctorBySlug(slug),
     getMembershipsBySlug(slug, page, limit),
   ]);
 

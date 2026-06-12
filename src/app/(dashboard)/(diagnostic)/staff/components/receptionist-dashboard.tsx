@@ -2,12 +2,11 @@
 "use client";
 
 import AppPagination from "@/components/app-pagination";
-import { useDebounce } from "@/hooks/useDebaunce";
-import { useGetMyAppointmentsQuery } from "@/redux/api/appointmentApi";
+import { useGetReceptionistAppointmentsQuery } from "@/redux/api/appointmentApi";
 import { useState } from "react";
 
 import Loader from "@/components/loader";
-import { useGetAccessibleDoctorsQuery } from "@/redux/api/doctorApi";
+import { useGetDiagnosticDoctorsNameQuery } from "@/redux/api/doctorApi";
 import CreateAppointmentModal from "../../components/dashboard-appointmet-dialog";
 import AppointmentCard from "./staff-apt-card";
 
@@ -16,32 +15,15 @@ const ReceptionistDashboard = () => {
 
   const [doctorId, setDoctorId] = useState("");
   const [date, setDate] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
+
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
   const size = 10;
-
-  // =====================================================
-  // DEBOUNCE
-  // =====================================================
-
-  const debouncedTerm = useDebounce({
-    searchQuery: searchTerm,
-    delay: 600,
-  });
-
-  // =====================================================
-  // QUERY
-  // =====================================================
 
   const query: Record<string, any> = {
     page,
     limit: size,
   };
-
-  if (debouncedTerm?.searchQuery) {
-    query["searchTerm"] = debouncedTerm.searchQuery;
-  }
 
   if (status) query["status"] = status;
   if (doctorId) query["doctorId"] = doctorId;
@@ -52,11 +34,11 @@ const ReceptionistDashboard = () => {
   // API
   // =====================================================
 
-  const { data, isLoading, isFetching } = useGetMyAppointmentsQuery({
+  const { data, isLoading, isFetching } = useGetReceptionistAppointmentsQuery({
     ...query,
   });
 
-  const { data: allDoctors } = useGetAccessibleDoctorsQuery({});
+  const { data: allDoctors } = useGetDiagnosticDoctorsNameQuery({});
 
   // =====================================================
   // DATA
@@ -83,10 +65,10 @@ const ReceptionistDashboard = () => {
       {/* ===================================================== */}
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-2 p-4">
-        <StatCard label="মোট" value={stats?.total} />
+        <StatCard label="Total" value={stats?.total} />
 
         <StatCard
-          label="আজকের"
+          label="Today"
           value={stats?.todayAppointments || 0}
           color="blue"
         />

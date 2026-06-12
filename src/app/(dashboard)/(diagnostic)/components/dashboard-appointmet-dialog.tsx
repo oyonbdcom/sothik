@@ -14,7 +14,7 @@ import {
   useUpdateAppointmentMutation,
 } from "@/redux/api/appointmentApi";
 
-import { useGetAccessibleDoctorsQuery } from "@/redux/api/doctorApi";
+import { useGetDiagnosticDoctorsNameQuery } from "@/redux/api/doctorApi";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -103,7 +103,7 @@ export default function CreateAppointmentModal({
 
   const [updateAppointment] = useUpdateAppointmentMutation();
 
-  const { data } = useGetAccessibleDoctorsQuery({});
+  const { data } = useGetDiagnosticDoctorsNameQuery({});
 
   // =====================================================
   // FORM

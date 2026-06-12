@@ -33,13 +33,13 @@ export const getAllDoctors = async (query: Record<string, any>) => {
 };
 // services/doctorService.ts
 
-export const getSingleDoctor = async (
-  id: string,
+export const getDoctorBySlug = async (
+  slug: string,
   page: number = 1,
   limit: number = 10,
 ): Promise<IDoctorResponse | null> => {
   try {
-    const url = new URL(`${BASE_URL}/doctors/${id}`);
+    const url = new URL(`${BASE_URL}/doctors/${slug}`);
     url.searchParams.append("page", page.toString());
     url.searchParams.append("limit", limit.toString());
 

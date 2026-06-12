@@ -7,7 +7,7 @@ import { siteConfig } from "@/config/site";
 import { IDoctorResponse } from "@/interface/doctor";
 import {
   useAddDoctorToAreaMutation,
-  useGetDoctorsQuery,
+  useGetDoctorDirectoryQuery,
   useRemoveDoctorFromAreaMutation,
 } from "@/redux/api/doctorApi";
 import {
@@ -59,7 +59,7 @@ export default function DoctorManagement() {
   const areas = areaData?.areas || [];
 
   // --- Main API Call for Doctors ---
-  const { data, isLoading } = useGetDoctorsQuery({
+  const { data, isLoading } = useGetDoctorDirectoryQuery({
     searchTerm: searchTerm || undefined,
     department: department || undefined,
     area: area || undefined,
@@ -68,7 +68,7 @@ export default function DoctorManagement() {
     minRating: minRating || undefined,
     deactivate: deactivate,
     myAreaOnly: activeTab === "my" ? "true" : undefined,
-    area_doctor: "true",
+
     page: page,
     limit: 12,
   });

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IGenericResponse } from "@/types";
 import { tagTypes } from "@/types/tagTypes";
 
@@ -20,18 +21,18 @@ const patient = baseApi.injectEndpoints({
       invalidatesTags: [tagTypes.patient],
     }),
 
-    getSinglePatient: build.query({
+    getPatientById: build.query({
       query: () => ({
         url: `${PATIENT_URL}/me`,
         method: "GET",
       }),
       // এখানে response.data সরাসরি রিটার্ন করলে টাইপ হ্যান্ডেল করা সহজ হয়
-      transformResponse: (response: IGenericResponse<IPatientResponse>) => {
-        return response.data; // সরাসরি পেশেন্ট অবজেক্ট রিটার্ন করা হলো
+      transformResponse: (response: any) => {
+        return response.data;
       },
       providesTags: [tagTypes.patient],
     }),
   }),
 });
 
-export const { useUpdatePatientMutation, useGetSinglePatientQuery } = patient;
+export const { useUpdatePatientMutation, useGetPatientByIdQuery } = patient;

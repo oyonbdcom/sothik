@@ -9,11 +9,8 @@ const UnifiedDashboard = () => {
 
   return (
     <div className="min-h-screen bg-slate-50   font-sans text-slate-900">
-      {user?.staff.staffType === "RECEPTIONIST" ? (
-        <ReceptionistDashboard />
-      ) : (
-        <CoordinatorDashboard />
-      )}
+      {user?.staff.staffType === "RECEPTIONIST" && <ReceptionistDashboard />}
+      {user?.staff.staffType === "COORDINATOR" && <CoordinatorDashboard />}
     </div>
   );
 };

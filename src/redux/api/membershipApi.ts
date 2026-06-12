@@ -26,12 +26,12 @@ const memberShipApi = baseApi.injectEndpoints({
     }),
 
     // 2. Get All Memberships (Filtering & Pagination)
-    getDiagnosticMembershipsDoctors: build.query<
+    getDiagnosticDoctors: build.query<
       { membership: any[]; meta: IMeta | undefined },
       Record<string, any> | void
     >({
       query: (arg) => ({
-        url: `${MEMBERSHIP_URL}/diagnostic-doctors`,
+        url: `${MEMBERSHIP_URL}/slug/${arg?.slug}`,
         method: "GET",
         params: arg,
       }),
@@ -43,25 +43,39 @@ const memberShipApi = baseApi.injectEndpoints({
       },
       providesTags: [tagTypes.membership],
     }),
-    // getMyDoctors: build.query<any[], void>({
-    //   query: () => ({
-    //     url: `${MEMBERSHIP_URL}/my-doctors`,
-    //     method: "GET",
-    //   }),
-    //   transformResponse: (response: IGenericResponse<any[]>) => response.data,
-    //   providesTags: [tagTypes.membership, tagTypes.doctor],
-    // }),
-    // 3. Get Single Membership By ID
-    getMembershipById: build.query<any, { targetId: string; params?: any }>({
-      query: ({ targetId, params }) => ({
-        url: `${MEMBERSHIP_URL}/${targetId}`,
+
+    // ***************
+    //     doctor dashboard diagnostics name for filter
+    // ******************
+    getDoctorDiagnosticsName: build.query({
+      query: () => ({
+        url: `${MEMBERSHIP_URL}/doctor-diagnostics-name`,
         method: "GET",
-        params,
       }),
-      transformResponse: (response: IGenericResponse<any>) => response.data,
-      providesTags: (result, error, { targetId }) => [
-        { type: tagTypes.membership, id: targetId },
+      transformResponse: (response: any) => response.data,
+      providesTags: (result, error, slug) => [
+        { type: tagTypes.membership, id: slug },
       ],
+    }),
+    getMembershipById: build.query<
+      { memberships: IMembershipResponse[]; meta: IMeta | undefined },
+      Record<string, any> | void
+    >({
+      query: (arg) => ({
+        url: `${MEMBERSHIP_URL}/diagnostic`,
+        method: "GET",
+        // যদি arg থাকে তবে সেটি params এ যাবে, নাহলে undefined
+        params: arg || {},
+      }),
+      transformResponse: (
+        response: IGenericResponse<IMembershipResponse[]>,
+      ) => {
+        return {
+          memberships: response?.data || [], // response না থাকলে খালি অ্যারে
+          meta: response?.meta,
+        };
+      },
+      providesTags: [tagTypes.membership],
     }),
 
     // 4. Update Membership Status
@@ -99,7 +113,8 @@ const memberShipApi = baseApi.injectEndpoints({
 
 export const {
   useCreateMembershipMutation,
-  useGetDiagnosticMembershipsDoctorsQuery,
+  useGetDiagnosticDoctorsQuery,
+  useGetDoctorDiagnosticsNameQuery,
   useGetMembershipByIdQuery,
   useUpdateMembershipMutation,
 

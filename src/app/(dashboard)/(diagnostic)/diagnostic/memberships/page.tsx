@@ -8,7 +8,7 @@ import { IScheduleResponse } from "@/interface/schedule";
 import { enToBnNumber } from "@/lib/utils/utils";
 import {
   useDeleteMembershipMutation,
-  useGetDiagnosticMembershipsDoctorsQuery,
+  useGetMembershipByIdQuery,
 } from "@/redux/api/membershipApi";
 import { useDeleteScheduleMutation } from "@/redux/api/scheduleApi";
 import { AnimatePresence, motion } from "framer-motion";
@@ -16,7 +16,6 @@ import {
   Clock,
   Edit3,
   Loader2,
-  MapPin,
   Plus,
   Stethoscope,
   Trash2,
@@ -43,14 +42,15 @@ export default function MembershipMainPage() {
   const [page, setPage] = useState(1);
 
   // redux
-  const { data, isLoading, isError } = useGetDiagnosticMembershipsDoctorsQuery({
-    page: page,
+  // কল করার সঠিক পদ্ধতি
+  const { data, isLoading, isError } = useGetMembershipByIdQuery({
+    page: page, // আপনার স্টেট থেকে আসা page
     limit: 10,
   });
+  const memberships = data?.memberships || [];
 
   const [deleteMembership, { isLoading: isDeleting }] =
     useDeleteMembershipMutation();
-  const memberships = data?.membership || [];
 
   const [deleteSchedule, { isLoading: isScheduleDeleting }] =
     useDeleteScheduleMutation();
@@ -163,10 +163,6 @@ export default function MembershipMainPage() {
               </div>
 
               {/* ক্লিনিকের নাম - এক লাইনে ছোট করে */}
-              <div className="flex items-center gap-1  text-primary-500 text-xs font-bold">
-                <MapPin size={10} className="text-slate-400" />
-                <span className="truncate">{item.diagnostic?.user?.name}</span>
-              </div>
 
               {/* সেশন সেকশন - বর্ডারলেস এবং কম্প্যাক্ট */}
               <div className="bg-slate-50/50 rounded-xl p-2 space-y-1.5">

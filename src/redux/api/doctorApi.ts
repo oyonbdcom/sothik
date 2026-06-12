@@ -55,12 +55,12 @@ const doctorApi = baseApi.injectEndpoints({
       invalidatesTags: [tagTypes.doctor],
     }),
 
-    getDoctors: build.query<
+    getDoctorDirectory: build.query<
       { doctors: IDoctorResponse[]; meta: IMeta | undefined },
       Record<string, any> | void
     >({
       query: (arg) => ({
-        url: DOCTOR_URL,
+        url: `${DOCTOR_URL}/directory`,
         method: "GET",
         params: arg,
       }),
@@ -73,12 +73,19 @@ const doctorApi = baseApi.injectEndpoints({
       },
       providesTags: [tagTypes.doctor],
     }),
-    getAccessibleDoctors: build.query<
+    // getDoctorAppointmentStats: build.query({
+    //   query: (arg) => ({
+    //     url: `${DOCTOR_URL}/appointment-stats`,
+
+    //     params: arg,
+    //   }),
+    // }),
+    getAreaManagerDoctorsName: build.query<
       { doctors: IDoctorResponse[] },
       Record<string, any> | void
     >({
       query: (arg) => ({
-        url: `${DOCTOR_URL}/area-diagnostic-doctors`,
+        url: `${DOCTOR_URL}/area-doctors-name`,
         method: "GET",
         params: arg,
       }),
@@ -91,6 +98,25 @@ const doctorApi = baseApi.injectEndpoints({
 
       providesTags: [tagTypes.diagnostic],
     }),
+    getDiagnosticDoctorsName: build.query<
+      { doctors: IDoctorResponse[] },
+      Record<string, any> | void
+    >({
+      query: (arg) => ({
+        url: `${DOCTOR_URL}/diagnostic-doctors-name`,
+        method: "GET",
+        params: arg,
+      }),
+
+      transformResponse: (response: any) => {
+        return {
+          doctors: response.data,
+        };
+      },
+
+      providesTags: [tagTypes.doctor],
+    }),
+
     getDoctorStats: build.query<{ stats: IDoctorStats }, void>({
       query: () => ({
         url: `${DOCTOR_URL}/statistics`,
@@ -103,19 +129,20 @@ const doctorApi = baseApi.injectEndpoints({
       },
       providesTags: [tagTypes.doctor],
     }),
-    getSingleDoctor: build.query({
-      query: (id) => ({
-        url: `${DOCTOR_URL}/${id}`,
+
+    getDoctorById: build.query({
+      query: () => ({
+        url: `${DOCTOR_URL}/profile`,
         method: "GET",
       }),
-      transformResponse: (response: IGenericResponse<IDoctorResponse>) => {
+      transformResponse: (response: any) => {
         return {
           doctor: response.data,
-          meta: response.meta,
         };
       },
       providesTags: (result, error, id) => [{ type: tagTypes.doctor, id }],
     }),
+
     deleteDoctor: build.mutation({
       query: (id) => ({
         url: `${DOCTOR_URL}/${id}`,
@@ -131,9 +158,10 @@ export const {
   useAddDoctorMutation,
   useGetDoctorStatsQuery,
   useUpdateDoctorMutation,
-  useGetDoctorsQuery,
-  useGetSingleDoctorQuery,
-  useGetAccessibleDoctorsQuery,
+  useGetDoctorDirectoryQuery,
+  useGetDiagnosticDoctorsNameQuery,
+  useGetDoctorByIdQuery,
+  useGetAreaManagerDoctorsNameQuery,
   useAddDoctorToAreaMutation,
   useDeleteDoctorMutation,
   useRemoveDoctorFromAreaMutation,

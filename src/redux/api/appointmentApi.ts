@@ -41,6 +41,49 @@ export const appointmentApi = baseApi.injectEndpoints({
 
       transformResponse: (response: any) => response,
     }),
+
+    // ***************
+    //     doctor dashboard appointments
+    // ******************
+    getDoctorDashboardAppointments: build.query({
+      query: (params) => ({
+        url: `${APPOINTMENT_URL}/doctor-dashboard`,
+        method: "GET",
+        params,
+      }),
+
+      providesTags: ["appointment"],
+
+      transformResponse: (
+        response: IGenericResponse<IAppointmentResponse[], IAppointmentStats>,
+      ) => {
+        return {
+          appointments: response.data,
+          meta: response.meta,
+          stats: response.stats,
+        };
+      },
+    }),
+    getDiagnosticAppointments: build.query({
+      query: (params) => ({
+        url: `${APPOINTMENT_URL}/diagnostic-dashboard`,
+        method: "GET",
+        params,
+      }),
+
+      providesTags: ["appointment"],
+
+      transformResponse: (
+        response: IGenericResponse<IAppointmentResponse[], IAppointmentStats>,
+      ) => {
+        return {
+          appointments: response.data,
+          meta: response.meta,
+          stats: response.stats,
+        };
+      },
+    }),
+
     getPatientAppointments: build.query({
       query: (params) => ({
         url: `${APPOINTMENT_URL}/patient-appointments`,
@@ -77,6 +120,24 @@ export const appointmentApi = baseApi.injectEndpoints({
       providesTags: [tagTypes.appointment],
     }),
 
+    getAreaManagerAppointments: build.query({
+      query: (arg: Record<string, any>) => ({
+        url: `${APPOINTMENT_URL}/area-manager`,
+        method: "GET",
+        params: arg,
+      }),
+      transformResponse: (
+        response: IGenericResponse<IAppointmentResponse[], IAppointmentStats>,
+      ) => {
+        return {
+          appointments: response.data,
+          meta: response.meta,
+          stats: response.stats,
+        };
+      },
+      providesTags: [tagTypes.appointment],
+    }),
+
     // coordinator dashboard
     getCoordinatorDashboard: build.query({
       query: (params) => ({
@@ -87,18 +148,23 @@ export const appointmentApi = baseApi.injectEndpoints({
 
       providesTags: [tagTypes.appointment],
     }),
-
-    // getManagerAreaAppointments: build.query({
-    //   query: (arg: Record<string, any>) => ({
-    //     url: "/appointments/manager-appointments",
-    //     method: "GET",
-    //     params: arg,
-    //   }),
-    //   providesTags: ["appointment"],
-    // }),
-    // ======================================================
-    // EMERGENCY REQUEST
-    // ======================================================
+    getReceptionistAppointments: build.query({
+      query: (params) => ({
+        url: "/appointments/receptionist",
+        method: "GET",
+        params,
+      }),
+      transformResponse: (
+        response: IGenericResponse<IAppointmentResponse[], IAppointmentStats>,
+      ) => {
+        return {
+          appointments: response.data,
+          meta: response.meta,
+          stats: response.stats,
+        };
+      },
+      providesTags: [tagTypes.appointment],
+    }),
 
     requestEmergency: build.mutation({
       query: (id: string) => ({
@@ -166,6 +232,10 @@ export const appointmentApi = baseApi.injectEndpoints({
 
 export const {
   useCreateAppointmentMutation,
+  useGetDoctorDashboardAppointmentsQuery,
+  useGetAreaManagerAppointmentsQuery,
+  useGetDiagnosticAppointmentsQuery,
+  useGetReceptionistAppointmentsQuery,
   useUpdateDoctorSessionMutation,
   useRequestEmergencyMutation,
   useRejectEmergencyMutation,

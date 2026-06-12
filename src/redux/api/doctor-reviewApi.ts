@@ -72,7 +72,7 @@ const doctorReviewApi = baseApi.injectEndpoints({
     }),
     getManagerAreaDoctorReviews: build.query({
       query: (arg: Record<string, any>) => ({
-        url: "/reviews/manager-area-reviews",
+        url: "/doctor-reviews/manager-area-reviews",
         method: "GET",
         params: arg, // এখানে searchTerm, page, limit, rating, status ইত্যাদি পাস হবে
       }),

@@ -6,13 +6,13 @@ import { useAuth } from "@/hooks/useAuth";
 
 import {
   useDeleteDiagnosticReviewMutation,
-  useGetTargetDiagnosticReviewsQuery,
+  useGetDiagnosticReviewsQuery,
 } from "@/redux/api/diagnostic-reviewApi";
 import {
   useDeleteDoctorReviewMutation,
   useGetTargetDoctorReviewsQuery,
 } from "@/redux/api/doctor-reviewApi";
-import { CheckCircle2, Edit2, Loader2, Star, Trash2 } from "lucide-react";
+import { Edit2, Star, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -46,7 +46,7 @@ export default function ReviewPage({ targetId, type }: ReviewPageProps) {
     { skip: type !== "doctor" },
   );
 
-  const diagnosticQuery = useGetTargetDiagnosticReviewsQuery(
+  const diagnosticQuery = useGetDiagnosticReviewsQuery(
     {
       diagnosticId: targetId,
       page,
@@ -149,126 +149,88 @@ export default function ReviewPage({ targetId, type }: ReviewPageProps) {
           const isOwner = user?.id === review.reviewer?.id;
 
           return (
-            <article key={review.id} className="group relative bg-white pt-5">
-              <div className="flex gap-4">
+            <article
+              key={review?.id}
+              className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm transition-shadow hover:shadow-md"
+            >
+              <div className="flex gap-3">
                 {/* Avatar */}
-                <div className="relative flex-shrink-0 h-12 w-12">
+                <div className="h-8 w-8 shrink-0 overflow-hidden rounded-full bg-slate-100 mt-0.5">
                   {review.reviewer?.image ? (
                     <Image
                       src={review.reviewer.image}
                       alt={review.reviewer.name}
-                      fill
-                      className="rounded-full object-cover ring-2 ring-gray-100"
+                      width={32}
+                      height={32}
+                      className="h-full w-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-semibold text-lg shadow-sm">
+                    <div className="flex h-full w-full items-center justify-center text-[10px] font-medium text-slate-500">
                       {review.reviewer?.name?.charAt(0) || "P"}
                     </div>
                   )}
                 </div>
 
-                {/* Info & Content */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 space-y-1.5">
+                  {/* Header: Name, Date & Actions */}
+                  <div className="flex items-start justify-between">
                     <div>
-                      <h4 className="font-semibold text-gray-900 text-base leading-tight truncate">
+                      <h4 className="text-sm font-semibold text-slate-900 leading-tight">
                         {review.reviewer?.name}
                       </h4>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <time className="text-xs text-gray-400">
-                          {new Date(review.createdAt).toLocaleDateString(
-                            "bn-BD",
-                            {
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                            },
-                          )}
-                        </time>
-                      </div>
+                      <p className="text-[11px] text-slate-400">
+                        {new Date(review.createdAt).toLocaleDateString("bn-BD")}
+                      </p>
                     </div>
 
-                    {/* Action Buttons */}
                     {isOwner && (
-                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all duration-200">
+                      <div className="flex items-center gap-0.5 -mt-1">
                         <button
                           onClick={() => onEdit(review)}
-                          className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-blue-600 transition-colors"
-                          title="Edit review"
+                          className="p-1.5 text-slate-400 hover:text-slate-600 rounded-md hover:bg-slate-100"
                         >
-                          <Edit2 className="w-4 h-4" />
+                          <Edit2 size={12} />
                         </button>
                         <button
-                          disabled={deletingId === review.id}
                           onClick={() => onDelete(review.id)}
-                          className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-600 transition-colors disabled:opacity-50"
-                          title="Delete review"
+                          className="p-1.5 text-slate-400 hover:text-red-600 rounded-md hover:bg-red-50"
                         >
-                          {deletingId === review.id ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            <Trash2 className="w-4 h-4" />
-                          )}
+                          <Trash2 size={12} />
                         </button>
                       </div>
                     )}
                   </div>
 
-                  {/* Rating Stars */}
-                  <div className="flex text-amber-400 mt-1 mb-2">
+                  {/* Stars */}
+                  <div className="flex text-amber-400">
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
-                        size={14}
+                        size={11}
                         fill={i < review.rating ? "currentColor" : "none"}
-                        stroke="currentColor"
+                        strokeWidth={1.5}
                       />
                     ))}
                   </div>
 
-                  {/* Comment Text */}
-                  <p className="text-gray-700 leading-relaxed mb-4">
+                  {/* Content */}
+                  <p className="text-sm text-slate-700 leading-relaxed">
                     {review.comment}
                   </p>
-                </div>
-              </div>
 
-              {/* 🔥 ফিক্সড অফিশিয়াল রিপ্লাই সেকশন (Prisma স্কিমা অনুযায়ী `review.reply` চেক হবে) */}
-              {review.reply && (
-                <div className="bg-gradient-to-r from-blue-50/50 to-indigo-50/50 border-t border-blue-100 ml-16 rounded-2xl px-5 py-4 mt-2">
-                  <div className="flex gap-3">
-                    <div className="flex-shrink-0">
-                      <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center shadow-sm">
-                        <CheckCircle2 className="w-4 h-4 text-white" />
-                      </div>
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                        <span className="text-xs font-semibold text-blue-700 uppercase tracking-wide">
-                          Official Response{" "}
-                          {type === "diagnostic" ? "(Diagnostic)" : "(Doctor)"}
-                        </span>
-                        <span className="text-xs text-gray-400">•</span>
-                        <time className="text-xs text-gray-400">
-                          {new Date(review.reply.createdAt).toLocaleDateString(
-                            "bn-BD",
-                            {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                            },
-                          )}
-                        </time>
-                      </div>
-
-                      <p className="text-sm text-gray-700 leading-relaxed">
+                  {/* Official Reply */}
+                  {review.reply && (
+                    <div className="bg-slate-50 border border-slate-100 px-3 py-2 rounded-lg mt-2">
+                      <p className="text-[10px] font-bold text-blue-600 uppercase tracking-wider mb-0.5">
+                        Diagnostic Replay
+                      </p>
+                      <p className="text-sm text-slate-600">
                         {review.reply.content}
                       </p>
                     </div>
-                  </div>
+                  )}
                 </div>
-              )}
+              </div>
             </article>
           );
         })}

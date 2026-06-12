@@ -38,7 +38,7 @@ const diagnosticReviewApi = baseApi.injectEndpoints({
       ],
     }),
 
-    getTargetDiagnosticReviews: build.query<
+    getDiagnosticReviews: build.query<
       { reviews: any[]; meta: IMeta | undefined },
       { diagnosticId: string; [key: string]: any }
     >({
@@ -55,6 +55,23 @@ const diagnosticReviewApi = baseApi.injectEndpoints({
         };
       },
       providesTags: [tagTypes.review, tagTypes.doctor],
+    }),
+    getDiagnosticProfileReviews: build.query<
+      { reviews: IReviewResponse[]; meta: IMeta | undefined },
+      Record<string, any> | void
+    >({
+      query: (arg) => ({
+        url: `${REVIEW_URL}/profile`,
+        method: "GET",
+        params: arg || {},
+      }),
+      transformResponse: (response: IGenericResponse<IReviewResponse[]>) => {
+        return {
+          reviews: response?.data || [],
+          meta: response?.meta,
+        };
+      },
+      providesTags: [tagTypes.review],
     }),
 
     // getReviewStats: build.query<
@@ -107,8 +124,8 @@ export const {
   useReplyDiagnosticReviewMutation,
 
   useCreateDiagnosticReviewMutation,
-
-  useGetTargetDiagnosticReviewsQuery,
+  useGetDiagnosticProfileReviewsQuery,
+  useGetDiagnosticReviewsQuery,
 
   useUpdateDiagnosticReviewMutation,
   useDeleteDiagnosticReviewMutation,

@@ -3,40 +3,30 @@
 
 import AppPagination from "@/components/app-pagination";
 import Loader from "@/components/loader";
-import { useDebounce } from "@/hooks/useDebaunce";
 import { IReviewResponse } from "@/interface/review";
 import {
-  useDeleteDoctorReviewMutation,
-  useGetManagerAreaDoctorReviewsQuery,
-  useReplyDoctorReviewMutation,
-  useUpdateDoctorReviewMutation,
-} from "@/redux/api/doctor-reviewApi";
+  useGetDiagnosticProfileReviewsQuery,
+  useReplyDiagnosticReviewMutation,
+  useUpdateDiagnosticReviewMutation,
+} from "@/redux/api/diagnostic-reviewApi";
 
-import { useGetAccessibleDoctorsQuery } from "@/redux/api/doctorApi";
-import { format } from "date-fns";
 import {
   AlertCircle,
   CheckCircle2,
-  Clock,
   Loader2,
   MessageSquare,
   MoreVertical,
-  Search,
   Star,
   Trash2,
   User,
   XCircle,
 } from "lucide-react";
-import Image from "next/image";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 
 export default function ManagerReviewsPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [rating, setRating] = useState("");
-  const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
-  const [doctorId, setDoctorId] = useState("");
+
   // replay review
   const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
   const [replyText, setReplyText] = useState("");
@@ -47,27 +37,20 @@ export default function ManagerReviewsPage() {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const query: Record<string, any> = {};
-  const debouncedTerm = useDebounce({ searchQuery: searchTerm, delay: 600 });
+  const limit = 10;
 
-  if (debouncedTerm?.searchQuery)
-    query["searchTerm"] = debouncedTerm.searchQuery;
-  if (!!rating) query["rating"] = rating;
-  if (!!status) query["status"] = status;
-  query["page"] = page;
-  query["limit"] = 10;
-  query["doctorId"] = doctorId;
+  const { data, isLoading } = useGetDiagnosticProfileReviewsQuery({
+    page,
+    limit,
+  });
 
-  const { data, isLoading } = useGetManagerAreaDoctorReviewsQuery({ ...query });
   const [updateReview, { isLoading: isUpdating }] =
-    useUpdateDoctorReviewMutation();
-  const [deleteReview, { isLoading: isDeleting }] =
-    useDeleteDoctorReviewMutation();
+    useUpdateDiagnosticReviewMutation();
+
   const [replyReview, { isLoading: isReplying }] =
-    useReplyDoctorReviewMutation();
+    useReplyDiagnosticReviewMutation();
   const reviews = data?.reviews || [];
-  const { data: allDoctors, isLoading: allDoctorLoading } =
-    useGetAccessibleDoctorsQuery();
+
   // স্ট্যাটাস আপডেট হ্যান্ডলার
   const handleUpdateStatus = async (id: string, newStatus: string) => {
     try {
@@ -97,86 +80,13 @@ export default function ManagerReviewsPage() {
       toast.error(err?.message || "রিপ্লাই ব্যর্থ হয়েছে");
     }
   };
-  // ডিলিট হ্যান্ডলার
-  const handleDeleteReview = async () => {
-    if (!selectedReview) return;
-    try {
-      await deleteReview(selectedReview.id).unwrap();
-      toast.success("রিভিউটি সফলভাবে ডিলিট করা হয়েছে");
-      setIsDeleteModalOpen(false);
-    } catch (err: any) {
-      toast.error(err?.message || "ডিলিট করা সম্ভব হয়নি");
-    }
-  };
 
-  if (isLoading || allDoctorLoading) {
+  if (isLoading) {
     return <Loader />;
   }
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
-      {/* ফিল্টার সেকশন */}
-      <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-black text-slate-900 leading-none">
-              এরিয়া রিভিউ সমূহ
-            </h1>
-            <p className="text-sm text-slate-500 mt-2">
-              আপনার এরিয়ার সকল ডাক্তারদের প্রাপ্ত ফিডব্যাক
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <select
-              value={doctorId}
-              onChange={(e) => setDoctorId(e.target.value)}
-              className="px-3 py-2 rounded-xl border text-xs"
-            >
-              <option value="">সব ডাক্তার</option>
-              {allDoctors?.doctors?.map((d: any) => (
-                <option key={d.id} value={d.id}>
-                  {d.name}
-                </option>
-              ))}
-            </select>
-            <select
-              value={rating}
-              onChange={(e) => setRating(e.target.value)}
-              className="bg-slate-50 text-slate-600 text-sm px-4 py-2.5 rounded-xl border-none outline-none focus:ring-2 ring-emerald-500/10 transition-all cursor-pointer"
-            >
-              <option value="">সব রেটিং</option>
-              {[5, 4, 3, 2, 1].map((star) => (
-                <option key={star} value={star}>
-                  {star} স্টার
-                </option>
-              ))}
-            </select>
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="bg-slate-50 text-slate-600 text-sm px-4 py-2.5 rounded-xl border-none outline-none focus:ring-2 ring-emerald-500/10 transition-all cursor-pointer"
-            >
-              <option value="">সব স্ট্যাটাস</option>
-              <option value="APPROVED">APPROVED</option>
-              <option value="PENDING">PENDING</option>
-              <option value="REJECTED">REJECTED</option>
-            </select>
-          </div>
-        </div>
-        <div className="relative w-full">
-          <Search
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-            size={18}
-          />
-          <input
-            type="text"
-            placeholder="ডাক্তারের নামে সার্চ করুন..."
-            className="w-full pl-11 pr-4 py-3 bg-slate-50 rounded-2xl outline-none border border-transparent focus:border-emerald-200 transition-all text-sm"
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      </div>
-
       {/* রিভিউ গ্রিড */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {reviews?.map((review: IReviewResponse) => (
@@ -193,7 +103,7 @@ export default function ManagerReviewsPage() {
 
                 <div className="min-w-0">
                   <h3 className="text-sm font-black text-slate-800 truncate">
-                    Dr. {review.doctor?.user?.name}
+                    {review.reviewer?.name}
                   </h3>
 
                   <p className="text-[10px] font-bold text-emerald-600 uppercase truncate">
@@ -242,16 +152,6 @@ export default function ManagerReviewsPage() {
                 >
                   <MoreVertical size={14} />
                 </button>
-
-                <button
-                  onClick={() => {
-                    setSelectedReview(review);
-                    setIsDeleteModalOpen(true);
-                  }}
-                  className="h-8 w-8 rounded-xl bg-rose-50 flex items-center justify-center text-rose-500"
-                >
-                  <Trash2 size={14} />
-                </button>
               </div>
             </div>
 
@@ -274,35 +174,6 @@ export default function ManagerReviewsPage() {
                 </p>
               </div>
             )}
-
-            {/* footer */}
-            <div className="flex items-center justify-between pt-1">
-              <div className="flex items-center gap-2 min-w-0">
-                <div className="h-7 w-7 rounded-full overflow-hidden bg-slate-200 relative shrink-0">
-                  {review.reviewer?.image ? (
-                    <Image
-                      src={review.reviewer.image}
-                      alt={review.reviewer?.name}
-                      fill
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-emerald-100 flex items-center justify-center text-[10px] font-bold text-emerald-700">
-                      {review.reviewer?.name?.[0]}
-                    </div>
-                  )}
-                </div>
-
-                <span className="text-xs font-bold text-slate-700 truncate">
-                  {review.reviewer?.name}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-1 text-[10px] text-slate-400 font-bold shrink-0">
-                <Clock size={10} />
-                {format(new Date(review.createdAt), "dd MMM")}
-              </div>
-            </div>
           </div>
         ))}
       </div>
@@ -381,17 +252,6 @@ export default function ManagerReviewsPage() {
                 className="flex-1 py-4 rounded-2xl bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 transition-all"
               >
                 না
-              </button>
-              <button
-                disabled={isDeleting}
-                onClick={handleDeleteReview}
-                className="flex-1 py-4 rounded-2xl bg-rose-500 text-white font-bold hover:bg-rose-600 shadow-lg shadow-rose-200 transition-all flex items-center justify-center"
-              >
-                {isDeleting ? (
-                  <Loader2 className="animate-spin" size={20} />
-                ) : (
-                  "হ্যাঁ, মুছুন"
-                )}
               </button>
             </div>
           </div>
